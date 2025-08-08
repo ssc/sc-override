@@ -19,15 +19,15 @@ brain = Brain()
 controller = Controller()
 
 # Drive motors
-left_drive_1 = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
-left_drive_2 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
-right_drive_1 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True)
-right_drive_2 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, True)
+left_drive_1 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
+left_drive_2 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
+right_drive_1 = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
+right_drive_2 = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
 
 # Arm and claw motors will have brake mode set to hold
 # Claw motor will have max torque limited
 #claw_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
-arm_motor = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
+arm_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
 
 # Auxilary motors
 motor_aux_1 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
@@ -35,6 +35,20 @@ motor_aux_2 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 
 # Max motor speed (percent) for motors controlled by buttons
 MAX_SPEED = 40
+
+controllerMode = 0
+
+def add_MAXSPEED():
+    global MAX_SPEED
+    MAX_SPEED += 10
+    if MAX_SPEED > 100:
+        MAX_SPEED = 100
+
+def remove_MAXSPEED():
+    global MAX_SPEED
+    MAX_SPEED -= 10
+    if MAX_SPEED < 0:
+        MAX_SPEED = 0
 
 #
 # All motors are controlled from this function which is run as a separate thread
@@ -51,14 +65,36 @@ def drive_task():
     #arm_motor.set_stopping(HOLD)
 
     # loop forever
+
+    controller.buttonR2.pressed(add_MAXSPEED)
+    controller.buttonR1.pressed(remove_MAXSPEED)
+    global controllerMode
     while True:
         # buttons
         # Three values, max, 0 and -max.
         #
-        control_l1  = (controller.buttonL1.pressing() - controller.buttonL2.pressing()) * MAX_SPEED
-        control_r1  = (controller.buttonR1.pressing() - controller.buttonR2.pressing()) * MAX_SPEED
-        control_l2  = (controller.buttonUp.pressing() - controller.buttonDown.pressing()) * MAX_SPEED
-        control_r2  = (controller.buttonA.pressing() - controller.buttonB.pressing()) * MAX_SPEED
+        if controllerMode == 0:
+            control_l1  = (controller.buttonL1.pressing() - controller.buttonL2.pressing()) * MAX_SPEED
+            control_r1  = (controller.buttonR1.pressing() - controller.buttonR2.pressing()) * MAX_SPEED
+            control_l2  = (controller.buttonUp.pressing() - controller.buttonDown.pressing()) * MAX_SPEED
+            control_r2  = (controller.buttonA.pressing() - controller.buttonB.pressing()) * MAX_SPEED
+        else:
+            left_drive_1.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
+            left_drive_2.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
+            right_drive_1.set_velocity((controller.axis3.position() - controller.axis1.position()), PERCENT)
+            right_drive_2.set_velocity((controller.axis3.position() - controller.axis1.position()), PERCENT)
+
+
+
+
+        if controller.buttonB.pressing():
+            # Toggle controller mode
+            brain.screen.clear_screen()
+            controllerMode = (controllerMode + 1) % 2
+            if controllerMode == 0:
+                brain.screen.print("drive")
+            else:
+                brain.screen.print("arm")
 
         # joystick tank control
         drive_left = controller.axis3.position()
@@ -75,11 +111,17 @@ def drive_task():
         # Now send all drive values to motors
 
         # The drivetrain
-        left_drive_1.spin(FORWARD, drive_left, PERCENT)
-        left_drive_2.spin(FORWARD, drive_left, PERCENT)
-        right_drive_1.spin(FORWARD, drive_right, PERCENT)
-        right_drive_2.spin(FORWARD, drive_right, PERCENT)
 
+        if controllerMode == 0:
+            left_drive_1.spin(FORWARD, drive_left, PERCENT)
+            left_drive_2.spin(FORWARD, drive_left, PERCENT)
+            right_drive_1.spin(FORWARD, drive_right, PERCENT)
+            right_drive_2.spin(FORWARD, drive_right, PERCENT)
+        else:
+            left_drive_1.spin(FORWARD)
+            left_drive_2.spin(FORWARD)
+            right_drive_1.spin(FORWARD)
+            right_drive_2.spin(FORWARD)
         # Claw and Arm motors
         arm_motor.spin(REVERSE, control_l1, PERCENT)
         #claw_motor.spin(FORWARD, control_r1, PERCENT)
