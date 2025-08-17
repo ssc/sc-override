@@ -22,7 +22,7 @@ controller = Controller()
 left_drive_1 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
 left_drive_2 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
 right_drive_1 = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
-right_drive_2 = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
+right_drive_2 = Motor(Ports.PORT15, GearSetting.RATIO_18_1, True)
 
 # Arm and claw motors will have brake mode set to hold
 # Claw motor will have max torque limited
@@ -32,11 +32,42 @@ arm_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
 # Auxilary motors
 motor_aux_1 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 motor_aux_2 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
+toprack = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
 
 # Max motor speed (percent) for motors controlled by buttons
 MAX_SPEED = 40
 
 controllerMode = 0
+def auto():
+    Forward(1)
+
+def Forward(degrees):
+  left_drive_1.spin_to_position(degrees)
+  left_drive_2.spin_to_position(degrees)
+  right_drive_1.spin_to_position(degrees)
+  right_drive_2.spin_to_position(degrees)
+
+
+def Backward(degrees):
+  left_drive_1.spin_to_position(-degrees)
+  left_drive_2.spin_to_position(-degrees)
+  right_drive_1.spin_to_position(-degrees)
+  right_drive_2.spin_to_position(-degrees)
+
+
+def Left(degrees):
+  left_drive_1.spin_to_position(-degrees)
+  left_drive_2.spin_to_position(-degrees)
+  right_drive_1.spin_to_position(degrees)
+  right_drive_2.spin_to_position(degrees)
+
+
+def Right(degrees):
+  left_drive_1.spin_to_position(degrees)
+  left_drive_2.spin_to_position(degrees)
+  right_drive_1.spin_to_position(-degrees)
+  right_drive_2.spin_to_position(-degrees)
+
 
 def add_MAXSPEED():
     global MAX_SPEED
@@ -69,10 +100,20 @@ def drive_task():
     controller.buttonR2.pressed(add_MAXSPEED)
     controller.buttonR1.pressed(remove_MAXSPEED)
     global controllerMode
+
+    #Autonomous
+    #Forward(720)
+    #controller.buttonY.pressed(auto)
+
+
+
+
+
+
     while True:
         # buttons
         # Three values, max, 0 and -max.
-        #
+        brain.screen.print(MAX_SPEED)
         if controllerMode == 0:
             control_l1  = (controller.buttonL1.pressing() - controller.buttonL2.pressing()) * MAX_SPEED
             control_r1  = (controller.buttonR1.pressing() - controller.buttonR2.pressing()) * MAX_SPEED
@@ -129,6 +170,7 @@ def drive_task():
         # and the auxilary motors
         motor_aux_1.spin(FORWARD, control_l2, PERCENT)
         motor_aux_2.spin(FORWARD, control_r2, PERCENT)
+        toprack.spin(FORWARD, control_r1, PERCENT)
 
         # No need to run too fast
         sleep(10)
