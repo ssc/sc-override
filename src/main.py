@@ -7,6 +7,7 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
+MAX_SPEED = 0
 # Library imports
 from vex import *
 
@@ -22,10 +23,11 @@ brain.screen.print("Hello V5")
 left_motor_a = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
 left_motors = MotorGroup(left_motor_a, left_motor_b)
+
 # Create the right Motors and group them under the
 # MotorGroup "right_motors".
 right_motor_a = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
-right_motor_b = Motor(Ports.PORT15, GearSetting.RATIO_18_1, True)
+right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
 right_motors = MotorGroup(right_motor_a, right_motor_b)
 # Construct a 4-Motor Drivetrain "drivetrain" with the
 # 1 is the circumference, 2 is the distance on a single axle between two wheels, 3 is the distance between the two axles, 4 is the unit of measurement
@@ -34,6 +36,7 @@ drivetrain = DriveTrain(left_motors, right_motors, 330, 335, 231, MM, 1)
 
 
 def main():
+    global MAX_SPEED
     # Move the Drivetrain forward 1000 mm at 50% speed.
     #drivetrain.drive_for(FORWARD, 500, MM, 25, PERCENT)
     # Turn the Drivetrain left 90 degrees at 50% speed.
@@ -42,20 +45,31 @@ def main():
     #drivetrain.turn_for(LEFT, 90 * SCALE_VALUE, DEGREES, 25, PERCENT)
     # Move the Drivetrain backward 500 mm at 50% speed.
     #drive in a square
-    for _ in range(4):      
-        drivetrain.drive_for(FORWARD, 200, MM, 25, PERCENT)
-        drivetrain.turn_for(LEFT, 90 * SCALE_VALUE, DEGREES, 25, PERCENT)
+    # for _ in range(4):      
+    #     drivetrain.drive_for(FORWARD, 200, MM, 25, PERCENT)
+    #     drivetrain.turn_for(LEFT, 90 * SCALE_VALUE, DEGREES, 25, PERCENT)
+    # start of 15 second auton section
+    drivetrain.drive_for(FORWARD, 200, MM, 25, PERCENT)
+    drivetrain.turn_for(LEFT, 90 * SCALE_VALUE, DEGREES, 25, PERCENT)
+    drivetrain.drive_for(FORWARD, 200, MM, 25, PERCENT)
+    drivetrain.turn_for(RIGHT, 10 * SCALE_VALUE, DEGREES, 25, PERCENT)
+    drivetrain.drive_for(FORWARD, 2000, MM, 25, PERCENT)
+    drivetrain.turn_for(LEFT, 100 * SCALE_VALUE, DEGREES, 25, PERCENT)
+
     
 def drive_task():
     drive_left = 0
     drive_right = 0
-    MAX_SPEED = 40
-    arm_motor = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
+    global MAX_SPEED
+    MAX_SPEED= 40
+    first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
+    basket_intake_motor = Motor(Ports.PORT15, GearSetting.RATIO_18_1, False)
+
 
     # Auxilary motors
     #motor_aux_1 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
     #motor_aux_2 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
-    toprack = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
+    toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
 
 
@@ -71,6 +85,8 @@ def drive_task():
     global auton
     global controllerMode
 
+
+
     #Autonomous
     #Forward(720)
     #controller.buttonY.pressed(auto)
@@ -83,8 +99,9 @@ def drive_task():
         if controllerMode == 0:
             control_l1  = (controller.buttonL1.pressing() - controller.buttonL2.pressing()) * MAX_SPEED
             control_r1  = (controller.buttonR1.pressing() - controller.buttonR2.pressing()) * MAX_SPEED
+            control_r2  = (controller.buttonR2.pressing()) * MAX_SPEED
             control_l2  = (controller.buttonUp.pressing() - controller.buttonDown.pressing()) * MAX_SPEED
-            control_r2  = (controller.buttonA.pressing() - controller.buttonB.pressing()) * MAX_SPEED
+            #control_r2  = (controller.buttonA.pressing() - controller.buttonB.pressing()) * MAX_SPEED
         else:
             left_motor_a.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
             left_motor_b.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
@@ -136,7 +153,7 @@ def drive_task():
         # The drivetrain
 
         if controllerMode == 0:
-            if controller.buttonR1.pressing():
+            if controller.buttonUp.pressing():
                 left_motor_a.set_velocity(50, PERCENT)
                 left_motor_b.set_velocity(50, PERCENT)
                 right_motor_a.set_velocity(50, PERCENT)
@@ -147,7 +164,7 @@ def drive_task():
                 right_motor_b.spin(FORWARD)
 
             else:
-                if controller.buttonR2.pressing():
+                if controller.buttonDown.pressing():
                     left_motor_a.set_velocity(50, PERCENT)
                     left_motor_b.set_velocity(50, PERCENT)
                     right_motor_a.set_velocity(50, PERCENT)
@@ -167,11 +184,11 @@ def drive_task():
             right_motor_a.spin(FORWARD)
             right_motor_b.spin(FORWARD)
         # Claw and Arm motors
-        arm_motor.spin(REVERSE, control_l1 * 10, PERCENT)
-        #claw_motor.spin(FORWARD, control_r1, PERCENT)
- 
-        # and the auxilary motors
-        toprack.spin(FORWARD, control_r1, PERCENT)
+
+
+        first_intake.spin(FORWARD, control_l1 * 10, PERCENT)
+        basket_intake_motor.spin(FORWARD, control_r1 * 10, PERCENT)
+        toprack.spin(REVERSE, control_l1 * 10, PERCENT)
 
         # No need to run too fast
         sleep(10)    
