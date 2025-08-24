@@ -3,6 +3,7 @@
 # 	Module:       main.py                                                      #
 # 	Author:       magicgear                                                    #
 # 	Created:      8/16/2025, 6:09:00 PM                                        #
+# 	Created:      8/16/2025, 6:09:00 PM                                        #
 # 	Description:  V5 project                                                   #
 #                                                                              #
 # ---------------------------------------------------------------------------- #
@@ -12,6 +13,7 @@ MAX_SPEED = 0
 from vex import *
 
 # Brain should be defined by default
+brain=Brain()
 brain=Brain()
 controller = Controller()
 controllerMode = 0
@@ -83,6 +85,7 @@ def drive_task():
     # loop forever
 
     global auton
+    global auton
     global controllerMode
 
 
@@ -90,6 +93,7 @@ def drive_task():
     #Autonomous
     #Forward(720)
     #controller.buttonY.pressed(auto)
+    auton = 0
     auton = 0
 
     while True:
@@ -103,6 +107,10 @@ def drive_task():
             control_l2  = (controller.buttonUp.pressing() - controller.buttonDown.pressing()) * MAX_SPEED
             #control_r2  = (controller.buttonA.pressing() - controller.buttonB.pressing()) * MAX_SPEED
         else:
+            left_motor_a.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
+            left_motor_b.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
+            right_motor_a.set_velocity((controller.axis3.position() - controller.axis1.position()), PERCENT)
+            right_motor_b.set_velocity((controller.axis3.position() - controller.axis1.position()), PERCENT)
             left_motor_a.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
             left_motor_b.set_velocity((controller.axis3.position() + controller.axis1.position()), PERCENT)
             right_motor_a.set_velocity((controller.axis3.position() - controller.axis1.position()), PERCENT)
@@ -132,6 +140,18 @@ def drive_task():
             auton = 0
             pass    
 
+
+        if controller.buttonX.pressing():
+            # Toggle controller mode
+            brain.screen.clear_screen()
+            auton = 1
+
+
+        if auton == 1:
+            main()
+            auton = 0
+            pass    
+
         # joystick tank control
         drive_left = controller.axis3.position()
         drive_right = controller.axis2.position()
@@ -145,6 +165,10 @@ def drive_task():
             drive_right = 0
 
         # Now send all drive values to motors
+        
+        
+
+
         
         
 
@@ -183,6 +207,10 @@ def drive_task():
             left_motor_b.spin(FORWARD)
             right_motor_a.spin(FORWARD)
             right_motor_b.spin(FORWARD)
+            left_motor_a.spin(FORWARD)
+            left_motor_b.spin(FORWARD)
+            right_motor_a.spin(FORWARD)
+            right_motor_b.spin(FORWARD)
         # Claw and Arm motors
 
 
@@ -192,7 +220,11 @@ def drive_task():
 
         # No need to run too fast
         sleep(10)    
+        sleep(10)    
 
+
+drive_task()
+        
 
 drive_task()
         
