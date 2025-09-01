@@ -11,7 +11,12 @@
 MAX_SPEED = 0
 # Library imports
 from vex import *
-import sys
+from vex import *
+
+brain = Brain()
+controller_1 = Controller(PRIMARY)    
+controller_2 = Controller(PARTNER)    
+
 
 # Brain should be defined by defaultF
 brain=Brain()
