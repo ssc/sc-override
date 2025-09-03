@@ -117,7 +117,7 @@ def drive_task():
        
         if controllerMode == 0:
      
-            if controller_1.buttonUp.pressing():
+            if controller_1.buttonUp.pressing() or controller_2.buttonUp.pressing():
                 left_motor_a.set_velocity(50, PERCENT)
                 left_motor_b.set_velocity(50, PERCENT)
                 right_motor_a.set_velocity(50, PERCENT)
@@ -126,7 +126,7 @@ def drive_task():
                 right_motor_a.spin(FORWARD)
                 left_motor_b.spin(FORWARD)
                 right_motor_b.spin(FORWARD)
-            elif controller_1.buttonDown.pressing():
+            elif controller_1.buttonDown.pressing() or controller_2.buttonDown.pressing():
                 left_motor_a.set_velocity(50, PERCENT)
                 left_motor_b.set_velocity(50, PERCENT)
                 right_motor_a.set_velocity(50, PERCENT)
@@ -137,8 +137,12 @@ def drive_task():
                 right_motor_b.spin(REVERSE)
             else:
                 # Joystick tank control (Controller 1)
-                drive_left = controller_1.axis3.position()   # Left stick Y
+                drive_left = controller_1.axis3.position()    # Left stick Y
                 drive_right = controller_1.axis2.position()  # Right stick Y
+                if drive_left == 0:
+                    drive_left = controller_2.axis3.position()  # Left stick Y
+                if drive_right == 0:
+                    drive_right = controller_2.axis2.position()  # Right stick Y
 
                 # Deadband threshold
                 deadband = 15
@@ -156,7 +160,11 @@ def drive_task():
             # Arcade control mode (Controller 1)
             forward_power = controller_1.axis3.position()  # Left stick Y
             turn_power = controller_1.axis1.position()     # Left stick X
-            
+            if forward_power == 0:
+                forward_power = controller_2.axis3.position()  # Left stick Y
+            if turn_power == 0:
+                turn_power = controller_2.axis1.position()     # Left stick X
+
             left_power = forward_power + turn_power
             right_power = forward_power - turn_power
             
@@ -170,12 +178,18 @@ def drive_task():
             right_motor_a.spin(FORWARD)
             right_motor_b.spin(FORWARD)
 
-       
+     
 
         first_intake_control = (controller_2.buttonL1.pressing() - controller_2.buttonL2.pressing()) * MAX_SPEED
         basket_intake_control = (controller_2.buttonR1.pressing() - controller_2.buttonR2.pressing()) * MAX_SPEED
         toprack_control = (controller_2.buttonA.pressing() - controller_2.buttonY.pressing()) * 60
 
+        if first_intake_control == 0:
+            first_intake_control = (controller_1.buttonL1.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED
+        if basket_intake_control == 0:
+            basket_intake_control = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * MAX_SPEED
+        if toprack_control == 0:
+            toprack_control = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * 60
 
         first_intake.spin(FORWARD, first_intake_control * 10, PERCENT)
         basket_intake_motor.spin(FORWARD, basket_intake_control * 10, PERCENT)    
@@ -185,12 +199,12 @@ def drive_task():
         toprack.spin(REVERSE, toprack_control * MOTOR_MULTIPLIER, PERCENT)
        
 
-        if controller_1.buttonLeft.pressing():
+        if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
             brain.screen.clear_screen()
             controllerMode = 0  
             brain.screen.print("Tank Drive Mode")
             wait(200, MSEC)  
-        elif controller_1.buttonRight.pressing():
+        elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
             brain.screen.clear_screen()
             controllerMode = 1  # Arcade mode
             brain.screen.print("Arcade Drive Mode")
@@ -215,7 +229,7 @@ def drive_task():
             hopper_running = 0
         #change new_line to new_row
         # Speed adjustment (Up/Down arrows on Controller 2 for intake speed)
-        if controller_2.buttonUp.pressing():
+        if controller_2.buttonUp.pressing() or controller_1.buttonUp.pressing():
             MAX_SPEED = min(100, MAX_SPEED + 5)
             wait(100, MSEC)
             brain.screen.clear_screen()
