@@ -187,7 +187,7 @@ def drive_task():
             wait(200, MSEC)  
 
         # Autonomous function (X button on either controller)
-        if controller_1.buttonX.pressing() or controller_2.buttonX.pressing():
+        if controller_1.buttonX.pressing() and controller_2.buttonX.pressing():
             brain.screen.clear_screen()
             auton = 1
 
