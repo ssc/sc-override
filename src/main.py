@@ -9,10 +9,20 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
+# Library imports
 from vex import *
 
-# Brain and Controllers
 brain = Brain()
+
+        
+
+
+
+# actions to do when the program starts
+brain.screen.clear_screen()
+
+# Brain and Controllers
+
 
 
 # Configure the optical sensor on a specific port (change port number as needed)
@@ -255,7 +265,20 @@ def drive_task():
         sleep(10)
        # brain.screen.new_line()  # Removed typo and malformed code
 
+def autonomous():
+    brain.screen.clear_screen()
+    brain.screen.print("autonomous code")
+    auton_funct()
+    # place automonous code here
 
-drive_task()
+def user_control():
+    brain.screen.clear_screen()
+    brain.screen.print("driver control")
+    # place driver control in this while loop
+    drive_task()
+        
+#drive_task()
+# create competition instance
+comp = Competition(user_control, autonomous)
 
 
