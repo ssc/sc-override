@@ -104,6 +104,29 @@ def turn_until_distance(distance,direction,speed):
     right_motors.stop()
     return
 
+def move_until_distance(distance,direction,speed):
+    while distance_sensor.object_distance(MM) > distance:
+        if direction == 'forward':
+            if left_motor_c.installed():
+                left_motors.spin(REVERSE,speed,PERCENT)
+                right_motors.spin(REVERSE,speed,PERCENT)
+            else: 
+                left_motors.spin(FORWARD,speed,PERCENT)
+                right_motors.spin(FORWARD,speed,PERCENT)
+        elif direction == 'reverse':
+            if left_motor_c.installed():
+                left_motors.spin(FORWARD,speed,PERCENT)
+                right_motors.spin(FORWARD,speed,PERCENT)
+            else: 
+                left_motors.spin(REVERSE,speed,PERCENT)
+                right_motors.spin(REVERSE,speed,PERCENT)
+
+    left_motors.stop()
+    right_motors.stop()
+    return
+
+
+
 
 #def turn_until_distance(target_distance_1, target_distance_2, direction):
 #     global MAX_SPEED
@@ -143,10 +166,20 @@ def auton_funct():
 
 
      drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
-     drivetrain.turn_for(RIGHT, 35, DEGREES, 25, PERCENT)
+     drivetrain.turn_for(RIGHT, 20, DEGREES, 15, PERCENT)
+     
 
-        #  first_intake.spin(FORWARD, 100, PERCENT)
-        #  basket_intake_motor.spin(REVERSE, 100, PERCENT)
+     first_intake.spin(FORWARD, 100, PERCENT)
+     basket_intake_motor.spin(REVERSE, 100, PERCENT)
+     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+     wait(0.5,SECONDS)
+     first_intake.stop()
+     basket_intake_motor.stop()
+     drivetrain.turn_for(LEFT, 67, DEGREES, 15, PERCENT)
+     drivetrain.drive_for(REVERSE, 25, INCHES, 35 , PERCENT)
+     turn_until_distance(250,'right',5)
+     move_until_distance(100,'reverse',20)
+
         #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
         #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
         #  drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
