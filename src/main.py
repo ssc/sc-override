@@ -46,13 +46,22 @@ brain.screen.print("Hello V5 - Movement/Intake Split")
 left_motor_a = Motor(Ports.PORT19, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
 left_motor_c = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
-left_motors = MotorGroup(left_motor_a, left_motor_b, left_motor_c)
+
+
 
 # Create the right Motors and group them under the MotorGroup "right_motors"
 right_motor_a = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
 right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
-right_motor_c = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
-right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
+right_motor_c = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
+left_motor_b.set_reversed(False)
+left_motor_a.set_reversed(False)
+if left_motor_c.installed():
+    right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
+    left_motors = MotorGroup(left_motor_a, left_motor_b, left_motor_c)
+
+else:
+    right_motors = MotorGroup(right_motor_a, right_motor_b)
+    left_motors = MotorGroup(left_motor_a, left_motor_b)
 #FORWARD = REVERSE
 #REVERSE = FORWARD
 tube_intake_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, False)
@@ -131,66 +140,40 @@ def auton_funct():
     
      SCALE_VALUE = 0.6
     
-     if vex_brain_slot == 2:  # right side auton
-         first_intake.spin(FORWARD, 100, PERCENT)
-         basket_intake_motor.spin(REVERSE, 100, PERCENT)
-         drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
-         drivetrain.turn_for(RIGHT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
-         drivetrain.turn_for(LEFT, 25 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         drivetrain.drive_for(FORWARD, 550, MM, 20, PERCENT)
-         wait(1, SECONDS)
-         basket_intake_motor.stop()
-         first_intake.stop()
-         drivetrain.drive_for(REVERSE, 620, MM, 50, PERCENT)
-         drivetrain.turn_for(RIGHT, 105 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         drivetrain.drive_for(FORWARD, 685, MM, 75, PERCENT)
-         #where it turns to look at the goal
-         #drivetrain.turn_for(RIGHT, 100 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         turn_until_distance(1, 70, 'right')
 
-         drivetrain.drive_for(REVERSE, 200, MM, 50, PERCENT)
-         first_intake.spin(FORWARD, 50, PERCENT)
-         basket_intake_motor.spin(FORWARD, 100, PERCENT)
-         brain.screen.print("we made it")
-         toprack.spin(REVERSE, 100, PERCENT)
-         wait(5, SECONDS)
-         brain.screen.print("we made it 2")
-         basket_intake_motor.stop()
-         first_intake.stop()
-         toprack.stop()
-         brain.screen.print("we made it3")
 
-     elif vex_brain_slot == 1:  # left side auton
-         first_intake.spin(FORWARD, 100, PERCENT)
-         basket_intake_motor.spin(REVERSE, 100, PERCENT)
-         drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
-         drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
-         drivetrain.turn_for(RIGHT, 25 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         drivetrain.drive_for(FORWARD, 550, MM, 20, PERCENT)
-         wait(1, SECONDS)
-         basket_intake_motor.stop()
-         first_intake.stop()
-         drivetrain.drive_for(REVERSE, 620, MM, 50, PERCENT)
-         #drivetrain.turn_for(LEFT, 105 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         turn_until_distance(500,'left',5)
-         drivetrain.drive_for(FORWARD, 685, MM, 75, PERCENT)
-         #where it turns to look at the goal
-         #drivetrain.turn_for(LEFT, 100 * SCALE_VALUE, DEGREES, 25, PERCENT)
-         turn_until_distance(1, 70, 'left')
+     drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+     drivetrain.turn_for(RIGHT, 35, DEGREES, 25, PERCENT)
 
-         drivetrain.drive_for(REVERSE, 200, MM, 50, PERCENT)
-         first_intake.spin(FORWARD, 50, PERCENT)
-         basket_intake_motor.spin(FORWARD, 100, PERCENT)
-         brain.screen.print("we made it")
-         toprack.spin(REVERSE, 100, PERCENT)
-         wait(5, SECONDS)
-         brain.screen.print("we made it 2")
-         basket_intake_motor.stop()
-         first_intake.stop()
-         toprack.stop()
-         brain.screen.print("we made it3")
+        #  first_intake.spin(FORWARD, 100, PERCENT)
+        #  basket_intake_motor.spin(REVERSE, 100, PERCENT)
+        #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
+        #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
+        #  drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
+        #  drivetrain.turn_for(RIGHT, 25 * SCALE_VALUE, DEGREES, 25, PERCENT)
+        #  drivetrain.drive_for(FORWARD, 550, MM, 20, PERCENT)
+        #  wait(1, SECONDS)
+        #  basket_intake_motor.stop()
+        #  first_intake.stop()
+        #  drivetrain.drive_for(REVERSE, 620, MM, 50, PERCENT)
+        #  #drivetrain.turn_for(LEFT, 105 * SCALE_VALUE, DEGREES, 25, PERCENT)
+        #  turn_until_distance(500,'left',5)
+        #  drivetrain.drive_for(FORWARD, 685, MM, 75, PERCENT)
+        #  #where it turns to look at the goal
+        #  #drivetrain.turn_for(LEFT, 100 * SCALE_VALUE, DEGREES, 25, PERCENT)
+        #  turn_until_distance(1, 70, 'left')
+
+        #  drivetrain.drive_for(REVERSE, 200, MM, 50, PERCENT)
+        #  first_intake.spin(FORWARD, 50, PERCENT)
+        #  basket_intake_motor.spin(FORWARD, 100, PERCENT)
+        #  brain.screen.print("we made it")
+        #  toprack.spin(REVERSE, 100, PERCENT)
+        #  wait(5, SECONDS)
+        #  brain.screen.print("we made it 2")
+        #  basket_intake_motor.stop()
+        #  first_intake.stop()
+        #  toprack.stop()
+        #  brain.screen.print("we made it3")
 
 def drive_task():
     #optical_sensor.set_light_power(25, PERCENT)
@@ -338,7 +321,7 @@ def drive_task():
             auton = 1
 
         if auton == 1:
-            #auton_funct()
+            auton_funct()
             auton = 0
 
         # Hopper pickup function (B button on either controller)
@@ -420,7 +403,7 @@ def user_control():
 #drive_task()
 # create competition instance
 comp = Competition(user_control, autonomous)
-turn_until_distance(100,'left',20)
+#turn_until_distance(100,'left',20)
 drive_task()
 
 
