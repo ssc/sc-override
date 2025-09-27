@@ -273,12 +273,12 @@ def drive_task():
 
                 # Apply tank drive
                 if left_motor_c.installed():
-                    left_motor_a.spin(REVERSE, drive_left * 100, PERCENT)
-                    left_motor_b.spin(REVERSE, drive_left * 100, PERCENT)
-                    left_motor_c.spin(REVERSE, drive_left * 100, PERCENT)
-                    right_motor_a.spin(REVERSE, drive_right * 100, PERCENT)
-                    right_motor_b.spin(REVERSE, drive_right * 100, PERCENT)
-                    right_motor_c.spin(REVERSE, drive_right * 100, PERCENT)
+                    left_motor_a.spin(FORWARD, drive_left * 100, PERCENT)
+                    left_motor_b.spin(FORWARD, drive_left * 100, PERCENT)
+                    left_motor_c.spin(FORWARD, drive_left * 100, PERCENT)
+                    right_motor_a.spin(FORWARD, drive_right * 100, PERCENT)
+                    right_motor_b.spin(FORWARD, drive_right * 100, PERCENT)
+                    right_motor_c.spin(FORWARD, drive_right * 100, PERCENT)
                 else:
                     left_motor_a.spin(FORWARD, drive_left * 1, PERCENT)
                     left_motor_b.spin(FORWARD, drive_left * 1, PERCENT)
