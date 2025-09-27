@@ -52,7 +52,7 @@ left_motor_c = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
 # Create the right Motors and group them under the MotorGroup "right_motors"
 right_motor_a = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
 right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
-right_motor_c = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
+right_motor_c = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True)
 left_motor_b.set_reversed(False)
 left_motor_a.set_reversed(False)
 if left_motor_c.installed():
@@ -72,7 +72,7 @@ drivetrain = DriveTrain(left_motors, right_motors, 330, 335, 231, MM, 1)
 
 # Intake/Mechanism motors
 first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
-basket_intake_motor = Motor(Ports.PORT9, GearSetting.RATIO_18_1, False)
+basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
 def hopper_pickup():
@@ -81,7 +81,7 @@ def hopper_pickup():
     
     drivetrain.turn_for(RIGHT, 20 * SCALE_VALUE, DEGREES, 25, PERCENT)
     drivetrain.turn_for(LEFT, 20 * SCALE_VALUE, DEGREES, 25, PERCENT)
-    drivetrain.drive_for(FORWARD, 10, MM, 50, PERCENT)\
+    drivetrain.drive_for(FORWARD, 10, MM, 50, PERCENT)
     
 def turn_until_distance(distance,direction,speed):
     while distance_sensor.object_distance(MM) > distance:
@@ -240,6 +240,8 @@ def drive_task():
                 left_motor_b.spin(FORWARD)
                 right_motor_b.spin(FORWARD)
                 right_motor_c.spin(FORWARD)
+
+                brain.screen.print("Button Up Pressed")
             elif controller_1.buttonDown.pressing(): #or controller_2.buttonDown.pressing():
                 left_motor_a.set_velocity(60, PERCENT)
                 left_motor_c.set_velocity(60, PERCENT)
