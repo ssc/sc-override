@@ -29,6 +29,7 @@ brain.screen.clear_screen()
 
 
 # Configure the optical sensor on a specific port (change port number as needed)
+potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT10)
 inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
@@ -42,7 +43,7 @@ controllerMode = 0
 auton = 0
 hopper_running = 0
 b_was_pressed = 0
-vex_brain_slot = 1 # 1 = left, 2 = right Auton
+vex_brain_slot = 2 # 1 = left, 2 = right Auton
 
 brain.screen.print("Hello V5 - Movement/Intake Split")
 
@@ -77,7 +78,7 @@ drivetrain = SmartDrive(left_motors, right_motors, inertial_sensor,330, 335, 231
 
 
 # Intake/Mechanism motors
-first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
+first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
@@ -209,26 +210,74 @@ def turnTestingAuton():
 
 def auton_funct():
      global MAX_SPEED
-    
+     if potentiometer.value() < 1500:
+         vex_brain_slot = 1
+         brain.screen.print("right Side Auton")
+
+     else:
+         vex_brain_slot = 2
+
+         brain.screen.print("left Side Auton")
      SCALE_VALUE = 0.6
     
+     while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+     inertial_sensor.reset_rotation()
+     inertial_sensor.set_heading(0, DEGREES)
+    
 
 
-     drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
-     drivetrain.turn_for(RIGHT, 20, DEGREES, 15, PERCENT)
-     
-
+     drivetrain.drive_for(FORWARD,12, INCHES, 50, PERCENT )
+     #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
      first_intake.spin(FORWARD, 100, PERCENT)
      basket_intake_motor.spin(REVERSE, 100, PERCENT)
-     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+     drivetrain.drive_for(FORWARD, 9, INCHES, 10, PERCENT)
+
+
+     
      wait(0.5,SECONDS)
      first_intake.stop()
      basket_intake_motor.stop()
-     drivetrain.turn_for(LEFT, 67, DEGREES, 15, PERCENT)
-     drivetrain.drive_for(REVERSE, 25, INCHES, 35 , PERCENT)
-     turn_until_distance(250,'right',5)
-     move_until_distance(100,'reverse',20)
 
+     if vex_brain_slot == 1:
+        drivetrain.turn_to_heading(calibratedAngle(115), DEGREES, wait=True)
+
+     else:
+
+        drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
+     
+     drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
+
+     if vex_brain_slot == 1:
+        turn_until_distance(500,'left',5)
+
+     else: 
+        turn_until_distance(500,'right',5)
+
+     
+     move_until_distance(150,'reverse',20)
+
+     if vex_brain_slot == 1:
+    
+        drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
+
+     else:
+         
+        drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
+     
+     first_intake.spin(FORWARD, 50, PERCENT)
+     basket_intake_motor.spin(FORWARD, 100, PERCENT)
+     brain.screen.print("we made it")
+     toprack.spin(REVERSE, 100, PERCENT)
+     wait(5, SECONDS)
+     brain.screen.print("we made it 2")
+     basket_intake_motor.stop()
+     first_intake.stop()
+     toprack.stop()
+     drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
         #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
         #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
         #  drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
@@ -246,16 +295,17 @@ def auton_funct():
         #  turn_until_distance(1, 70, 'left')
 
         #  drivetrain.drive_for(REVERSE, 200, MM, 50, PERCENT)
-        #  first_intake.spin(FORWARD, 50, PERCENT)
-        #  basket_intake_motor.spin(FORWARD, 100, PERCENT)
-        #  brain.screen.print("we made it")
-        #  toprack.spin(REVERSE, 100, PERCENT)
-        #  wait(5, SECONDS)
-        #  brain.screen.print("we made it 2")
-        #  basket_intake_motor.stop()
-        #  first_intake.stop()
-        #  toprack.stop()
+
         #  brain.screen.print("we made it3")
+
+def potentiometer_test():
+    brain.screen.clear_screen()
+    brain.screen.print("Potentiometer Test")
+    while True:
+        brain.screen.new_line()
+        brain.screen.print("Value: " + str(potentiometer.value()))
+        wait(100, MSEC)
+
 
 def drive_task():
     optical_sensor.set_light_power(25, PERCENT)
@@ -266,6 +316,9 @@ def drive_task():
     global MAX_SPEED, hopper_running, auton, controllerMode
     #brightness = optical_sensor.brightness()
     #hue = optical_sensor.hue()
+
+    brain.screen.clear_screen()
+    brain.screen.print(potentiometer.value())
     
     while True:
 
@@ -405,7 +458,7 @@ def drive_task():
             auton = 1
 
         if auton == 1:
-            turnTestingAuton()
+            auton_funct()
             auton = 0
 
         # Hopper pickup function (B button on either controller)
@@ -428,44 +481,44 @@ def drive_task():
             MAX_SPEED = min(100, MAX_SPEED + 5)
             wait(100, MSEC)
             brain.screen.clear_screen()
-        if True: # controller_2.buttonDown.pressing():
-            MAX_SPEED = max(10, MAX_SPEED - 5)
-            wait(100, MSEC)
+        # if True: # controller_2.buttonDown.pressing():
+        #     MAX_SPEED = max(10, MAX_SPEED - 5)
+        #     wait(100, MSEC)
     
-            if optical_sensor.is_near_object():
-                brain.screen.next_row()
-                brain.screen.clear_screen()
-                brain.screen.print("Object Detected")
-                optical_sensor.set_light_power(100, PERCENT)
-                brightness = optical_sensor.brightness()
-                hue = optical_sensor.hue()
-                #brain.screen.clear_screen()
-                if brightness > 10:
-                    brain.screen.next_row()
-                    brain.screen.print("Brightness > ten: " + str(brightness))
-                    if (hue <= 20) or (hue >= 340):
+        #     if optical_sensor.is_near_object():
+        #         brain.screen.next_row()
+        #         brain.screen.clear_screen()
+        #         brain.screen.print("Object Detected")
+        #         optical_sensor.set_light_power(100, PERCENT)
+        #         brightness = optical_sensor.brightness()
+        #         hue = optical_sensor.hue()
+        #         #brain.screen.clear_screen()
+        #         if brightness > 10:
+        #             brain.screen.next_row()
+        #             brain.screen.print("Brightness > ten: " + str(brightness))
+        #             if (hue <= 20) or (hue >= 340):
 
                         
-                        toprack.spin(REVERSE, 1000, PERCENT)
-                        wait(0.5, SECONDS)
-                        toprack.stop()
+        #                 #toprack.spin(REVERSE, 1000, PERCENT)
+        #                 #wait(0.5, SECONDS)
+        #                 toprack.stop()
 
-                    elif (hue >= 210) and (hue <= 230):
+        #             elif (hue >= 210) and (hue <= 230):
 
-                        brain.screen.next_row()
-                        brain.screen.print("Blue Detected")
+        #                 brain.screen.next_row()
+        #                 brain.screen.print("Blue Detected")
                         
 
-                    else:
-                        brain.screen.next_row()
-                        brain.screen.print("No Color Detected")
-                else:
-                    brain.screen.next_row()
-                    brain.screen.print("Brightness less than ten " + str(brightness))
+        #             else:
+        #                 brain.screen.next_row()
+        #                 brain.screen.print("No Color Detected")
+        #         else:
+        #             brain.screen.next_row()
+        #             brain.screen.print("Brightness less than ten " + str(brightness))
 
-            else:
-                brain.screen.next_row()
-                brain.screen.print("No Object Detected")
+        #     else:
+        #         brain.screen.next_row()
+        #         brain.screen.print("No Object Detected")
 
        # brain.screen.new_line()ain.screen.print("Brightness less than ten")
 
@@ -475,7 +528,7 @@ def drive_task():
 def autonomous():
     brain.screen.clear_screen()
     brain.screen.print("autonomous code")
-    #auton_funct()
+    auton_funct()
     # place automonous code here
 
 def user_control():
@@ -486,9 +539,10 @@ def user_control():
         
 #drive_task()
 # create competition instance
-comp = Competition(user_control, autonomous)
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 drive_task()
+
 
 
 #test_funct()
