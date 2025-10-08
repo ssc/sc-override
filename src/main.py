@@ -13,7 +13,10 @@
 from vex import *
 
 brain = Brain()
+gyro_360 = 354
 
+def calibratedAngle(idealAngle):
+    return (idealAngle * gyro_360/360)
         
 distance = 0
 
@@ -27,6 +30,7 @@ brain.screen.clear_screen()
 
 # Configure the optical sensor on a specific port (change port number as needed)
 distance_sensor = Distance(Ports.PORT10)
+inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
@@ -68,7 +72,9 @@ tube_intake_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, False)
 
 # Construct a 4-Motor Drivetrain
 # Parameters: circumference, distance between wheels on axle, distance between axles, units, gear ratio
-drivetrain = DriveTrain(left_motors, right_motors, 330, 335, 231, MM, 1)
+#drivetrain = DriveTrain(left_motors, right_motors, 330, 335, 231, MM, 1)
+drivetrain = SmartDrive(left_motors, right_motors, inertial_sensor,330, 335, 231, MM, 1)
+
 
 # Intake/Mechanism motors
 first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
@@ -126,7 +132,50 @@ def move_until_distance(distance,direction,speed):
     return
 
 
+def turnTestingAuton():
+    # reset the gyro sensor to 0 degrees
+    #change all Gyro to inertial
+    inertial_sensor.calibrate()
+    controller_1.screen.clear_screen()
+    controller_1.screen.set_cursor(1,1)
+    controller_1.screen.print("turnTestingAuton 1.1")
 
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    
+    # turn to 90 degrees
+    drivetrain.turn_to_heading(calibratedAngle(90), DEGREES, wait=True)
+    controller_1.screen.set_cursor(3,1)    
+    controller_1.screen.print("[90=]")
+    controller_1.screen.print(inertial_sensor.heading(DEGREES))
+    # wait for a moment
+    wait(1, SECONDS)
+    
+    # turn to 180 degrees
+    drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
+    
+    # wait for a moment
+    wait(1, SECONDS)
+    
+    # turn to 270 degrees
+    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
+    
+    # wait for a moment
+    wait(1, SECONDS)
+    
+    # turn to 0 degrees
+    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+    
+    # wait for a moment
+    wait(1, SECONDS)
+    
+    # end of auton
+    drivetrain.stop()
 
 #def turn_until_distance(target_distance_1, target_distance_2, direction):
 #     global MAX_SPEED
@@ -209,19 +258,19 @@ def auton_funct():
         #  brain.screen.print("we made it3")
 
 def drive_task():
-    #optical_sensor.set_light_power(25, PERCENT)
+    optical_sensor.set_light_power(25, PERCENT)
     brightness = optical_sensor.brightness()
-    hue = optical_sensor.hue()
+    #hue = optical_sensor.hue()
     drive_left = 0
     drive_right = 0
     global MAX_SPEED, hopper_running, auton, controllerMode
-    brightness = optical_sensor.brightness()
-    hue = optical_sensor.hue()
+    #brightness = optical_sensor.brightness()
+    #hue = optical_sensor.hue()
     
     while True:
 
         global distance
-        brain.screen.print(optical_sensor.hue())
+        #brain.screen.print(optical_sensor.hue())
         brain.screen.print(distance)
         distance = distance_sensor.object_distance(MM)
        
@@ -356,7 +405,7 @@ def drive_task():
             auton = 1
 
         if auton == 1:
-            auton_funct()
+            turnTestingAuton()
             auton = 0
 
         # Hopper pickup function (B button on either controller)
