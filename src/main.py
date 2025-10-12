@@ -82,6 +82,19 @@ first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
+def terminate_Program():
+    while True:
+        if controller_1.buttonDown.pressing():
+            brain.screen.clear_screen()
+            left_motors.stop()
+            right_motors.stop()
+            first_intake.stop()
+            basket_intake_motor.stop()
+            toprack.stop()
+            tube_intake_motor.stop()        
+
+kill_switch = Thread(terminate_Program)
+
 def hopper_pickup():
     SCALE_VALUE = 0.6
     global MAX_SPEED
@@ -208,6 +221,7 @@ def turnTestingAuton():
 # def test_funct():
 #     turn_until_distance(1, 70, 'right')
 
+
 def auton_funct():
      global MAX_SPEED
      if potentiometer.value() < 1500:
@@ -252,21 +266,21 @@ def auton_funct():
      drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
 
      if vex_brain_slot == 1:
-        turn_until_distance(500,'left',5)
+        turn_until_distance(750,'left',5)
 
      else: 
-        turn_until_distance(500,'right',5)
+        turn_until_distance(750,'right',5)
 
      
      move_until_distance(150,'reverse',20)
 
-     if vex_brain_slot == 1:
+    #  if vex_brain_slot == 1:
     
-        drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
+    #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
 
-     else:
+    #  else:
          
-        drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
+    #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
      
      first_intake.spin(FORWARD, 50, PERCENT)
      basket_intake_motor.spin(FORWARD, 100, PERCENT)
