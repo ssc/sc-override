@@ -24,6 +24,9 @@ distance = 0
 # actions to do when the program starts
 brain.screen.clear_screen()
 
+left_tube_spin = 0
+right_tube_spin = 0
+
 # Brain and Controllers
 
 
@@ -69,7 +72,7 @@ else:
     left_motors = MotorGroup(left_motor_a, left_motor_b)
 #FORWARD = REVERSE
 #REVERSE = FORWARD
-tube_intake_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, False)
+tube_intake_motor = Motor(Ports.PORT15, GearSetting.RATIO_18_1, False)
 
 # Construct a 4-Motor Drivetrain
 # Parameters: circumference, distance between wheels on axle, distance between axles, units, gear ratio
@@ -82,18 +85,18 @@ first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
-def terminate_Program():
-    while True:
-        if controller_1.buttonDown.pressing():
-            brain.screen.clear_screen()
-            left_motors.stop()
-            right_motors.stop()
-            first_intake.stop()
-            basket_intake_motor.stop()
-            toprack.stop()
-            tube_intake_motor.stop()        
+#def terminate_Program():
+#     while True:
+#         if controller_1.buttonDown.pressing():
+#             brain.screen.clear_screen()
+#             left_motors.stop()
+#             right_motors.stop()
+#             first_intake.stop()
+#             basket_intake_motor.stop()
+#             toprack.stop()
+#             tube_intake_motor.stop()        
 
-kill_switch = Thread(terminate_Program)
+# kill_switch = Thread(terminate_Program)
 
 def hopper_pickup():
     SCALE_VALUE = 0.6
@@ -330,10 +333,11 @@ def drive_task():
     global MAX_SPEED, hopper_running, auton, controllerMode
     #brightness = optical_sensor.brightness()
     #hue = optical_sensor.hue()
-
+    tube_intake_motor.set_position(0,DEGREES)
     brain.screen.clear_screen()
     brain.screen.print(potentiometer.value())
-    
+    global left_tube_spin
+    global right_tube_spin
     while True:
 
         global distance
@@ -434,6 +438,22 @@ def drive_task():
         basket_intake_control = (controller_2.buttonR1.pressing() - controller_2.buttonR2.pressing()) * MAX_SPEED
         toprack_control = (controller_2.buttonA.pressing() - controller_2.buttonY.pressing()) * 110
 
+
+
+
+
+        if controller_1.buttonRight.pressing()   or controller_2.buttonRight.pressing():
+            right_tube_spin = 1
+
+            tube_intake_motor_control = (controller_1.buttonRight.pressing()) * 100
+        else:
+            if controller_1.buttonLeft.pressing()   or controller_2.buttonLeft.pressing():
+                left_tube_spin = 1
+                tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * -100
+            else:
+                tube_intake_motor_control = 0
+
+
         if first_intake_control == 0:
             first_intake_control = (controller_1.buttonL1.pressing() - controller_1.buttonL2.pressing()) * 30
         if basket_intake_control == 0:
@@ -441,24 +461,46 @@ def drive_task():
         if toprack_control == 0:
             toprack_control = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * 70
 
+
+
+        if right_tube_spin == 1 and tube_intake_motor_control == 0:
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print("Right Spin")
+            controller_1.screen.print(tube_intake_motor.position())      
+            tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
+            right_tube_spin = 0
+      
+
+        if left_tube_spin == 1 and tube_intake_motor_control == 0:
+
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print("Left Spin")
+            controller_1.screen.print(tube_intake_motor.position())      
+            tube_intake_motor.spin_to_position(tube_intake_motor.position() - 360 - tube_intake_motor.position()%360)
+            left_tube_spin = 0
+            
+
         first_intake.spin(FORWARD, first_intake_control * 8, PERCENT)
         basket_intake_motor.spin(FORWARD, basket_intake_control * 10, PERCENT)    
         toprack.spin(REVERSE, toprack_control * 50, PERCENT)
         first_intake.spin(FORWARD, first_intake_control * 8, PERCENT)
         basket_intake_motor.spin(FORWARD, basket_intake_control * MOTOR_MULTIPLIER, PERCENT)    
         toprack.spin(REVERSE, toprack_control * 50, PERCENT)
+        tube_intake_motor.spin(FORWARD, tube_intake_motor_control, PERCENT)
        
 
-        if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
-            brain.screen.clear_screen()
-            controllerMode = 0  
-            brain.screen.print("Tank Drive Mode")
-            wait(200, MSEC)  
-        elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
-            brain.screen.clear_screen()
-            controllerMode = 1  # Arcade mode
-            brain.screen.print("Arcade Drive Mode")
-            wait(200, MSEC)  
+        #if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
+        #     brain.screen.clear_screen()
+        #     controllerMode = 0  
+        #     brain.screen.print("Tank Drive Mode")
+        #     wait(200, MSEC)  
+        # elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
+        #     brain.screen.clear_screen()
+        #     controllerMode = 1  # Arcade mode
+        #     brain.screen.print("Arcade Drive Mode")
+        #     wait(200, MSEC)  
 
         if controller_2.buttonUp.pressing():
             first_intake.spin(REVERSE,10,PERCENT)
@@ -476,13 +518,13 @@ def drive_task():
             auton = 0
 
         # Hopper pickup function (B button on either controller)
-        if controller_1.buttonB.pressing() or controller_2.buttonB.pressing():
-            tube_intake_motor.spin(FORWARD, 100, PERCENT)
-            #brain.screen.clear_screen()
-            #hopper_running = 1
+        # if controller_1.buttonB.pressing() or controller_2.buttonB.pressing():
+        #     tube_intake_motor.spin(FORWARD, 100, PERCENT)
+        #     #brain.screen.clear_screen()
+        #     #hopper_running = 1
 
-        else: 
-            tube_intake_motor.stop()
+        # else: 
+        #     tube_intake_motor.stop()
             #brain.screen.clear_screen()
             #hopper_running = 0
         
