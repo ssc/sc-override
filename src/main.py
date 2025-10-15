@@ -72,7 +72,7 @@ else:
     left_motors = MotorGroup(left_motor_a, left_motor_b)
 #FORWARD = REVERSE
 #REVERSE = FORWARD
-tube_intake_motor = Motor(Ports.PORT15, GearSetting.RATIO_18_1, False)
+tube_intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
 
 # Construct a 4-Motor Drivetrain
 # Parameters: circumference, distance between wheels on axle, distance between axles, units, gear ratio
@@ -224,14 +224,86 @@ def turnTestingAuton():
 # def test_funct():
 #     turn_until_distance(1, 70, 'right')
 
+def skills_auton():
+    global MAX_SPEED
+    vex_brain_slot = 1
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    
+
+
+    drivetrain.drive_for(FORWARD,18, INCHES, 50, PERCENT )
+    drivetrain.turn_to_heading(calibratedAngle(15), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD,6, INCHES, 50, PERCENT )
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+
+
+
+    wait(2,SECONDS)
+    first_intake.stop()
+    basket_intake_motor.stop()
+
+    if vex_brain_slot == 1:
+        drivetrain.turn_to_heading(calibratedAngle(110), DEGREES, wait=True)
+
+    else:
+
+        drivetrain.turn_to_heading(calibratedAngle(225), DEGREES, wait=True)
+     
+    drivetrain.drive_for(FORWARD, 29, INCHES, 35 , PERCENT)
+
+    if vex_brain_slot == 1:
+        turn_until_distance(750,'left',5)
+
+    else: 
+        turn_until_distance(750,'right',5)
+
+     
+    move_until_distance(125,'reverse',20)
+
+    #  if vex_brain_slot == 1:
+    
+    #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
+
+    #  else:
+         
+    #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
+     
+    first_intake.spin(FORWARD, 50, PERCENT)
+    basket_intake_motor.spin(FORWARD, 100, PERCENT)
+    brain.screen.print("we made it")
+    toprack.spin(REVERSE, 100, PERCENT)
+    wait(5, SECONDS)
+    brain.screen.print("we made it 2")
+    basket_intake_motor.stop()
+    first_intake.stop()
+    toprack.stop()
+    drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
+    drivetrain.drive_for(FORWARD, 4, INCHES, 75 , PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(5), DEGREES, wait=True)
+    move_until_distance(65,'reverse',25)
+    drivetrain.turn_to_heading(calibratedAngle(260), DEGREES, wait=True)
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.drive_for(FORWARD, 70, INCHES, 75 , PERCENT)
+    first_intake.stop()
+    basket_intake_motor.stop()
+
 
 def auton_funct():
      global MAX_SPEED
-     if potentiometer.value() < 1500:
+     if potentiometer.value() < 1250:
          vex_brain_slot = 1
          brain.screen.print("right Side Auton")
 
-     else:
+     elif potentiometer.value() > 2250:
          vex_brain_slot = 2
 
          brain.screen.print("left Side Auton")
@@ -445,11 +517,11 @@ def drive_task():
         if controller_1.buttonRight.pressing()   or controller_2.buttonRight.pressing():
             right_tube_spin = 1
 
-            tube_intake_motor_control = (controller_1.buttonRight.pressing()) * 100
+            tube_intake_motor_control = (controller_1.buttonRight.pressing()) * -100
         else:
             if controller_1.buttonLeft.pressing()   or controller_2.buttonLeft.pressing():
                 left_tube_spin = 1
-                tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * -100
+                tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * 100
             else:
                 tube_intake_motor_control = 0
 
@@ -468,7 +540,7 @@ def drive_task():
             controller_1.screen.set_cursor(1,1)
             controller_1.screen.print("Right Spin")
             controller_1.screen.print(tube_intake_motor.position())      
-            tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
+            #tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
             right_tube_spin = 0
       
 
@@ -478,7 +550,7 @@ def drive_task():
             controller_1.screen.set_cursor(1,1)
             controller_1.screen.print("Left Spin")
             controller_1.screen.print(tube_intake_motor.position())      
-            tube_intake_motor.spin_to_position(tube_intake_motor.position() - 360 - tube_intake_motor.position()%360)
+            #tube_intake_motor.spin_to_position(tube_intake_motor.position() - 360 - tube_intake_motor.position()%360)
             left_tube_spin = 0
             
 
@@ -511,10 +583,18 @@ def drive_task():
         #and controller_2.buttonX.pressing()
         if controller_1.buttonX.pressing():
             brain.screen.clear_screen()
-            auton = 1
+            if potentiometer.value() < 2250 and potentiometer.value() > 1250:
+                auton = 2
+                brain.screen.print("right Side Auton")
+            else:
+                auton = 1
 
         if auton == 1:
             auton_funct()
+            auton = 0
+
+        if auton == 2:
+            skills_auton()
             auton = 0
 
         # Hopper pickup function (B button on either controller)
