@@ -238,8 +238,8 @@ def skills_auton():
 
 
     drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
-    drivetrain.turn_to_heading(calibratedAngle(12), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD,6, INCHES, 25, PERCENT )
+    drivetrain.turn_to_heading(calibratedAngle(16), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
@@ -250,123 +250,126 @@ def skills_auton():
     first_intake.stop()
     basket_intake_motor.stop()
 
-    if vex_brain_slot == 1:
-        drivetrain.turn_to_heading(calibratedAngle(130), DEGREES, wait=True)
+#     if vex_brain_slot == 1:
+#         drivetrain.turn_to_heading(calibratedAngle(135), DEGREES, wait=True)
 
-    else:
+#     else:
 
-        drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
+#         drivetrain.turn_to_heading(calibratedAngle(250), DEGREES, wait=True)
      
-    drivetrain.drive_for(FORWARD, 29, INCHES, 35 , PERCENT)
+#     drivetrain.drive_for(FORWARD, 33, INCHES, 35 , PERCENT)
 
-    if vex_brain_slot == 1:
-        turn_until_distance(750,'left',5)
 
-    else: 
-        turn_until_distance(750,'right',5)
+#     if vex_brain_slot == 1:
+#         turn_until_distance(750,'left',5)
+#         drivetrain.turn_for(LEFT, 5,DEGREES,5,PERCENT)
+
+
+#     else: 
+#         turn_until_distance(750,'right',5)
 
      
-    move_until_distance(125,'reverse',20)
+#     move_until_distance(125,'reverse',20)
 
-    #  if vex_brain_slot == 1:
+#     #  if vex_brain_slot == 1:
     
-    #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
+#     #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
 
-    #  else:
+#     #  else:
          
-    #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
+#     #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
      
-    first_intake.spin(FORWARD, 50, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    brain.screen.print("we made it")
-    toprack.spin(REVERSE, 100, PERCENT)
-    wait(5, SECONDS)
-    brain.screen.print("we made it 2")
-    basket_intake_motor.stop()
-    first_intake.stop()
-    toprack.stop()
-    drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
-    drivetrain.drive_for(FORWARD, 4, INCHES, 75 , PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(5), DEGREES, wait=True)
-    move_until_distance(65,'reverse',25)
-    drivetrain.turn_to_heading(calibratedAngle(260), DEGREES, wait=True)
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.drive_for(FORWARD, 70, INCHES, 75 , PERCENT)
-    first_intake.stop()
-    basket_intake_motor.stop()
+#     first_intake.spin(FORWARD, 50, PERCENT)
+#     basket_intake_motor.spin(FORWARD, 100, PERCENT)
+#     brain.screen.print("we made it")
+#     toprack.spin(REVERSE, 50, PERCENT)
+#     wait(7, SECONDS)
+#     brain.screen.print("we made it 2")
+#     basket_intake_motor.stop()
+#     first_intake.stop()
+#     toprack.stop()
+#     drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
+#     drivetrain.drive_for(FORWARD, 4, INCHES, 75 , PERCENT)
+#     drivetrain.turn_to_heading(calibratedAngle(5), DEGREES, wait=True)
+#     move_until_distance(65,'reverse',25)
+#     drivetrain.turn_to_heading(calibratedAngle(260), DEGREES, wait=True)
+#     first_intake.spin(FORWARD, 100, PERCENT)
+#     basket_intake_motor.spin(REVERSE, 100, PERCENT)
+#     drivetrain.drive_for(FORWARD, 70, INCHES, 75 , PERCENT)
+#     first_intake.stop()
+#     basket_intake_motor.stop()
 
 
-def auton_funct():
-     global MAX_SPEED
-     if potentiometer.value() < 1250:
-         vex_brain_slot = 1
-         brain.screen.print("right Side Auton")
+# def auton_funct():
+#      global MAX_SPEED
+#      if potentiometer.value() < 1250:
+#          vex_brain_slot = 1
+#          brain.screen.print("right Side Auton")
 
-     elif potentiometer.value() > 2250:
-         vex_brain_slot = 2
+#      elif potentiometer.value() > 2250:
+#          vex_brain_slot = 2
 
-         brain.screen.print("left Side Auton")
-     SCALE_VALUE = 0.6
+#          brain.screen.print("left Side Auton")
+#      SCALE_VALUE = 0.6
     
-     while inertial_sensor.is_calibrating():
-        controller_1.screen.set_cursor(2,1)
+#      while inertial_sensor.is_calibrating():
+#         controller_1.screen.set_cursor(2,1)
 
-        controller_1.screen.print("Calibrating Gyro")
-        wait(100, MSEC)
-     inertial_sensor.reset_rotation()
-     inertial_sensor.set_heading(0, DEGREES)
+#         controller_1.screen.print("Calibrating Gyro")
+#         wait(100, MSEC)
+#      inertial_sensor.reset_rotation()
+#      inertial_sensor.set_heading(0, DEGREES)
     
 
 
-     drivetrain.drive_for(FORWARD,12, INCHES, 50, PERCENT )
-     #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
-     first_intake.spin(FORWARD, 100, PERCENT)
-     basket_intake_motor.spin(REVERSE, 100, PERCENT)
-     drivetrain.drive_for(FORWARD, 9, INCHES, 10, PERCENT)
+#      drivetrain.drive_for(FORWARD,12, INCHES, 50, PERCENT )
+#      #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
+#      first_intake.spin(FORWARD, 100, PERCENT)
+#      basket_intake_motor.spin(REVERSE, 100, PERCENT)
+#      drivetrain.drive_for(FORWARD, 9, INCHES, 10, PERCENT)
 
 
      
-     wait(0.5,SECONDS)
-     first_intake.stop()
-     basket_intake_motor.stop()
+#      wait(0.5,SECONDS)
+#      first_intake.stop()
+#      basket_intake_motor.stop()
 
-     if vex_brain_slot == 1:
-        drivetrain.turn_to_heading(calibratedAngle(115), DEGREES, wait=True)
+#      if vex_brain_slot == 1:
+#         drivetrain.turn_to_heading(calibratedAngle(115), DEGREES, wait=True)
 
-     else:
+#      else:
 
-        drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
+#         drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
      
-     drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
+#      drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
 
-     if vex_brain_slot == 1:
-        turn_until_distance(750,'left',5)
+#      if vex_brain_slot == 1:
+#         turn_until_distance(750,'left',5)
 
-     else: 
-        turn_until_distance(750,'right',5)
+#      else: 
+#         turn_until_distance(750,'right',5)
 
      
-     move_until_distance(150,'reverse',20)
+#      move_until_distance(150,'reverse',20)
 
-    #  if vex_brain_slot == 1:
+#     #  if vex_brain_slot == 1:
     
-    #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
+#     #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
 
-    #  else:
+#     #  else:
          
-    #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
+#     #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
      
-     first_intake.spin(FORWARD, 50, PERCENT)
-     basket_intake_motor.spin(FORWARD, 100, PERCENT)
-     brain.screen.print("we made it")
-     toprack.spin(REVERSE, 100, PERCENT)
-     wait(5, SECONDS)
-     brain.screen.print("we made it 2")
-     basket_intake_motor.stop()
-     first_intake.stop()
-     toprack.stop()
-     drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
+#      first_intake.spin(FORWARD, 50, PERCENT)
+#      basket_intake_motor.spin(FORWARD, 100, PERCENT)
+#      brain.screen.print("we made it")
+#      toprack.spin(REVERSE, 100, PERCENT)
+#      wait(5, SECONDS)
+#      brain.screen.print("we made it 2")
+#      basket_intake_motor.stop()
+#      first_intake.stop()
+#      toprack.stop()
+#      drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
         #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
         #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
         #  drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
