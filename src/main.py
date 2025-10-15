@@ -237,9 +237,9 @@ def skills_auton():
     
 
 
-    drivetrain.drive_for(FORWARD,18, INCHES, 50, PERCENT )
+    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
     drivetrain.turn_to_heading(calibratedAngle(15), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD,6, INCHES, 50, PERCENT )
+    drivetrain.drive_for(FORWARD,6, INCHES, 25, PERCENT )
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
