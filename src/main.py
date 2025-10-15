@@ -251,11 +251,11 @@ def skills_auton():
     basket_intake_motor.stop()
 
     if vex_brain_slot == 1:
-        drivetrain.turn_to_heading(calibratedAngle(110), DEGREES, wait=True)
+        drivetrain.turn_to_heading(calibratedAngle(130), DEGREES, wait=True)
 
     else:
 
-        drivetrain.turn_to_heading(calibratedAngle(225), DEGREES, wait=True)
+        drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
      
     drivetrain.drive_for(FORWARD, 29, INCHES, 35 , PERCENT)
 
