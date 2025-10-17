@@ -1,0 +1,3 @@
+# Removed settings.json from git due to os differences in python path
+settings.json
+
