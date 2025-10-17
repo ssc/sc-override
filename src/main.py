@@ -45,16 +45,15 @@ brain.screen.print("Hello V5 - Movement/Intake Split")
 # Create the left Motors and group them under the MotorGroup "left_motors"
 left_motor_a = Motor(Ports.PORT19, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
-left_motor_c = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
+left_motor_c = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
 
 
 
 # Create the right Motors and group them under the MotorGroup "right_motors"
 right_motor_a = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
 right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
-right_motor_c = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True)
+right_motor_c = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
 left_motor_b.set_reversed(False)
-
 left_motor_a.set_reversed(False)
 if left_motor_c.installed():
     right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
@@ -100,12 +99,6 @@ def turn_until_distance(distance,direction,speed):
             else: 
                 left_motors.spin(REVERSE,speed,PERCENT)
                 right_motors.spin(FORWARD,speed,PERCENT)
-
-        else:
-            brain.screen.print("error in turn_until_distance")
-            return()
-        if controller_1.buttonLeft.pressing():
-            return()
 
     left_motors.stop()
     right_motors.stop()
@@ -183,19 +176,9 @@ def auton_funct():
      first_intake.stop()
      basket_intake_motor.stop()
      drivetrain.turn_for(LEFT, 67, DEGREES, 15, PERCENT)
-     drivetrain.drive_for(REVERSE, 28, INCHES, 35 , PERCENT)
+     drivetrain.drive_for(REVERSE, 25, INCHES, 35 , PERCENT)
      turn_until_distance(250,'right',5)
-     #drivetrain.turn_for(LEFT, 15 , DEGREES, 10, PERCENT)
-     move_until_distance(110,'reverse',20)
-     basket_intake_motor.spin(FORWARD, 200, PERCENT)
-     first_intake.spin(FORWARD, 200, PERCENT)
-     toprack.spin(REVERSE, 200, PERCENT)
-     #left_motors.spin(REVERSE,2,PERCENT)
-     #right_motors.spin(REVERSE,2,PERCENT)
-     wait(5,SECONDS)
-     basket_intake_motor.stop()
-     first_intake.stop()
-     toprack.stop()
+     move_until_distance(100,'reverse',20)
 
         #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
         #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
@@ -226,8 +209,6 @@ def auton_funct():
         #  brain.screen.print("we made it3")
 
 def drive_task():
-    left_motor_b.set_reversed(True)
-    right_motor_b.set_reversed(False)
     #optical_sensor.set_light_power(25, PERCENT)
     brightness = optical_sensor.brightness()
     hue = optical_sensor.hue()
@@ -291,10 +272,10 @@ def drive_task():
                 # Apply tank drive
                 if left_motor_c.installed():
                     left_motor_a.spin(REVERSE, drive_left * 100, PERCENT)
-                    left_motor_b.spin(FORWARD, drive_left * 100, PERCENT)
+                    left_motor_b.spin(REVERSE, drive_left * 100, PERCENT)
                     left_motor_c.spin(REVERSE, drive_left * 100, PERCENT)
                     right_motor_a.spin(REVERSE, drive_right * 100, PERCENT)
-                    right_motor_b.spin(FORWARD, drive_right * 100, PERCENT)
+                    right_motor_b.spin(REVERSE, drive_right * 100, PERCENT)
                     right_motor_c.spin(REVERSE, drive_right * 100, PERCENT)
                 else:
                     left_motor_a.spin(FORWARD, drive_left * 1, PERCENT)
@@ -350,28 +331,21 @@ def drive_task():
         toprack.spin(REVERSE, toprack_control * 50, PERCENT)
        
 
-        #if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
-        #    brain.screen.clear_screen()
-        #    controllerMode = 0  
-        #    brain.screen.print("Tank Drive Mode")
-        #    wait(200, MSEC)  
-        #elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
-        #    brain.screen.clear_screen()
-        #    controllerMode = 1  # Arcade mode
-        #    brain.screen.print("Arcade Drive Mode")
-        #    wait(200, MSEC)  
+        if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
+            brain.screen.clear_screen()
+            controllerMode = 0  
+            brain.screen.print("Tank Drive Mode")
+            wait(200, MSEC)  
+        elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
+            brain.screen.clear_screen()
+            controllerMode = 1  # Arcade mode
+            brain.screen.print("Arcade Drive Mode")
+            wait(200, MSEC)  
 
         if controller_2.buttonUp.pressing():
             first_intake.spin(REVERSE,10,PERCENT)
             basket_intake_motor.spin(FORWARD,10,PERCENT)
 
-        if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
-            wait(750,MSEC)
-            turn_until_distance (250,'left',10)
-
-        if controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
-            wait(750,MSEC)
-            turn_until_distance (250,'right',10)
 
         # Autonomous function (X button on either controller)
         #and controller_2.buttonX.pressing()
