@@ -150,6 +150,30 @@ toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
 # kill_switch = Thread(terminate_Program)
 
+
+def one_wheel_turn_to_heading(target_heading, side, direction):
+    
+    #drivetrain.drive_for(REVERSE,12, INCHES, 50, PERCENT )
+    if side == 'left':
+        # while angle is not in the target range
+        # not ( angle < target + 10 and angle > target - 10 )
+        # left
+        while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
+            left_motors.spin(direction, 25, PERCENT)
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print(inertial_sensor.heading())
+    if side == 'right':
+        while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
+            right_motors.spin(direction, 25, PERCENT)
+    left_motors.stop()
+    right_motors.stop()
+    return()
+
+
+
+
+
 def hopper_pickup():
     SCALE_VALUE = 0.6
     global MAX_SPEED
@@ -287,6 +311,7 @@ def skills_auton():
         wait(100, MSEC)
     inertial_sensor.reset_rotation()
     inertial_sensor.set_heading(0, DEGREES)
+   
     
 
 
@@ -304,6 +329,7 @@ def skills_auton():
     first_intake.stop()
     basket_intake_motor.stop()
     tube_intake_motor.stop()
+    tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
 
     drivetrain.turn_to_heading(calibratedAngle(-53), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD, 13, INCHES, 35 , PERCENT)
@@ -348,10 +374,6 @@ def skills_auton():
     basket_intake_motor.spin(FORWARD, 100, PERCENT)
     wait(0.5,SECONDS)
     basket_intake_motor.stop()
-    wait(0.5,SECONDS)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    wait(0.5,SECONDS)
-    basket_intake_motor.stop()
    
 
     drivetrain.drive_for(FORWARD, 2, INCHES, 35 , PERCENT)
@@ -366,16 +388,28 @@ def skills_auton():
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     if kuba == 1:
         drivetrain.turn_to_heading(calibratedAngle(-158), DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, 55, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(FORWARD, 55, INCHES, 50 , PERCENT)
         wait(0.25, SECONDS)
-        drivetrain.drive_for(FORWARD, 19, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(FORWARD, 19, INCHES, 50 , PERCENT)
         first_intake.stop()
         basket_intake_motor.stop()
     else:
-        drivetrain.turn_to_heading(calibratedAngle(-10), DEGREES, wait=True)
-        move_until_distance(70,'reverse',45)
-        drivetrain.turn_to_heading(calibratedAngle(-98), DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, 40, INCHES, 100 , PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(-45), DEGREES, wait=True)
+        wait(0.25, SECONDS)
+        drivetrain.drive_for(REVERSE, 5, INCHES, 50 , PERCENT)
+        wait(0.25, SECONDS)
+        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        wait(0.25, SECONDS)
+        move_until_distance(270,'reverse',20)
+        wait(0.25, SECONDS)
+        
+        
+        one_wheel_turn_to_heading(calibratedAngle(265), 'left', REVERSE)
+        drivetrain.drive_for(FORWARD, 25, INCHES, 50 , PERCENT)
+        wait(1, SECONDS)
+        drivetrain.drive_for(REVERSE, 10, INCHES, 50 , PERCENT)
+        drivetrain.drive_for(FORWARD, 25, INCHES, 100 , PERCENT)
+        
         first_intake.stop()
         basket_intake_motor.stop()
 #     if vex_brain_slot == 1:
@@ -649,12 +683,17 @@ def drive_task():
 
         if controller_1.buttonRight.pressing()   or controller_2.buttonRight.pressing():
             right_tube_spin = 1
-
-            tube_intake_motor_control = (controller_1.buttonRight.pressing()) * -100
+            if controller_1.buttonRight.pressing() :
+                tube_intake_motor_control = (controller_1.buttonRight.pressing()) * -100
+            else:
+                tube_intake_motor_control = (controller_2.buttonRight.pressing()) * -100
         else:
             if controller_1.buttonLeft.pressing()   or controller_2.buttonLeft.pressing():
                 left_tube_spin = 1
-                tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * 100
+                if controller_1.buttonLeft.pressing() :
+                    tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * 100
+                else:
+                    tube_intake_motor_control = (controller_2.buttonLeft.pressing()) * 100
             else:
                 tube_intake_motor_control = 0
 
