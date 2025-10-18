@@ -483,6 +483,7 @@ def auton_funct():
 
      
       move_until_distance(150,'reverse',20)
+      drivetrain.turn_for(LEFT, 8,DEGREES,5,PERCENT)
 
 #     #  if vex_brain_slot == 1:
     
