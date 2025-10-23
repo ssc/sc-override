@@ -12,6 +12,56 @@
 # Library imports
 from vex import *
 
+
+def skills_auton_sidepark(controller_1, drivetrain, inertials, intakeone, intaketwo, intakethree, distances):
+    
+    global MAX_SPEED
+    vex_brain_slot = 1
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    
+
+
+    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
+    drivetrain.turn_to_heading(calibratedAngle(16), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+
+
+
+    wait(2,SECONDS)
+    first_intake.stop()
+    basket_intake_motor.stop()
+
+    drivetrain.turn_to_heading(calibratedAngle(-50), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 11, INCHES, 35 , PERCENT)
+
+    first_intake.spin(REVERSE, 100, PERCENT)
+    basket_intake_motor.spin(FORWARD, 100, PERCENT)
+    wait(5,SECONDS)
+
+    drivetrain.drive_for(FORWARD, 2, INCHES, 35 , PERCENT)
+    wait (1,SECONDS)
+    first_intake.stop()
+    basket_intake_motor.stop()
+
+
+    drivetrain.drive_for(REVERSE, 5, INCHES, 35 , PERCENT)
+
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(-167), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD,55, INCHES, 75 , PERCENT)
+    first_intake.stop()
+    basket_intake_motor.stop()
+
 brain = Brain()
 gyro_360 = 354
 
@@ -32,12 +82,14 @@ right_tube_spin = 0
 
 
 # Configure the optical sensor on a specific port (change port number as needed)
+bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT10)
 inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
+
 
 # Global variables
 MAX_SPEED = 40
@@ -98,6 +150,30 @@ toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
 
 # kill_switch = Thread(terminate_Program)
 
+
+def one_wheel_turn_to_heading(target_heading, side, direction):
+    
+    #drivetrain.drive_for(REVERSE,12, INCHES, 50, PERCENT )
+    if side == 'left':
+        # while angle is not in the target range
+        # not ( angle < target + 10 and angle > target - 10 )
+        # left
+        while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
+            left_motors.spin(direction, 25, PERCENT)
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print(inertial_sensor.heading())
+    if side == 'right':
+        while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
+            right_motors.spin(direction, 25, PERCENT)
+    left_motors.stop()
+    right_motors.stop()
+    return()
+
+
+
+
+
 def hopper_pickup():
     SCALE_VALUE = 0.6
     global MAX_SPEED
@@ -130,7 +206,7 @@ def turn_until_distance(distance,direction,speed):
 def move_until_distance(distance,direction,speed):
     while distance_sensor.object_distance(MM) > distance:
         if direction == 'forward':
-            if left_motor_c.installed():
+            if left_motor_c.installed(): 
                 left_motors.spin(REVERSE,speed,PERCENT)
                 right_motors.spin(REVERSE,speed,PERCENT)
             else: 
@@ -227,6 +303,7 @@ def turnTestingAuton():
 def skills_auton():
     global MAX_SPEED
     vex_brain_slot = 1
+    kuba = 2
     while inertial_sensor.is_calibrating():
         controller_1.screen.set_cursor(2,1)
 
@@ -234,6 +311,7 @@ def skills_auton():
         wait(100, MSEC)
     inertial_sensor.reset_rotation()
     inertial_sensor.set_heading(0, DEGREES)
+   
     
 
 
@@ -242,6 +320,7 @@ def skills_auton():
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    tube_intake_motor.spin(REVERSE,50,PERCENT)
     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
 
 
@@ -249,13 +328,21 @@ def skills_auton():
     wait(2,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
+    tube_intake_motor.stop()
+    tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
 
-    drivetrain.turn_to_heading(calibratedAngle(-50), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 11, INCHES, 35 , PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(-53), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 13, INCHES, 35 , PERCENT)
 
     first_intake.spin(REVERSE, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    wait(5,SECONDS)
+
+    for i in range(11):
+        basket_intake_motor.spin(FORWARD, 100, PERCENT)
+        wait(0.5,SECONDS)
+        basket_intake_motor.stop()
+        wait(0.5,SECONDS)
+    
+   
 
     drivetrain.drive_for(FORWARD, 2, INCHES, 35 , PERCENT)
     wait (1,SECONDS)
@@ -267,10 +354,32 @@ def skills_auton():
 
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(-167), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD,55, INCHES, 75 , PERCENT)
-    first_intake.stop()
-    basket_intake_motor.stop()
+    if kuba == 1:
+        drivetrain.turn_to_heading(calibratedAngle(-158), DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 55, INCHES, 50 , PERCENT)
+        wait(0.25, SECONDS)
+        drivetrain.drive_for(FORWARD, 19, INCHES, 50 , PERCENT)
+        first_intake.stop()
+        basket_intake_motor.stop()
+    else:
+        drivetrain.turn_to_heading(calibratedAngle(-45), DEGREES, wait=True)
+        wait(0.25, SECONDS)
+        drivetrain.drive_for(REVERSE, 5, INCHES, 50 , PERCENT)
+        wait(0.25, SECONDS)
+        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        wait(0.25, SECONDS)
+        move_until_distance(340,'reverse',20)
+        wait(0.25, SECONDS)
+        
+        
+        one_wheel_turn_to_heading(calibratedAngle(272), 'left', REVERSE)
+        drivetrain.drive_for(FORWARD, 47, INCHES, 100 , PERCENT)
+        wait(1, SECONDS)
+        drivetrain.drive_for(REVERSE, 27, INCHES, 50 , PERCENT)
+        drivetrain.drive_for(FORWARD, 37, INCHES, 100 , PERCENT)
+        
+        first_intake.stop()
+        basket_intake_motor.stop()
 #     if vex_brain_slot == 1:
 #         drivetrain.turn_to_heading(calibratedAngle(135), DEGREES, wait=True)
 
@@ -329,6 +438,9 @@ def auton_funct():
 
       elif potentiometer.value() > 2250:
           vex_brain_slot = 2
+      if potentiometer.value() < 2250 and potentiometer.value() > 1250:
+          skills_auton()
+          return
 
           brain.screen.print("left Side Auton")
       SCALE_VALUE = 0.6
@@ -371,6 +483,7 @@ def auton_funct():
 
      
       move_until_distance(150,'reverse',20)
+      drivetrain.turn_for(LEFT, 8,DEGREES,5,PERCENT)
 
 #     #  if vex_brain_slot == 1:
     
@@ -539,12 +652,17 @@ def drive_task():
 
         if controller_1.buttonRight.pressing()   or controller_2.buttonRight.pressing():
             right_tube_spin = 1
-
-            tube_intake_motor_control = (controller_1.buttonRight.pressing()) * -100
+            if controller_1.buttonRight.pressing() :
+                tube_intake_motor_control = (controller_1.buttonRight.pressing()) * -100
+            else:
+                tube_intake_motor_control = (controller_2.buttonRight.pressing()) * -100
         else:
             if controller_1.buttonLeft.pressing()   or controller_2.buttonLeft.pressing():
                 left_tube_spin = 1
-                tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * 100
+                if controller_1.buttonLeft.pressing() :
+                    tube_intake_motor_control = (controller_1.buttonLeft.pressing()) * 100
+                else:
+                    tube_intake_motor_control = (controller_2.buttonLeft.pressing()) * 100
             else:
                 tube_intake_motor_control = 0
 
@@ -604,7 +722,7 @@ def drive_task():
 
         # Autonomous function (X button on either controller)
         #and controller_2.buttonX.pressing()
-        if controller_1.buttonX.pressing():
+        if bumper.pressing():
             brain.screen.clear_screen()
             if potentiometer.value() < 2250 and potentiometer.value() > 1250:
                 auton = 2
@@ -618,6 +736,7 @@ def drive_task():
 
         if auton == 2:
             skills_auton()
+            #=skills_auton_sidepark(controller_1, drivetrain,inertial_sensor, first_intake, basket_intake_motor, toprack, distance_sensor)
             auton = 0
 
         # Hopper pickup function (B button on either controller)
