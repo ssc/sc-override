@@ -482,6 +482,11 @@ def auton_funct():
          turn_until_distance(750,'right',5)
 
      
+
+      first_intake.spin(FORWARD, 50, PERCENT)
+      basket_intake_motor.spin(FORWARD, 100, PERCENT)
+      brain.screen.print("we made it")
+      toprack.spin(REVERSE, 100, PERCENT)
       move_until_distance(150,'reverse',20)
       drivetrain.turn_for(LEFT, 8,DEGREES,5,PERCENT)
 
@@ -493,11 +498,8 @@ def auton_funct():
          
 #     #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
      
-      first_intake.spin(FORWARD, 50, PERCENT)
-      basket_intake_motor.spin(FORWARD, 100, PERCENT)
-      brain.screen.print("we made it")
-      toprack.spin(REVERSE, 100, PERCENT)
-      wait(5, SECONDS)
+
+      wait(3, SECONDS)
       brain.screen.print("we made it 2")
       basket_intake_motor.stop()
       first_intake.stop()
@@ -814,12 +816,14 @@ def user_control():
     brain.screen.print("driver control")
     # place driver control in this while loop
     drive_task()
-        
+
+
+#drive_task()  
 #drive_task()
 # create competition instance
-#comp = Competition(user_control, autonomous)
+comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
-drive_task()
+
 
 
 
