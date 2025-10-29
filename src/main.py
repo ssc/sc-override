@@ -13,54 +13,7 @@
 from vex import *
 
 
-def skills_auton_sidepark(controller_1, drivetrain, inertials, intakeone, intaketwo, intakethree, distances):
-    
-    global MAX_SPEED
-    vex_brain_slot = 1
-    while inertial_sensor.is_calibrating():
-        controller_1.screen.set_cursor(2,1)
 
-        controller_1.screen.print("Calibrating Gyro")
-        wait(100, MSEC)
-    inertial_sensor.reset_rotation()
-    inertial_sensor.set_heading(0, DEGREES)
-    
-
-
-    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
-    drivetrain.turn_to_heading(calibratedAngle(16), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
-
-
-
-    wait(2,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-
-    drivetrain.turn_to_heading(calibratedAngle(-50), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 11, INCHES, 35 , PERCENT)
-
-    first_intake.spin(REVERSE, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    wait(5,SECONDS)
-
-    drivetrain.drive_for(FORWARD, 2, INCHES, 35 , PERCENT)
-    wait (1,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-
-
-    drivetrain.drive_for(REVERSE, 5, INCHES, 35 , PERCENT)
-
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(-167), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD,55, INCHES, 75 , PERCENT)
-    first_intake.stop()
-    basket_intake_motor.stop()
 
 brain = Brain()
 gyro_360 = 354
@@ -124,7 +77,7 @@ else:
     left_motors = MotorGroup(left_motor_a, left_motor_b)
 #FORWARD = REVERSE
 #REVERSE = FORWARD
-tube_intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
+tube_intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, True)
 
 # Construct a 4-Motor Drivetrain
 # Parameters: circumference, distance between wheels on axle, distance between axles, units, gear ratio
@@ -316,12 +269,12 @@ def skills_auton():
 
 
     drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
-    drivetrain.turn_to_heading(calibratedAngle(16), DEGREES, wait=True)
+    drivetrain.turn_to_heading(calibratedAngle(29), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     tube_intake_motor.spin(REVERSE,50,PERCENT)
-    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+    drivetrain.drive_for(FORWARD, 14, INCHES, 10, PERCENT)
 
 
 
@@ -331,8 +284,8 @@ def skills_auton():
     tube_intake_motor.stop()
     tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
 
-    drivetrain.turn_to_heading(calibratedAngle(-53), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 13, INCHES, 35 , PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(-54), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 14.5, INCHES, 35 , PERCENT)
 
     first_intake.spin(REVERSE, 100, PERCENT)
 
@@ -350,7 +303,7 @@ def skills_auton():
     basket_intake_motor.stop()
 
 
-    drivetrain.drive_for(REVERSE, 5, INCHES, 35 , PERCENT)
+    drivetrain.drive_for(REVERSE, 7, INCHES, 35 , PERCENT)
 
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
@@ -364,7 +317,7 @@ def skills_auton():
     else:
         drivetrain.turn_to_heading(calibratedAngle(-45), DEGREES, wait=True)
         wait(0.25, SECONDS)
-        drivetrain.drive_for(REVERSE, 5, INCHES, 50 , PERCENT)
+        drivetrain.drive_for(REVERSE, 2, INCHES, 50 , PERCENT)
         wait(0.25, SECONDS)
         drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
         wait(0.25, SECONDS)
@@ -372,11 +325,11 @@ def skills_auton():
         wait(0.25, SECONDS)
         
         
-        one_wheel_turn_to_heading(calibratedAngle(272), 'left', REVERSE)
-        drivetrain.drive_for(FORWARD, 47, INCHES, 100 , PERCENT)
+        one_wheel_turn_to_heading(calibratedAngle(266), 'left', REVERSE)
+        drivetrain.drive_for(FORWARD, 30, INCHES, 100 , PERCENT)
         wait(1, SECONDS)
-        drivetrain.drive_for(REVERSE, 27, INCHES, 50 , PERCENT)
-        drivetrain.drive_for(FORWARD, 37, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(REVERSE, 10, INCHES, 50 , PERCENT)
+        drivetrain.drive_for(FORWARD, 28, INCHES, 100 , PERCENT)
         
         first_intake.stop()
         basket_intake_motor.stop()
