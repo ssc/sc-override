@@ -87,8 +87,8 @@ drivetrain = SmartDrive(left_motors, right_motors, inertial_sensor,330, 335, 231
 
 # Intake/Mechanism motors
 first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
-basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
-toprack = Motor(Ports.PORT17, GearSetting.RATIO_18_1, False)
+basket_intake_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
+toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
 #def terminate_Program():
 #     while True:
@@ -265,16 +265,19 @@ def skills_auton():
     inertial_sensor.reset_rotation()
     inertial_sensor.set_heading(0, DEGREES)
    
-    
+    controller_1.screen.set_cursor(2,1)
+
+    controller_1.rumble("......")
+    wait(100, MSEC)  
 
 
-    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT )
-    drivetrain.turn_to_heading(calibratedAngle(29), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     tube_intake_motor.spin(REVERSE,50,PERCENT)
-    drivetrain.drive_for(FORWARD, 14, INCHES, 10, PERCENT)
+    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
 
 
 
@@ -285,7 +288,7 @@ def skills_auton():
     tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
 
     drivetrain.turn_to_heading(calibratedAngle(-54), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 14.5, INCHES, 35 , PERCENT)
+    drivetrain.drive_for(FORWARD, 16, INCHES, 35 , PERCENT)
 
     first_intake.spin(REVERSE, 100, PERCENT)
 
@@ -297,7 +300,7 @@ def skills_auton():
     
    
 
-    drivetrain.drive_for(FORWARD, 2, INCHES, 35 , PERCENT)
+    drivetrain.drive_for(FORWARD, 1.5, INCHES, 10 , PERCENT)
     wait (1,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
@@ -321,15 +324,15 @@ def skills_auton():
         wait(0.25, SECONDS)
         drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
         wait(0.25, SECONDS)
-        move_until_distance(340,'reverse',20)
+        move_until_distance(360,'reverse',20)
         wait(0.25, SECONDS)
         
         
         one_wheel_turn_to_heading(calibratedAngle(266), 'left', REVERSE)
-        drivetrain.drive_for(FORWARD, 30, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(FORWARD, 35, INCHES, 100 , PERCENT)
         wait(1, SECONDS)
-        drivetrain.drive_for(REVERSE, 10, INCHES, 50 , PERCENT)
-        drivetrain.drive_for(FORWARD, 28, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(REVERSE, 12, INCHES, 50 , PERCENT)
+        drivetrain.drive_for(FORWARD, 45, INCHES, 100 , PERCENT)
         
         first_intake.stop()
         basket_intake_motor.stop()
@@ -679,14 +682,11 @@ def drive_task():
         #and controller_2.buttonX.pressing()
         if bumper.pressing():
             brain.screen.clear_screen()
-            if potentiometer.value() < 2250 and potentiometer.value() > 1250:
-                auton = 2
-                brain.screen.print("right Side Auton")
-            else:
-                auton = 1
+
+            auton = 1
 
         if auton == 1:
-            auton_funct()
+            skills_auton()
             auton = 0
 
         if auton == 2:
@@ -770,7 +770,7 @@ def user_control():
     # place driver control in this while loop
     drive_task()
 
-
+drive_task()
 #drive_task()  
 #drive_task()
 # create competition instance
