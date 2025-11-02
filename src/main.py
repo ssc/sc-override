@@ -12,7 +12,7 @@
 # Library imports
 from vex import *
 
-
+from math import tan, atan
 
 
 brain = Brain()
@@ -37,12 +37,12 @@ right_tube_spin = 0
 # Configure the optical sensor on a specific port (change port number as needed)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
-distance_sensor = Distance(Ports.PORT10)
+distance_sensor = Distance(Ports.PORT8)
 inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
-
+vision_sensor = Vision(Ports.PORT3)
 
 # Global variables
 MAX_SPEED = 40
@@ -102,6 +102,51 @@ toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 #             tube_intake_motor.stop()        
 
 # kill_switch = Thread(terminate_Program)
+def ball_sucker(direction, top_range, bottom_range):
+    #forward_dist = distance_sensor.object_distance(MM)
+    if direction == 'left':
+        while distance_sensor.object_distance(MM) > top_range or distance_sensor.object_distance(MM) < bottom_range:
+            left_motors.spin(REVERSE,10,PERCENT)
+            right_motors.spin(FORWARD,10,PERCENT)
+            #drivetrain.turn_to_heading(calibratedAngle(inertial_sensor.heading() - 2), DEGREES, wait=True)
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print(distance_sensor.object_distance(MM))
+        controller_1.rumble("..-..")
+        forward_dist = distance_sensor.object_distance(MM)
+        print("forward_dist" + str(forward_dist))
+        print ("atan value" + str(atan(20/forward_dist)))
+        print ("inertial heading" + str(inertial_sensor.heading()))
+
+        target_angle = inertial_sensor.heading() - 
+        
+        controller_1.screen.clear_screen()
+        controller_1.screen.set_cursor(1,1)
+        controller_1.screen.print(target_angle)
+        controller_1.screen.set_cursor(2,1)
+        controller_1.screen.print(inertial_sensor.heading())
+        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
+        controller_1.rumble(".--.")
+
+        #move_until_distance(10,'forward',30)
+        drivetrain.drive_for(FORWARD, forward_dist, MM, 10, PERCENT)
+    elif direction == 'right':
+        while distance_sensor.object_distance(MM) > top_range or distance_sensor.object_distance(MM) < bottom_range:
+            left_motors.spin(FORWARD,10,PERCENT)
+            right_motors.spin(REVERSE,10,PERCENT)
+            #drivetrain.turn_to_heading(calibratedAngle(inertial_sensor.heading() - 2), DEGREES, wait=True)
+            controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(1,1)
+            controller_1.screen.print(distance_sensor.object_distance(MM))
+        controller_1.rumble("..-..")
+        forward_dist = distance_sensor.object_distance(MM)
+        target_angle = inertial_sensor.heading() - 25
+        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
+        controller_1.rumble(".--.")
+
+        #move_until_distance(10,'forward',30)
+        drivetrain.drive_for(FORWARD, forward_dist, MM, 10, PERCENT)
+        
 
 
 def one_wheel_turn_to_heading(target_heading, side, direction):
@@ -253,10 +298,30 @@ def turnTestingAuton():
 # def test_funct():
 #     turn_until_distance(1, 70, 'right')
 
+def ballsucktest():
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+   
+    controller_1.screen.set_cursor(2,1)
+
+    controller_1.rumble("......")
+    wait(100, MSEC)  
+
+    ball_sucker('right',320,0)
+
+
+
+
 def skills_auton():
     global MAX_SPEED
     vex_brain_slot = 1
-    kuba = 2
+    kuba = 1
+    
     while inertial_sensor.is_calibrating():
         controller_1.screen.set_cursor(2,1)
 
@@ -271,53 +336,83 @@ def skills_auton():
     wait(100, MSEC)  
 
 
+#set up to intake balls
     drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
     drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
+
+
+#start intake
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    tube_intake_motor.spin(REVERSE,50,PERCENT)
+    tube_intake_motor.spin(REVERSE, 30,PERCENT)
+
+
+
+#start picking up balls by moving forward    
     drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
 
 
-
+#pick up balls
     wait(2,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    tube_intake_motor.stop()
+   
+
+#reset tube intake motor position   
     tube_intake_motor.spin_to_position(tube_intake_motor.position() + 360 - tube_intake_motor.position()%360)
+    if kuba == 2:
 
-    drivetrain.turn_to_heading(calibratedAngle(-54), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 16, INCHES, 35 , PERCENT)
 
-    first_intake.spin(REVERSE, 100, PERCENT)
+    
+        drivetrain.drive_for(REVERSE, 6, INCHES, 10, PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(190), DEGREES, wait=True)
+        drivetrain.drive_for(REVERSE, 10, INCHES, 10, PERCENT)
 
-    for i in range(11):
-        basket_intake_motor.spin(FORWARD, 100, PERCENT)
-        wait(0.5,SECONDS)
-        basket_intake_motor.stop()
-        wait(0.5,SECONDS)
+        # ball_sucker()
+        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
+        # drivetrain.turn_to_heading(calibratedAngle(90), DEGREES, wait=True)
+        # move_until_distance(150,'reverse',30)
+        # drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
+        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
+        # drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        # move_until_distance(150,'reverse',30)
+        # drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
+        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
+    else:
+
+
+#set up to outtake balls
+        drivetrain.turn_to_heading(calibratedAngle(-54), DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 17, INCHES, 35 , PERCENT)
+
+
+#outtake balls
+        first_intake.spin(REVERSE, 100, PERCENT)
+
+
+        for i in range(11):
+            basket_intake_motor.spin(FORWARD, 100, PERCENT)
+            wait(0.5,SECONDS)
+            basket_intake_motor.stop()
+            wait(0.5,SECONDS)
     
    
 
-    drivetrain.drive_for(FORWARD, 1.5, INCHES, 10 , PERCENT)
-    wait (1,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-
-
-    drivetrain.drive_for(REVERSE, 7, INCHES, 35 , PERCENT)
-
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    if kuba == 1:
-        drivetrain.turn_to_heading(calibratedAngle(-158), DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, 55, INCHES, 50 , PERCENT)
-        wait(0.25, SECONDS)
-        drivetrain.drive_for(FORWARD, 19, INCHES, 50 , PERCENT)
+#push balls into tube further
+        drivetrain.drive_for(FORWARD, 1.5, INCHES, 10 , PERCENT)
+        wait (1,SECONDS)
         first_intake.stop()
         basket_intake_motor.stop()
-    else:
+
+
+#set up to park
+        drivetrain.drive_for(REVERSE, 7, INCHES, 35 , PERCENT)
+
+#start intake backwards to ensure that the balls move out of parking
+        first_intake.spin(REVERSE, 100, PERCENT)
+        #basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    
+
+#continue setting up to park    
         drivetrain.turn_to_heading(calibratedAngle(-45), DEGREES, wait=True)
         wait(0.25, SECONDS)
         drivetrain.drive_for(REVERSE, 2, INCHES, 50 , PERCENT)
@@ -326,64 +421,18 @@ def skills_auton():
         wait(0.25, SECONDS)
         move_until_distance(360,'reverse',20)
         wait(0.25, SECONDS)
-        
-        
         one_wheel_turn_to_heading(calibratedAngle(266), 'left', REVERSE)
+
+
+#park robot
         drivetrain.drive_for(FORWARD, 35, INCHES, 100 , PERCENT)
         wait(1, SECONDS)
         drivetrain.drive_for(REVERSE, 12, INCHES, 50 , PERCENT)
-        drivetrain.drive_for(FORWARD, 45, INCHES, 100 , PERCENT)
+        drivetrain.drive_for(FORWARD, 40, INCHES, 100 , PERCENT)
         
         first_intake.stop()
         basket_intake_motor.stop()
-#     if vex_brain_slot == 1:
-#         drivetrain.turn_to_heading(calibratedAngle(135), DEGREES, wait=True)
-
-#     else:
-
-#         drivetrain.turn_to_heading(calibratedAngle(250), DEGREES, wait=True)
-     
-#     drivetrain.drive_for(FORWARD, 33, INCHES, 35 , PERCENT)
-
-
-#     if vex_brain_slot == 1:
-#         turn_until_distance(750,'left',5)
-#         drivetrain.turn_for(LEFT, 5,DEGREES,5,PERCENT)
-
-
-#     else: 
-#         turn_until_distance(750,'right',5)
-
-     
-#     move_until_distance(125,'reverse',20)
-
-#     #  if vex_brain_slot == 1:
-    
-#     #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
-
-#     #  else:
-         
-#     #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
-     
-#     first_intake.spin(FORWARD, 50, PERCENT)
-#     basket_intake_motor.spin(FORWARD, 100, PERCENT)
-#     brain.screen.print("we made it")
-#     toprack.spin(REVERSE, 50, PERCENT)
-#     wait(7, SECONDS)
-#     brain.screen.print("we made it 2")
-#     basket_intake_motor.stop()
-#     first_intake.stop()
-#     toprack.stop()
-#     drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
-#     drivetrain.drive_for(FORWARD, 4, INCHES, 75 , PERCENT)
-#     drivetrain.turn_to_heading(calibratedAngle(5), DEGREES, wait=True)
-#     move_until_distance(65,'reverse',25)
-#     drivetrain.turn_to_heading(calibratedAngle(260), DEGREES, wait=True)
-#     first_intake.spin(FORWARD, 100, PERCENT)
-#     basket_intake_motor.spin(REVERSE, 100, PERCENT)
-#     drivetrain.drive_for(FORWARD, 70, INCHES, 75 , PERCENT)
-#     first_intake.stop()
-#     basket_intake_motor.stop()
+#     
 
 
 def auton_funct():
@@ -770,9 +819,19 @@ def user_control():
     # place driver control in this while loop
     drive_task()
 
+while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+inertial_sensor.reset_rotation()
+inertial_sensor.set_heading(0, DEGREES)
+
+
+#ballsucktest()
+ball_sucker('left',200,0)
+
 drive_task()
-#drive_task()  
-#drive_task()
 # create competition instance
 comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
