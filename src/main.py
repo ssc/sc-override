@@ -12,7 +12,7 @@
 # Library imports
 from vex import *
 
-from math import tan, atan
+from math import atan, degrees, sin, radians, cos
 
 
 brain = Brain()
@@ -90,18 +90,6 @@ first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
-#def terminate_Program():
-#     while True:
-#         if controller_1.buttonDown.pressing():
-#             brain.screen.clear_screen()
-#             left_motors.stop()
-#             right_motors.stop()
-#             first_intake.stop()
-#             basket_intake_motor.stop()
-#             toprack.stop()
-#             tube_intake_motor.stop()        
-
-# kill_switch = Thread(terminate_Program)
 def ball_sucker(direction, top_range, bottom_range):
     #forward_dist = distance_sensor.object_distance(MM)
     if direction == 'left':
@@ -109,43 +97,47 @@ def ball_sucker(direction, top_range, bottom_range):
             left_motors.spin(REVERSE,10,PERCENT)
             right_motors.spin(FORWARD,10,PERCENT)
             #drivetrain.turn_to_heading(calibratedAngle(inertial_sensor.heading() - 2), DEGREES, wait=True)
-            controller_1.screen.clear_screen()
-            controller_1.screen.set_cursor(1,1)
-            controller_1.screen.print(distance_sensor.object_distance(MM))
-        controller_1.rumble("..-..")
+        left_motors.stop()
+        right_motors.stop()
+            
         forward_dist = distance_sensor.object_distance(MM)
-        print("forward_dist" + str(forward_dist))
-        print ("atan value" + str(atan(20/forward_dist)))
-        print ("inertial heading" + str(inertial_sensor.heading()))
 
-        target_angle = inertial_sensor.heading() - 
-        
+        target_angle = inertial_sensor.heading() - degrees(atan(120/forward_dist)) 
         controller_1.screen.clear_screen()
-        controller_1.screen.set_cursor(1,1)
         controller_1.screen.print(target_angle)
-        controller_1.screen.set_cursor(2,1)
+        controller_1.screen.set_cursor(3,1)
         controller_1.screen.print(inertial_sensor.heading())
-        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
-        controller_1.rumble(".--.")
 
-        #move_until_distance(10,'forward',30)
-        drivetrain.drive_for(FORWARD, forward_dist, MM, 10, PERCENT)
+
+        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
+        actual_distance = forward_dist / cos(atan(114 / forward_dist))
+        
+      
+        drivetrain.drive_for(FORWARD, actual_distance + 20, MM, 10, PERCENT)
     elif direction == 'right':
         while distance_sensor.object_distance(MM) > top_range or distance_sensor.object_distance(MM) < bottom_range:
             left_motors.spin(FORWARD,10,PERCENT)
             right_motors.spin(REVERSE,10,PERCENT)
             #drivetrain.turn_to_heading(calibratedAngle(inertial_sensor.heading() - 2), DEGREES, wait=True)
-            controller_1.screen.clear_screen()
-            controller_1.screen.set_cursor(1,1)
-            controller_1.screen.print(distance_sensor.object_distance(MM))
-        controller_1.rumble("..-..")
+        left_motors.stop()
+        right_motors.stop()
+            
         forward_dist = distance_sensor.object_distance(MM)
-        target_angle = inertial_sensor.heading() - 25
-        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
-        controller_1.rumble(".--.")
 
-        #move_until_distance(10,'forward',30)
-        drivetrain.drive_for(FORWARD, forward_dist, MM, 10, PERCENT)
+        target_angle = inertial_sensor.heading() - degrees(atan(120/forward_dist)) 
+        controller_1.screen.clear_screen()
+        controller_1.screen.print(target_angle)
+        controller_1.screen.set_cursor(3,1)
+        controller_1.screen.print(inertial_sensor.heading())
+        if target_angle < 0:
+            target_angle = target_angle + 360
+
+
+        drivetrain.turn_to_heading(target_angle, DEGREES, wait=True)
+        actual_distance = forward_dist / cos(atan(114 / forward_dist))
+        
+        
+        drivetrain.drive_for(FORWARD, actual_distance + 20, MM, 10, PERCENT)
         
 
 
@@ -298,21 +290,7 @@ def turnTestingAuton():
 # def test_funct():
 #     turn_until_distance(1, 70, 'right')
 
-def ballsucktest():
-    while inertial_sensor.is_calibrating():
-        controller_1.screen.set_cursor(2,1)
 
-        controller_1.screen.print("Calibrating Gyro")
-        wait(100, MSEC)
-    inertial_sensor.reset_rotation()
-    inertial_sensor.set_heading(0, DEGREES)
-   
-    controller_1.screen.set_cursor(2,1)
-
-    controller_1.rumble("......")
-    wait(100, MSEC)  
-
-    ball_sucker('right',320,0)
 
 
 
@@ -818,18 +796,19 @@ def user_control():
     brain.screen.print("driver control")
     # place driver control in this while loop
     drive_task()
-
-while inertial_sensor.is_calibrating():
+def ballsucktest():
+    
+    while inertial_sensor.is_calibrating():
         controller_1.screen.set_cursor(2,1)
 
         controller_1.screen.print("Calibrating Gyro")
         wait(100, MSEC)
-inertial_sensor.reset_rotation()
-inertial_sensor.set_heading(0, DEGREES)
-
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    ball_sucker('left',700, 0)
 
 #ballsucktest()
-ball_sucker('left',200,0)
+
 
 drive_task()
 # create competition instance
