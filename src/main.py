@@ -90,6 +90,38 @@ first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
+
+LEFT = 1
+RIGHT = 0
+
+def search_for_objects(direction,range_degrees):
+    
+    print("lucas is cool3")
+    controller_1.rumble('......')
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    controller_1.screen.clear_screen()
+    print("we finished calibrating")
+    inertial_sensor.set_heading(0, DEGREES)
+    if direction == LEFT:
+        print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+        
+        while range_degrees < inertial_sensor.heading():
+            print(str(inertial_sensor.heading()))
+            left_motors.spin(REVERSE,10,PERCENT)
+            right_motors.spin(FORWARD,10,PERCENT)
+
+        print("finished moving motors")    
+
+        right_motors.stop()
+        left_motors.stop()
+    print("exiting")
+
+
 def ball_sucker(direction, top_range, bottom_range):
     #forward_dist = distance_sensor.object_distance(MM)
     if direction == 'left':
@@ -808,7 +840,7 @@ def ballsucktest():
     ball_sucker('left',700, 0)
 
 #ballsucktest()
-
+search_for_objects(LEFT,-90)
 
 drive_task()
 # create competition instance
