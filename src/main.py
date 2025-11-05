@@ -94,6 +94,113 @@ toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 LEFT = 1
 RIGHT = 0
 
+def search_for_objects_prototype(direction, degrees):
+
+    data = [((359.0),(753.0)),
+        ((359.0087),(741.0)),
+        ((359.0102),(746.0)),
+        ((358.4795),(728.0)),
+        ((355.2454),(135.0)),
+        ((350.8036),(123.0)),
+        ((347.172),(132.0)),
+        ((344.0994),(145.0)),
+        ((340.5105),(171.0)),
+        ((336.7918),(980.9999)),
+        ((333.8525),(969.0)),
+        ((329.9612),(930.0)),
+        ((326.2497),(892.0)),
+        ((323.4548),(199.0)),
+        ((319.0367),(194.0)),
+        ((315.6708),(192.0)),
+        ((312.3238),(196.0)),
+        ((308.3157),(208.0)),
+        ((305.453),(224.0)),
+        ((301.2501),(786.0)),
+        ((297.505),(797.0)),
+        ((294.6898),(808.0)),
+        ((290.2702),(811.0)),
+        ((286.8119),(826.0)),
+        ((283.6574),(841.0)),
+        ((279.266),(866.0)),
+        ((276.4171),(905.9999)),
+        ((272.8502),(934.9999)),((359.0),(753.0)),
+        ((359.0087),(741.0)),
+        ((359.0102),(746.0)),
+        ((358.4795),(728.0)),
+        ((355.2454),(135.0)),
+        ((350.8036),(123.0)),
+        ((347.172),(132.0)),
+        ((344.0994),(145.0)),
+        ((340.5105),(171.0)),
+        ((336.7918),(980.9999)),
+        ((333.8525),(969.0)),
+        ((329.9612),(930.0)),
+        ((326.2497),(892.0)),
+        ((323.4548),(199.0)),
+        ((319.0367),(194.0)),
+        ((315.6708),(192.0)),
+        ((312.3238),(196.0)),
+        ((308.3157),(208.0)),
+        ((305.453),(224.0)),
+        ((301.2501),(786.0)),
+        ((297.505),(797.0)),
+        ((294.6898),(808.0)),
+        ((290.2702),(811.0)),
+        ((286.8119),(826.0)),
+        ((283.6574),(841.0)),
+        ((279.266),(866.0)),
+        ((276.4171),(905.9999)),
+            ((272.8502),(934.9999)),((359.0),(753.0)),
+        ((359.0087),(741.0)),
+        ((359.0102),(746.0)),
+        ((358.4795),(728.0)),
+        ((355.2454),(135.0)),
+        ((350.8036),(123.0)),
+        ((347.172),(132.0)),
+        ((344.0994),(145.0)),
+        ((340.5105),(171.0)),
+        ((336.7918),(980.9999)),
+        ((333.8525),(969.0)),
+        ((329.9612),(930.0)),
+        ((326.2497),(892.0))]
+
+    Num_of_objects = 0
+    shift_down_in_range = 0
+    previous_distance = 0
+    widths_of_objects = []
+    object_item_on_list = []
+    Number_of_cycles = 0
+    current_object = []
+    final_object_angle = []
+    for i in data:
+        Number_of_cycles += 1
+        if i[1] < previous_distance/2:
+            shift_down_in_range = 1
+            current_object = []
+        elif shift_down_in_range > 0:
+            shift_down_in_range += 1
+            current_object.append((i[0], i[1]))
+        if i[1] > previous_distance*2 and shift_down_in_range > 0:
+            Num_of_objects = Num_of_objects + 1 
+            widths_of_objects.append(current_object)
+            shift_down_in_range = 0
+        previous_distance = i[1]
+
+    #print("Num_of_objects " + str(Num_of_objects))
+
+        
+    for i_smalllist in widths_of_objects:
+       # print ("found an object" + str(len(i_smalllist)))
+        target_index = math.floor(len(i_smalllist)/2)
+        target_item = i_smalllist[target_index]
+        final_object_angle.append(target_item)
+       # print(target_item)
+        
+    return (final_object_angle)
+
+
+
+
 def search_for_objects(direction,range_degrees):
     
     print("lucas is cool3")
@@ -106,20 +213,32 @@ def search_for_objects(direction,range_degrees):
     inertial_sensor.reset_rotation()
     controller_1.screen.clear_screen()
     print("we finished calibrating")
-    inertial_sensor.set_heading(0, DEGREES)
+    distance_data = []
     if direction == LEFT:
         print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
-        
+        inertial_sensor.set_heading(359, DEGREES)        
         while range_degrees < inertial_sensor.heading():
-            print(str(inertial_sensor.heading()))
+            print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
+            distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+
             left_motors.spin(REVERSE,10,PERCENT)
             right_motors.spin(FORWARD,10,PERCENT)
+            wait (100,MSEC)
 
         print("finished moving motors")    
 
         right_motors.stop()
         left_motors.stop()
+    print("done gathering data")
+    smallest_distance = 100000
+    smallest_distance_angle = 0
+    for i in distance_data:
+        if i[1] < smallest_distance:
+            smallest_distance = i[1]
+            smallest_distance_angle = i[0]
+        print("((" + str(i[0]) + "),(" + str(i[1]) + ")),")
     print("exiting")
+    print("smallest v   distance " + str(smallest_distance) + " at angle " + str(smallest_distance_angle))
 
 
 def ball_sucker(direction, top_range, bottom_range):
@@ -840,7 +959,7 @@ def ballsucktest():
     ball_sucker('left',700, 0)
 
 #ballsucktest()
-search_for_objects(LEFT,-90)
+search_for_objects(LEFT,270)
 
 drive_task()
 # create competition instance
