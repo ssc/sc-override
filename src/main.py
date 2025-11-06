@@ -42,7 +42,6 @@ inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
-vision_sensor = Vision(Ports.PORT3)
 
 # Global variables
 MAX_SPEED = 40
@@ -936,6 +935,48 @@ def drive_task():
         sleep(10)
        # brain.screen.new_line()  # Removed typo and malformed code
 
+
+
+#def vision_scan():
+
+    #print("func_scan")
+    controller_1.screen.print("BlahEnzo5")
+    # Create a new Signature "RED_BOX" with the Colordesc class
+    RED_BOX = Signature(0, 9269, 11397,10333, -1695, -523, -1109,7878448, 0)
+    # Create a new Vision Sensor "vision_1" with the Vision
+    # class, with the "RED_BOX" Signature.
+    vision_1 = Vision(Ports.PORT17, 100, RED_BOX)
+    wilenum = 0
+    # Move forward if a red object is detected
+    while True:
+        
+        controller_1.screen.set_cursor(1,1)
+        controller_1.screen.clear_screen()
+        wilenum += 1
+        controller_1.screen.print("hia")
+        red_object = vision_1.take_snapshot(RED_BOX)
+        controller_1.screen.print(red_object)
+        if red_object:
+            #drivetrain.drive_for(FORWARD, 10, MM)
+            controller_1.rumble(".....-")
+        wait(5, MSEC)
+def visionTask():
+    while True:
+        SIG_1 = Signature(0, 9269, 11397,10333, -1695, -523, -1109,7878448, 0)
+        vision = Vision(Ports.PORT17, 100)
+        objects = vision.take_snapshot(SIG_1)
+        if objects is not None:
+            for obj in objects:
+                wait(50,MSEC)
+                if obj.width > 120:
+                    print("e8 x:" + str(obj.centerX) + " y:" + str(obj.centerY))
+                
+
+
+
+
+
+
 def autonomous():
     brain.screen.clear_screen()
     brain.screen.print("autonomous code")
@@ -959,14 +1000,18 @@ def ballsucktest():
     ball_sucker('left',700, 0)
 
 #ballsucktest()
-search_for_objects(LEFT,270)
+#search_for_objects(LEFT,270)
 
-drive_task()
+
+#drive_task()
 # create competition instance
-comp = Competition(user_control, autonomous)
+controller_1.screen.clear_screen()
+controller_1.screen.set_cursor(2,1)
+controller_1.screen.print("BlahEnzo9")
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
 
-
+visionTask()
 
 #test_funct()
