@@ -23,7 +23,7 @@ def calibratedAngle(idealAngle):
         
 distance = 0
 
-
+final_object_angle = []
 # actions to do when the program starts
 brain.screen.clear_screen()
 
@@ -32,12 +32,13 @@ right_tube_spin = 0
 
 # Brain and Controllers
 
-
+smallest_distance_value = 100000
+smallest_distance_angle = 0
 
 # Configure the optical sensor on a specific port (change port number as needed)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
-distance_sensor = Distance(Ports.PORT8)
+distance_sensor = Distance(Ports.PORT9)
 inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
@@ -93,8 +94,9 @@ toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 LEFT = 1
 RIGHT = 0
 
-def search_for_objects_prototype(direction, degrees):
+def find_objects_in_data(data_set):
 
+    global final_object_angle
     data = [((359.0),(753.0)),
         ((359.0087),(741.0)),
         ((359.0102),(746.0)),
@@ -167,41 +169,52 @@ def search_for_objects_prototype(direction, degrees):
     shift_down_in_range = 0
     previous_distance = 0
     widths_of_objects = []
-    object_item_on_list = []
+    #object_item_on_list = []
     Number_of_cycles = 0
     current_object = []
     final_object_angle = []
-    for i in data:
+
+
+    for i in data_set:
+        print ("data set not empty" + str(len(data_set)))
         Number_of_cycles += 1
-        if i[1] < previous_distance/2:
+        if i[1] < previous_distance/1.5:
             shift_down_in_range = 1
             current_object = []
         elif shift_down_in_range > 0:
             shift_down_in_range += 1
             current_object.append((i[0], i[1]))
-        if i[1] > previous_distance*2 and shift_down_in_range > 0:
+        if i[1] > previous_distance*1.5 and shift_down_in_range > 0:
+            print ("i am appending  " + str(Num_of_objects))
             Num_of_objects = Num_of_objects + 1 
+            
             widths_of_objects.append(current_object)
             shift_down_in_range = 0
         previous_distance = i[1]
 
-    #print("Num_of_objects " + str(Num_of_objects))
+    print (data_set)
+
 
         
     for i_smalllist in widths_of_objects:
        # print ("found an object" + str(len(i_smalllist)))
+        print ("lucas is awesome 23")
         target_index = math.floor(len(i_smalllist)/2)
         target_item = i_smalllist[target_index]
         final_object_angle.append(target_item)
        # print(target_item)
         
+
+    print(final_object_angle)    
     return (final_object_angle)
 
 
 
 
 def search_for_objects(direction,range_degrees):
-    
+    global smallest_distance_value
+    global smallest_distance_angle
+    global final_object_angle
     print("lucas is cool3")
     controller_1.rumble('......')
     while inertial_sensor.is_calibrating():
@@ -220,8 +233,8 @@ def search_for_objects(direction,range_degrees):
             print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
-            left_motors.spin(REVERSE,10,PERCENT)
-            right_motors.spin(FORWARD,10,PERCENT)
+            left_motors.spin(REVERSE,5,PERCENT)
+            right_motors.spin(FORWARD,5,PERCENT)
             wait (100,MSEC)
 
         print("finished moving motors")    
@@ -231,13 +244,26 @@ def search_for_objects(direction,range_degrees):
     print("done gathering data")
     smallest_distance = 100000
     smallest_distance_angle = 0
-    for i in distance_data:
-        if i[1] < smallest_distance:
-            smallest_distance = i[1]
-            smallest_distance_angle = i[0]
-        print("((" + str(i[0]) + "),(" + str(i[1]) + ")),")
-    print("exiting")
+    find_objects_in_data(distance_data)
+    # for i in distance_data:
+    #     if i[1] < smallest_distance:
+    #         smallest_distance = i[1]
+    #         smallest_distance_angle = i[0]
+    #     print("((" + str(i[0]) + "),(" + str(i[1]) + ")),")
+    # print("exiting")
     print("smallest v   distance " + str(smallest_distance) + " at angle " + str(smallest_distance_angle))
+
+    smallest_distance_value = 100000
+    smallest_distance_angle = 0
+    for i in final_object_angle:
+        if i[1] < smallest_distance_value:
+            smallest_distance_value = i[1]
+            smallest_distance_angle = i[0]
+
+    print(smallest_distance_angle)
+    #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
+
+
 
 
 def ball_sucker(direction, top_range, bottom_range):
@@ -467,22 +493,44 @@ def skills_auton():
 #set up to intake balls
     drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
     drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
 
 
 #start intake
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    tube_intake_motor.spin(REVERSE, 30,PERCENT)
+
+    #tube_intake_motor.spin(REVERSE, 30,PERCENT)
 
 
 
 #start picking up balls by moving forward    
-    drivetrain.drive_for(FORWARD, 13, INCHES, 10, PERCENT)
+    drivetrain.drive_for(FORWARD, 16, INCHES, 10, PERCENT)
+    #tube_intake_motor.stop()
+    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 20, INCHES, 25, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
+    search_for_objects(LEFT,270)
+    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
 
+    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 25, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(187), DEGREES, wait=True)
+    move_until_distance(315,'forward',20)
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(FORWARD, 100, PERCENT)
+    toprack.spin(FORWARD, 20, PERCENT)
+    wait(5,SECONDS)
+    toprack.stop()
+    basket_intake_motor.stop()
+    first_intake.stop()
+    drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
+
+    #drivetrain.turn_for(LEFT,15,DEGREES,20,PERCENT)
+
+    return
 
 #pick up balls
-    wait(2,SECONDS)
+    #wait(2,SECONDS)
    
 
 #reset tube intake motor position   
@@ -1001,6 +1049,14 @@ def ballsucktest():
 
 #ballsucktest()
 #search_for_objects(LEFT,270)
+#drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
+#drivetrain.drive_for(FORWARD, smallest_distance_value-50, MM, 10, PERCENT)
+##drivetrain.turn_to_heading(365, DEGREES, wait=True)
+#drivetrain.drive_for(FORWARD, 60, MM, 10, PERCENT)
+
+skills_auton()
+
+
 
 
 #drive_task()
