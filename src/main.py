@@ -524,9 +524,27 @@ def skills_auton():
     basket_intake_motor.stop()
     first_intake.stop()
     drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
-
-    #drivetrain.turn_for(LEFT,15,DEGREES,20,PERCENT)
-
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True) 
+    drivetrain.drive_for(FORWARD, 10, INCHES, 60, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(290), DEGREES, wait=True)
+    search_for_objects(LEFT,250)
+    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
+    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 50, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(200), DEGREES, wait=True)
+    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
+    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 50, PERCENT)
+    move_until_distance(1000,'forward',30)
+    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
+    move_until_distance(500,'forward',30)
+    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+    drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
+    first_intake.spin(FORWARD, 80, PERCENT)
+    basket_intake_motor.spin(FORWARD, 100, PERCENT)
+    toprack.spin(FORWARD, 50, PERCENT)
     return
 
 #pick up balls
@@ -878,12 +896,12 @@ def drive_task():
             left_tube_spin = 0
             
 
-        first_intake.spin(FORWARD, first_intake_control * 8, PERCENT)
+        first_intake.spin(FORWARD, first_intake_control * 10, PERCENT)
         basket_intake_motor.spin(FORWARD, basket_intake_control * 10, PERCENT)    
-        toprack.spin(REVERSE, toprack_control * 50, PERCENT)
-        first_intake.spin(FORWARD, first_intake_control * 8, PERCENT)
+        toprack.spin(REVERSE, toprack_control * 100, PERCENT)
+        first_intake.spin(FORWARD, first_intake_control * 10, PERCENT)
         basket_intake_motor.spin(FORWARD, basket_intake_control * MOTOR_MULTIPLIER, PERCENT)    
-        toprack.spin(REVERSE, toprack_control * 50, PERCENT)
+        toprack.spin(REVERSE, toprack_control * 100, PERCENT)
         tube_intake_motor.spin(FORWARD, tube_intake_motor_control, PERCENT)
        
 
@@ -1054,12 +1072,12 @@ def ballsucktest():
 ##drivetrain.turn_to_heading(365, DEGREES, wait=True)
 #drivetrain.drive_for(FORWARD, 60, MM, 10, PERCENT)
 
-skills_auton()
+#skills_auton()
 
 
 
 
-#drive_task()
+drive_task()
 # create competition instance
 controller_1.screen.clear_screen()
 controller_1.screen.set_cursor(2,1)
