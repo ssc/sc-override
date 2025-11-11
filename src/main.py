@@ -437,9 +437,17 @@ def turnTestingAuton():
     drivetrain.stop()
 
 
-
-
-
+def collect_balls():
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE, 100, PERCENT)
+    drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
+    drivetrain.drive_for(FORWARD, 16, INCHES, 10, PERCENT)
+def turn_to_balls():
+    ideal_pickup_angle = inertial_sensor.heading(DEGREES) - 20
+    if ideal_pickup_angle < 0:
+        ideal_pickup_angle += 360
+    one_wheel_turn_to_heading(ideal_pickup_angle, 'left', REVERSE)
+    collect_balls()
 
 
 
@@ -458,36 +466,36 @@ def skills_auton():
    
     controller_1.screen.set_cursor(2,1)
 
-    controller_1.rumble("......")
+    controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..")
     wait(100, MSEC)  
 
-
-#set up to intake balls
+    
+    #set up to intake balls
     drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
     drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
-
-
-#start intake
-
-    #tube_intake_motor.spin(REVERSE, 30,PERCENT)
-
-
-
-#start picking up balls by moving forward    
-    drivetrain.drive_for(FORWARD, 16, INCHES, 10, PERCENT)
+    collect_balls()
     #tube_intake_motor.stop()
     drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 20, INCHES, 25, PERCENT)
+    drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
+    #scanning corner 2
     drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
     search_for_objects(LEFT,270)
+    #going to and intake corner 2
     drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
+    drivetrain.drive_for(FORWARD, smallest_distance_value-35, MM, 25, PERCENT)
+    turn_to_balls()
+    basket_intake_motor.stop()
+    first_intake.stop()
+    #finding center goal
+    controller_1.screen.clear_screen()
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print(inertial_sensor.heading(DEGREES))
 
-    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 25, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(187), DEGREES, wait=True)
-    move_until_distance(315,'forward',20)
+    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
+    search_for_objects(LEFT,180)
+    drivetrain.turn_to_heading(smallest_distance_angle-20, DEGREES, wait=True)    
+    #going to and outake center goal
+    move_until_distance(250,'forward',20)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD, 100, PERCENT)
     toprack.spin(FORWARD, 20, PERCENT)
@@ -495,6 +503,7 @@ def skills_auton():
     toprack.stop()
     basket_intake_motor.stop()
     first_intake.stop()
+    return
     drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
@@ -950,9 +959,9 @@ def ballsucktest():
 controller_1.screen.clear_screen()
 controller_1.screen.set_cursor(2,1)
 controller_1.screen.print("BlahEnzo12")
-skills_auton()
 
-#drive_task()
+
+drive_task()
 # create competition instance
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
