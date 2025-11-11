@@ -1072,20 +1072,20 @@ def ballsucktest():
 ##drivetrain.turn_to_heading(365, DEGREES, wait=True)
 #drivetrain.drive_for(FORWARD, 60, MM, 10, PERCENT)
 
-#skills_auton()
 
 
 
-
-drive_task()
-# create competition instance
 controller_1.screen.clear_screen()
 controller_1.screen.set_cursor(2,1)
-controller_1.screen.print("BlahEnzo9")
+controller_1.screen.print("BlahEnzo12")
+skills_auton()
+
+#drive_task()
+# create competition instance
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
-
-visionTask()
+#This code is Enzo's testing of the vision sensor
+#visionTask()
 
 #test_funct()
