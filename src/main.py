@@ -436,35 +436,7 @@ def turnTestingAuton():
     # end of auton
     drivetrain.stop()
 
-#def turn_until_distance(target_distance_1, target_distance_2, direction):
-#     global MAX_SPEED
-#     global distance
-#     left_motors.set_velocity(MAX_SPEED / 2, PERCENT)
-#     right_motors.set_velocity(MAX_SPEED / 2, PERCENT)
-    
-#     while True:
-#         if direction == 'left':
 
-#             if distance >= target_distance_1 and distance <= target_distance_2:
-#                 break
-#             else:
-#                 left_motors.spin(FORWARD)
-#                 right_motors.spin(REVERSE)
-                
-
-#         elif direction == 'right':
-
-#             if distance >= target_distance_1 and distance <= target_distance_2:
-#                 break
-#             else:
-#                 left_motors.spin(REVERSE)
-#                 right_motors.spin(FORWARD)
-
-#     left_motors.stop()
-#     right_motors.stop()
-
-# def test_funct():
-#     turn_until_distance(1, 70, 'right')
 
 
 
@@ -561,16 +533,7 @@ def skills_auton():
         drivetrain.turn_to_heading(calibratedAngle(190), DEGREES, wait=True)
         drivetrain.drive_for(REVERSE, 10, INCHES, 10, PERCENT)
 
-        # ball_sucker()
-        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
-        # drivetrain.turn_to_heading(calibratedAngle(90), DEGREES, wait=True)
-        # move_until_distance(150,'reverse',30)
-        # drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
-        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
-        # drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-        # move_until_distance(150,'reverse',30)
-        # drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
-        # drivetrain.drive_for(FORWARD, 6, INCHES, 25, PERCENT)
+   
     else:
 
 
@@ -689,14 +652,7 @@ def auton_funct():
       move_until_distance(150,'reverse',20)
       drivetrain.turn_for(LEFT, 8,DEGREES,5,PERCENT)
 
-#     #  if vex_brain_slot == 1:
-    
-#     #     drivetrain.turn_for(LEFT, 2,DEGREES,5,PERCENT)
 
-#     #  else:
-         
-#     #     drivetrain.turn_for(RIGHT, 2,DEGREES,5,PERCENT)
-     
 
       wait(3, SECONDS)
       brain.screen.print("we made it 2")
@@ -704,25 +660,6 @@ def auton_funct():
       first_intake.stop()
       toprack.stop()
       drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
-        #  drivetrain.drive_for(FORWARD, 450, MM, 50, PERCENT)
-        #  drivetrain.turn_for(LEFT, 30 * SCALE_VALUE, DEGREES, 25, PERCENT)
-        #  drivetrain.drive_for(FORWARD, 300, MM, 25, PERCENT)
-        #  drivetrain.turn_for(RIGHT, 25 * SCALE_VALUE, DEGREES, 25, PERCENT)
-        #  drivetrain.drive_for(FORWARD, 550, MM, 20, PERCENT)
-        #  wait(1, SECONDS)
-        #  basket_intake_motor.stop()
-        #  first_intake.stop()
-        #  drivetrain.drive_for(REVERSE, 620, MM, 50, PERCENT)
-        #  #drivetrain.turn_for(LEFT, 105 * SCALE_VALUE, DEGREES, 25, PERCENT)
-        #  turn_until_distance(500,'left',5)
-        #  drivetrain.drive_for(FORWARD, 685, MM, 75, PERCENT)
-        #  #where it turns to look at the goal
-        #  #drivetrain.turn_for(LEFT, 100 * SCALE_VALUE, DEGREES, 25, PERCENT)
-        #  turn_until_distance(1, 70, 'left')
-
-        #  drivetrain.drive_for(REVERSE, 200, MM, 50, PERCENT)
-
-        #  brain.screen.print("we made it3")
 
 def potentiometer_test():
     brain.screen.clear_screen()
@@ -905,16 +842,7 @@ def drive_task():
         tube_intake_motor.spin(FORWARD, tube_intake_motor_control, PERCENT)
        
 
-        #if controller_1.buttonLeft.pressing() or controller_2.buttonLeft.pressing():
-        #     brain.screen.clear_screen()
-        #     controllerMode = 0  
-        #     brain.screen.print("Tank Drive Mode")
-        #     wait(200, MSEC)  
-        # elif controller_1.buttonRight.pressing() or controller_2.buttonRight.pressing():
-        #     brain.screen.clear_screen()
-        #     controllerMode = 1  # Arcade mode
-        #     brain.screen.print("Arcade Drive Mode")
-        #     wait(200, MSEC)  
+   
 
         if controller_2.buttonUp.pressing():
             first_intake.spin(REVERSE,10,PERCENT)
@@ -937,69 +865,13 @@ def drive_task():
             #=skills_auton_sidepark(controller_1, drivetrain,inertial_sensor, first_intake, basket_intake_motor, toprack, distance_sensor)
             auton = 0
 
-        # Hopper pickup function (B button on either controller)
-        # if controller_1.buttonB.pressing() or controller_2.buttonB.pressing():
-        #     tube_intake_motor.spin(FORWARD, 100, PERCENT)
-        #     #brain.screen.clear_screen()
-        #     #hopper_running = 1
-
-        # else: 
-        #     tube_intake_motor.stop()
-            #brain.screen.clear_screen()
-            #hopper_running = 0
-        
-        #if hopper_running == 1:
-            #hopper_pickup()
-            #hopper_running = 0
-        #change new_line to new_row
-        # Speed adjustment (Up/Down arrows on Controller 2 for intake speed)
         if controller_2.buttonUp.pressing() or controller_1.buttonUp.pressing():
             MAX_SPEED = min(100, MAX_SPEED + 5)
             wait(100, MSEC)
             brain.screen.clear_screen()
-        # if True: # controller_2.buttonDown.pressing():
-        #     MAX_SPEED = max(10, MAX_SPEED - 5)
-        #     wait(100, MSEC)
-    
-        #     if optical_sensor.is_near_object():
-        #         brain.screen.next_row()
-        #         brain.screen.clear_screen()
-        #         brain.screen.print("Object Detected")
-        #         optical_sensor.set_light_power(100, PERCENT)
-        #         brightness = optical_sensor.brightness()
-        #         hue = optical_sensor.hue()
-        #         #brain.screen.clear_screen()
-        #         if brightness > 10:
-        #             brain.screen.next_row()
-        #             brain.screen.print("Brightness > ten: " + str(brightness))
-        #             if (hue <= 20) or (hue >= 340):
-
-                        
-        #                 #toprack.spin(REVERSE, 1000, PERCENT)
-        #                 #wait(0.5, SECONDS)
-        #                 toprack.stop()
-
-        #             elif (hue >= 210) and (hue <= 230):
-
-        #                 brain.screen.next_row()
-        #                 brain.screen.print("Blue Detected")
-                        
-
-        #             else:
-        #                 brain.screen.next_row()
-        #                 brain.screen.print("No Color Detected")
-        #         else:
-        #             brain.screen.next_row()
-        #             brain.screen.print("Brightness less than ten " + str(brightness))
-
-        #     else:
-        #         brain.screen.next_row()
-        #         brain.screen.print("No Object Detected")
-
-       # brain.screen.new_line()ain.screen.print("Brightness less than ten")
-
+     
         sleep(10)
-       # brain.screen.new_line()  # Removed typo and malformed code
+
 
 
 
