@@ -13,7 +13,7 @@
 from vex import *
 
 from math import atan, degrees, sin, radians, cos
-
+test_function = 0
 
 brain = Brain()
 gyro_360 = 354
@@ -43,6 +43,7 @@ inertial_sensor = Inertial(Ports.PORT1)
 optical_sensor = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
+bumper_was_pressing = 0
 
 # Global variables
 MAX_SPEED = 40
@@ -184,7 +185,7 @@ def find_objects_in_data(data_set):
         elif shift_down_in_range > 0:
             shift_down_in_range += 1
             current_object.append((i[0], i[1]))
-        if i[1] > previous_distance*1.5 and shift_down_in_range > 0:
+        if i[1] > previous_distance + 100 and shift_down_in_range > 0:
             print ("i am appending  " + str(Num_of_objects))
             Num_of_objects = Num_of_objects + 1 
             
@@ -208,6 +209,30 @@ def find_objects_in_data(data_set):
     print(final_object_angle)    
     return (final_object_angle)
 
+def fix_angle_left(range):
+    final_angle = range
+    if range <180:
+        final_angle = range +360
+
+    return final_angle
+    #current_gyro_angle = range
+    #if current_gyro_angle < 10 and current_gyro_angle > 0:
+    #    current_gyro_angle += 360
+    #return current_gyro_angle
+
+def convert_relative_to_absolute(relative_angle):
+
+    absolute_angle = relative_angle + inertial_sensor.heading()
+    if absolute_angle < 0:
+        absolute_angle += 360
+
+
+    #if relative_angle < 0:
+    #    absolute_angle = inertial_sensor.heading() + relative_angle + 360
+    #else:
+    #    absolute_angle = inertial_sensor.heading() + relative_angle
+
+    return absolute_angle
 
 
 
@@ -216,20 +241,24 @@ def search_for_objects(direction,range_degrees):
     global smallest_distance_angle
     global final_object_angle
     print("lucas is cool3")
-    controller_1.rumble('......')
-    while inertial_sensor.is_calibrating():
-        controller_1.screen.set_cursor(2,1)
+    #controller_1.rumble('......')
+    # while inertial_sensor.is_calibrating():
+    #     controller_1.screen.set_cursor(2,1)
 
-        controller_1.screen.print("Calibrating Gyro")
-        wait(100, MSEC)
-    inertial_sensor.reset_rotation()
+    #     controller_1.screen.print("Calibrating Gyro")
+    #     wait(100, MSEC)
+    #inertial_sensor.reset_rotation()
+    range_degrees = convert_relative_to_absolute(range_degrees)
+    print("enzo" + str(range_degrees))
     controller_1.screen.clear_screen()
     print("we finished calibrating")
     distance_data = []
     if direction == LEFT:
         print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
-        inertial_sensor.set_heading(359, DEGREES)        
-        while range_degrees < inertial_sensor.heading():
+        #inertial_sensor.set_heading(359, DEGREES)  
+        print (range_degrees)
+        print(inertial_sensor.heading())
+        while range_degrees < fix_angle_left(inertial_sensor.heading()):
             print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
@@ -241,6 +270,22 @@ def search_for_objects(direction,range_degrees):
 
         right_motors.stop()
         left_motors.stop()
+    else:
+        print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+        #inertial_sensor.set_heading(359, DEGREES)        
+        while range_degrees > fix_angle(inertial_sensor.heading()):
+            print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
+            distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+
+            left_motors.spin(FORWARD,5,PERCENT)
+            right_motors.spin(REVERSE,5,PERCENT)
+            wait (100,MSEC)
+
+        print("finished moving motors")    
+
+        right_motors.stop()
+        left_motors.stop()
+
     print("done gathering data")
     smallest_distance = 100000
     smallest_distance_angle = 0
@@ -261,6 +306,9 @@ def search_for_objects(direction,range_degrees):
             smallest_distance_angle = i[0]
 
     print(smallest_distance_angle)
+    if smallest_distance_value == 100000:
+        smallest_distance_value = -1
+    return (smallest_distance_angle, smallest_distance_value)
     #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
 
 
@@ -456,13 +504,7 @@ def skills_auton():
     vex_brain_slot = 1
     kuba = 1
     
-    while inertial_sensor.is_calibrating():
-        controller_1.screen.set_cursor(2,1)
-
-        controller_1.screen.print("Calibrating Gyro")
-        wait(100, MSEC)
-    inertial_sensor.reset_rotation()
-    inertial_sensor.set_heading(0, DEGREES)
+    
    
     controller_1.screen.set_cursor(2,1)
 
@@ -479,53 +521,65 @@ def skills_auton():
     drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
     #scanning corner 2
     drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
-    search_for_objects(LEFT,270)
+    search_for_objects(LEFT,-90)
     #going to and intake corner 2
-    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, smallest_distance_value-35, MM, 25, PERCENT)
+    return
+    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True) 
+    print("caleb is unhappy") 
+
+
+    
+    drivetrain.drive_for(FORWARD, dist_skills-35, MM, 25, PERCENT)
+    
     turn_to_balls()
+     
+
+
+
+    
     basket_intake_motor.stop()
     first_intake.stop()
+    drivetrain.drive_for(REVERSE, 10, INCHES, 40, PERCENT)
     #finding center goal
     controller_1.screen.clear_screen()
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print(inertial_sensor.heading(DEGREES))
-
     drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
-    search_for_objects(LEFT,180)
+    search_for_objects(LEFT,-180)
     drivetrain.turn_to_heading(smallest_distance_angle-20, DEGREES, wait=True)    
     #going to and outake center goal
-    move_until_distance(250,'forward',20)
+    move_until_distance(350,'forward',20)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD, 100, PERCENT)
     toprack.spin(FORWARD, 20, PERCENT)
-    wait(5,SECONDS)
+    wait(7,SECONDS)
     toprack.stop()
     basket_intake_motor.stop()
     first_intake.stop()
+    #Going to corner 3
+    drivetrain.drive_for(REVERSE, 7, INCHES, 50, PERCENT)
     return
-    drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
     drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True) 
-    drivetrain.drive_for(FORWARD, 10, INCHES, 60, PERCENT)
+    drivetrain.drive_for(FORWARD, 20, INCHES, 60, PERCENT)
+    #scanning corner 3
     drivetrain.turn_to_heading(calibratedAngle(290), DEGREES, wait=True)
     search_for_objects(LEFT,250)
+    #going to and intaking corner 3
     drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 50, PERCENT)
+    drivetrain.drive_for(FORWARD, smallest_distance_value-35, MM, 50, PERCENT)
+    turn_to_balls()
+    #going to corner 4
     drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+    drivetrain.drive_for(FORWARD, 20, INCHES, 50, PERCENT)
+    #scanning corner 4
     drivetrain.turn_to_heading(calibratedAngle(200), DEGREES, wait=True)
+    search_for_objects(LEFT,240)
+    #going to and intake corner 4
     drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, smallest_distance_value+350, MM, 50, PERCENT)
-    move_until_distance(1000,'forward',30)
-    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
-    move_until_distance(500,'forward',30)
-    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-    drivetrain.drive_for(REVERSE, 5, INCHES, 40, PERCENT)
-    first_intake.spin(FORWARD, 80, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    toprack.spin(FORWARD, 50, PERCENT)
+    drivetrain.drive_for(FORWARD, smallest_distance_value-35, MM, 50, PERCENT)
+    turn_to_balls()
     return
 
 #pick up balls
@@ -602,26 +656,33 @@ def skills_auton():
 
 
 def auton_funct():
-      global MAX_SPEED
-      if potentiometer.value() < 1250:
-          vex_brain_slot = 1
-          brain.screen.print("right Side Auton")
-
-      elif potentiometer.value() > 2250:
-          vex_brain_slot = 2
-      if potentiometer.value() < 2250 and potentiometer.value() > 1250:
-          skills_auton()
-          return
-
-          brain.screen.print("left Side Auton")
-      SCALE_VALUE = 0.6
-    
       while inertial_sensor.is_calibrating():
          controller_1.screen.set_cursor(2,1)
          controller_1.screen.print("Calibrating Gyro")
          wait(100, MSEC)
       inertial_sensor.reset_rotation()
       inertial_sensor.set_heading(0, DEGREES)
+      global MAX_SPEED
+      if potentiometer.value() < 1250:
+          vex_brain_slot = 1
+          brain.screen.print("right Side Auton")
+
+      elif potentiometer.value() > 2250 and potentiometer.value() < 4050:
+          vex_brain_slot = 2
+
+      elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
+          skills_auton()
+          return
+      
+      elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
+          test_function_before_going()
+          return
+      
+
+          brain.screen.print("left Side Auton")
+      SCALE_VALUE = 0.6
+    
+
     
 
 
@@ -679,7 +740,81 @@ def potentiometer_test():
         wait(100, MSEC)
 
 
+def test_function_before_going():
+    print("we are in the test function before going")
+    
+    brain.screen.clear_screen()
+    brain.screen.print("Testing Function Before Going")
+    #wait(2, SECONDS)
+    #drivetrain.turn_to_heading(270,DEGREES,wait=True)
+    drivetrain.turn_to_heading(340,DEGREES,wait=True)
+    (a,d) = search_for_objects(LEFT,-90)
+    drivetrain.turn_to_heading(a, DEGREES, wait=True)
+    return
+    #controller_1.rumble('......')
+    wait(1,SECONDS)
+    #drivetrain.turn_to_heading(0,DEGREES,wait=True)
+    #drivetrain.turn_to_heading(90,DEGREES,wait=True)
+    drivetrain.turn_to_heading(0,DEGREES,wait=True)
+    (a,d) = search_for_objects(RIGHT,90)
+    drivetrain.turn_to_heading(d, DEGREES, wait=True)
+    return
+    controller_1.rumble('......')
+    wait(1,SECONDS)
+    drivetrain.turn_to_heading(0,DEGREES,wait=True)
+    first_intake.spin(FORWARD,100,PERCENT)
+    wait (1,SECONDS)
+    first_intake.stop()
+    first_intake.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    first_intake.stop()
+    basket_intake_motor.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    basket_intake_motor.stop()
+    basket_intake_motor.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    basket_intake_motor.stop()
+    toprack.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    toprack.stop()
+    toprack.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    toprack.stop()
+    left_motor_a.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    left_motor_a.stop()
+    wait(1,SECONDS)
+    left_motor_a.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    left_motor_a.stop()
+    wait(1,SECONDS)
+    left_motor_b.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    left_motor_b.stop()
+    wait(1,SECONDS)
+    left_motor_b.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    left_motor_b.stop()
+    wait(1,SECONDS)
+    right_motor_a.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    right_motor_a.stop()
+    wait(1,SECONDS)
+    right_motor_a.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    right_motor_a.stop()
+    wait(1,SECONDS)
+    right_motor_b.spin(FORWARD,100,PERCENT)
+    wait(1,SECONDS)
+    right_motor_b.stop()
+    wait(1,SECONDS)
+    right_motor_b.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
+    right_motor_b.stop()
+
+
 def drive_task():
+    global test_function
     optical_sensor.set_light_power(25, PERCENT)
     brightness = optical_sensor.brightness()
     #hue = optical_sensor.hue()
@@ -861,18 +996,10 @@ def drive_task():
         # Autonomous function (X button on either controller)
         #and controller_2.buttonX.pressing()
         if bumper.pressing():
-            brain.screen.clear_screen()
-
-            auton = 1
-
-        if auton == 1:
-            skills_auton()
-            auton = 0
-
-        if auton == 2:
-            skills_auton()
-            #=skills_auton_sidepark(controller_1, drivetrain,inertial_sensor, first_intake, basket_intake_motor, toprack, distance_sensor)
-            auton = 0
+            global bumper_was_pressing
+            if bumper_was_pressing == 0:
+                bumper_was_pressing = 1
+                auton_funct()
 
         if controller_2.buttonUp.pressing() or controller_1.buttonUp.pressing():
             MAX_SPEED = min(100, MAX_SPEED + 5)
@@ -960,6 +1087,10 @@ controller_1.screen.clear_screen()
 controller_1.screen.set_cursor(2,1)
 controller_1.screen.print("BlahEnzo12")
 
+
+
+#search_for_objects(RIGHT,120)
+#drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
 
 drive_task()
 # create competition instance
