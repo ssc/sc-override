@@ -40,7 +40,7 @@ bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT9)
 inertial_sensor = Inertial(Ports.PORT1)
-optical_sensor = Optical(Ports.PORT2)
+optical = Optical(Ports.PORT2)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
 bumper_was_pressing = 0
@@ -233,10 +233,15 @@ def convert_relative_to_absolute(relative_angle):
     #    absolute_angle = inertial_sensor.heading() + relative_angle
 
     return absolute_angle
+def color_sort(color):
+    optical.set_light_power(100)
+    optical.set_light(LedStateType.ON)
+    if color == "blue":
+        if optical.hue() < 55 and optical.hue() > 0:
 
 
 
-def search_for_objects(direction,range_degrees):
+def search_for_objects(range_degrees):
     #global smallest_distance_value
     #global smallest_distance_angle
     global final_object_angle
@@ -253,6 +258,12 @@ def search_for_objects(direction,range_degrees):
     controller_1.screen.clear_screen()
     print("we finished calibrating")
     distance_data = []
+
+    if range_degrees < 180:
+        direction = RIGHT
+    else:
+        direction = LEFT
+
     if direction == LEFT:
         print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)  
@@ -517,11 +528,11 @@ def skills_auton():
     drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
     collect_balls()
     #tube_intake_motor.stop()
-    drivetrain.turn_to_heading(calibratedAngle(10), DEGREES, wait=True)
+    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
     #scanning corner 2
     drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
-    (a,d) = search_for_objects(LEFT,-80)
+    (a,d) = search_for_objects(-80)
     #going to and intake corner 2
     
     drivetrain.turn_to_heading(a, DEGREES, wait=True) 
@@ -546,7 +557,7 @@ def skills_auton():
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print(inertial_sensor.heading(DEGREES))
     drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
-    (a,d) = search_for_objects(LEFT,-80)
+    (a,d) = search_for_objects(-80)
     drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
     #going to and outake center goal
     move_until_distance(310,'forward',20)
@@ -566,11 +577,20 @@ def skills_auton():
     drivetrain.drive_for(FORWARD, 28, INCHES, 60, PERCENT)
     #scanning corner 3
     
-    (a,d) = search_for_objects(LEFT,-50)
+    (a,d) = search_for_objects(-75)
     #going to and intaking corner 3
     drivetrain.turn_to_heading(a, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, d-35, MM, 50, PERCENT)
+    drivetrain.drive_for(FORWARD, d-30, MM, 50, PERCENT)
     turn_to_balls()
+
+    #delivering corner 3 balls
+    drivetrain.turn_to_heading(135, DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+    drivetrain.turn_to_heading(155, DEGREES, wait=True)
+    (a,d) = search_for_objects(-80)
+    drivetrain.turn_to_heading(a, DEGREES, wait=True)
+    drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
+
     return
     #going to corner 4
     drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
@@ -750,7 +770,7 @@ def test_function_before_going():
     #wait(2, SECONDS)
     drivetrain.turn_to_heading(270,DEGREES,wait=True)
     drivetrain.turn_to_heading(359,DEGREES,wait=True)
-    (a,d) = search_for_objects(LEFT,-90)
+    (a,d) = search_for_objects(-90)
     drivetrain.turn_to_heading(a, DEGREES, wait=True)
 
     controller_1.rumble('......')
@@ -758,7 +778,7 @@ def test_function_before_going():
     drivetrain.turn_to_heading(0,DEGREES,wait=True)
     drivetrain.turn_to_heading(90,DEGREES,wait=True)
     drivetrain.turn_to_heading(0,DEGREES,wait=True)
-    (a,d) = search_for_objects(RIGHT,90)
+    (a,d) = search_for_objects(90)
     drivetrain.turn_to_heading(d, DEGREES, wait=True)
     
     controller_1.rumble('......')
