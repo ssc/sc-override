@@ -32,8 +32,8 @@ right_tube_spin = 0
 
 # Brain and Controllers
 
-smallest_distance_value = 100000
-smallest_distance_angle = 0
+#smallest_distance_value = 100000
+#smallest_distance_angle = 0
 
 # Configure the optical sensor on a specific port (change port number as needed)
 bumper = Bumper(brain.three_wire_port.a)
@@ -237,8 +237,8 @@ def convert_relative_to_absolute(relative_angle):
 
 
 def search_for_objects(direction,range_degrees):
-    global smallest_distance_value
-    global smallest_distance_angle
+    #global smallest_distance_value
+    #global smallest_distance_angle
     global final_object_angle
     print("lucas is cool3")
     #controller_1.rumble('......')
@@ -273,7 +273,7 @@ def search_for_objects(direction,range_degrees):
     else:
         print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)        
-        while range_degrees > fix_angle(inertial_sensor.heading()):
+        while range_degrees > fix_angle_left(inertial_sensor.heading()):
             print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
@@ -491,7 +491,7 @@ def collect_balls():
     drivetrain.drive_for(FORWARD,8, INCHES, 25, PERCENT )
     drivetrain.drive_for(FORWARD, 16, INCHES, 10, PERCENT)
 def turn_to_balls():
-    ideal_pickup_angle = inertial_sensor.heading(DEGREES) - 20
+    ideal_pickup_angle = inertial_sensor.heading(DEGREES) - 18
     if ideal_pickup_angle < 0:
         ideal_pickup_angle += 360
     one_wheel_turn_to_heading(ideal_pickup_angle, 'left', REVERSE)
@@ -517,20 +517,21 @@ def skills_auton():
     drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
     collect_balls()
     #tube_intake_motor.stop()
-    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+    drivetrain.turn_to_heading(calibratedAngle(10), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
     #scanning corner 2
     drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
-    search_for_objects(LEFT,-90)
+    (a,d) = search_for_objects(LEFT,-80)
     #going to and intake corner 2
-    return
-    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True) 
-    print("caleb is unhappy") 
+    
+    drivetrain.turn_to_heading(a, DEGREES, wait=True) 
+    print("caleb is unhappy")
 
 
-    
-    drivetrain.drive_for(FORWARD, dist_skills-35, MM, 25, PERCENT)
-    
+
+
+    drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
+
     turn_to_balls()
      
 
@@ -544,11 +545,11 @@ def skills_auton():
     controller_1.screen.clear_screen()
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print(inertial_sensor.heading(DEGREES))
-    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True)
-    search_for_objects(LEFT,-180)
-    drivetrain.turn_to_heading(smallest_distance_angle-20, DEGREES, wait=True)    
+    drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
+    (a,d) = search_for_objects(LEFT,-80)
+    drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
     #going to and outake center goal
-    move_until_distance(350,'forward',20)
+    move_until_distance(310,'forward',20)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD, 100, PERCENT)
     toprack.spin(FORWARD, 20, PERCENT)
@@ -557,19 +558,20 @@ def skills_auton():
     basket_intake_motor.stop()
     first_intake.stop()
     #Going to corner 3
-    drivetrain.drive_for(REVERSE, 7, INCHES, 50, PERCENT)
-    return
+    drivetrain.drive_for(REVERSE, 11, INCHES, 50, PERCENT)
+    
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(270), DEGREES, wait=True) 
-    drivetrain.drive_for(FORWARD, 20, INCHES, 60, PERCENT)
+    drivetrain.turn_to_heading(calibratedAngle(300), DEGREES, wait=True) 
+    drivetrain.drive_for(FORWARD, 28, INCHES, 60, PERCENT)
     #scanning corner 3
-    drivetrain.turn_to_heading(calibratedAngle(290), DEGREES, wait=True)
-    search_for_objects(LEFT,250)
+    
+    (a,d) = search_for_objects(LEFT,-50)
     #going to and intaking corner 3
-    drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, smallest_distance_value-35, MM, 50, PERCENT)
+    drivetrain.turn_to_heading(a, DEGREES, wait=True)    
+    drivetrain.drive_for(FORWARD, d-35, MM, 50, PERCENT)
     turn_to_balls()
+    return
     #going to corner 4
     drivetrain.turn_to_heading(calibratedAngle(180), DEGREES, wait=True)
     drivetrain.drive_for(FORWARD, 20, INCHES, 50, PERCENT)
@@ -746,19 +748,19 @@ def test_function_before_going():
     brain.screen.clear_screen()
     brain.screen.print("Testing Function Before Going")
     #wait(2, SECONDS)
-    #drivetrain.turn_to_heading(270,DEGREES,wait=True)
-    drivetrain.turn_to_heading(340,DEGREES,wait=True)
+    drivetrain.turn_to_heading(270,DEGREES,wait=True)
+    drivetrain.turn_to_heading(359,DEGREES,wait=True)
     (a,d) = search_for_objects(LEFT,-90)
     drivetrain.turn_to_heading(a, DEGREES, wait=True)
-    return
-    #controller_1.rumble('......')
+
+    controller_1.rumble('......')
     wait(1,SECONDS)
-    #drivetrain.turn_to_heading(0,DEGREES,wait=True)
-    #drivetrain.turn_to_heading(90,DEGREES,wait=True)
+    drivetrain.turn_to_heading(0,DEGREES,wait=True)
+    drivetrain.turn_to_heading(90,DEGREES,wait=True)
     drivetrain.turn_to_heading(0,DEGREES,wait=True)
     (a,d) = search_for_objects(RIGHT,90)
     drivetrain.turn_to_heading(d, DEGREES, wait=True)
-    return
+    
     controller_1.rumble('......')
     wait(1,SECONDS)
     drivetrain.turn_to_heading(0,DEGREES,wait=True)
