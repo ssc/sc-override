@@ -614,7 +614,7 @@ def skills_auton():
         drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
         #going to and outake center goal
         move_until_distance(310,'forward',20)
-        color_sort("blue", 5)
+        color_sort("blue", 4)
         
         #Going to corner 3
         drivetrain.drive_for(REVERSE, 11, INCHES, 50, PERCENT)
