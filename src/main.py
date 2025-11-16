@@ -40,7 +40,7 @@ bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT9)
 inertial_sensor = Inertial(Ports.PORT1)
-optical = Optical(Ports.PORT2)
+optical = Optical(Ports.PORT5)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
 bumper_was_pressing = 0
@@ -252,11 +252,18 @@ def color_sort(color, ball_count):
             run_basket = 0
      if color == "blue":
             if optical.hue() < 250 and optical.hue() > 200:
-                wait(0.3,SECONDS)
-                toprack.spin(FORWARD, 75, PERCENT)
-            wait(0.5,SECONDS)
-            toprack.stop()
-            balls_sorted += 1
+                if saw_ball < 10:
+                    saw_ball += 1
+                else:
+                    print(optical.hue())
+                    wait(0.2,SECONDS)
+                    toprack.spin(REVERSE, 75, PERCENT)
+                    wait(0.5,SECONDS)
+                    toprack.stop()
+                    balls_sorted += 1
+            else: 
+                saw_ball = 0
+            wait (0.01,SECONDS)
      elif color == "red":
         if optical.hue() < 11 and optical.hue() > 5:
             if saw_ball < 10:
@@ -271,7 +278,7 @@ def color_sort(color, ball_count):
                 balls_sorted += 1
         else: 
             saw_ball = 0
-     wait (0.01,SECONDS)
+        wait (0.01,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
         
@@ -560,74 +567,138 @@ def skills_auton():
     controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..")
     wait(100, MSEC)  
 
-    
+    if kuba == 1:
     #set up to intake balls
-    drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
-    collect_balls()
-    #tube_intake_motor.stop()
-    drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
-    #scanning corner 2
-    drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
-    (a,d) = search_for_objects(-80)
-    #going to and intake corner 2
+        drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
+        collect_balls()
+        #tube_intake_motor.stop()
+        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
+        #scanning corner 2
+        drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        #going to and intake corner 2
+        
+        drivetrain.turn_to_heading(a, DEGREES, wait=True) 
+        print("caleb is unhappy")
+
+
+
+
+        drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
+
+        turn_to_balls()
+        
+
+
+
+   
     
-    drivetrain.turn_to_heading(a, DEGREES, wait=True) 
-    print("caleb is unhappy")
+        basket_intake_motor.stop()
+        first_intake.stop()
+        drivetrain.drive_for(REVERSE, 10, INCHES, 40, PERCENT)
+        #finding center goal
+        controller_1.screen.clear_screen()
+        controller_1.screen.set_cursor(2,1)
+        controller_1.screen.print(inertial_sensor.heading(DEGREES))
+        drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
+        #going to and outake center goal
+        move_until_distance(310,'forward',20)
+        color_sort("blue", 5)
+        
+        #Going to corner 3
+        drivetrain.drive_for(REVERSE, 11, INCHES, 50, PERCENT)
+        
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(REVERSE, 100, PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(300), DEGREES, wait=True) 
+        drivetrain.drive_for(FORWARD, 28, INCHES, 60, PERCENT)
+        #scanning corner 3
+        
+        (a,d) = search_for_objects(-75)
+        #going to and intaking corner 3
+        drivetrain.turn_to_heading(a, DEGREES, wait=True)    
+        drivetrain.drive_for(FORWARD, d-30, MM, 50, PERCENT)
+        turn_to_balls()
+
+        #delivering corner 3 balls
+        drivetrain.turn_to_heading(135, DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+        drivetrain.turn_to_heading(155, DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        drivetrain.turn_to_heading(a, DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
+        toprack.spin(FORWARD, 75, PERCENT)
+        first_intake.spin(REVERSE, 100, PERCENT)
 
 
 
 
-    drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
+    else:
+        drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
+        collect_balls()
+        #tube_intake_motor.stop()
+        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
+        #scanning corner 2
+        drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        #going to and intake corner 2
+        
+        drivetrain.turn_to_heading(a, DEGREES, wait=True) 
+        print("caleb is unhappy")
 
-    turn_to_balls()
-     
 
 
 
-    
-    basket_intake_motor.stop()
-    first_intake.stop()
-    drivetrain.drive_for(REVERSE, 10, INCHES, 40, PERCENT)
-    #finding center goal
-    controller_1.screen.clear_screen()
-    controller_1.screen.set_cursor(2,1)
-    controller_1.screen.print(inertial_sensor.heading(DEGREES))
-    drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
-    (a,d) = search_for_objects(-80)
-    drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
-    #going to and outake center goal
-    move_until_distance(310,'forward',20)
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    toprack.spin(FORWARD, 20, PERCENT)
-    wait(7,SECONDS)
-    toprack.stop()
-    basket_intake_motor.stop()
-    first_intake.stop()
-    #Going to corner 3
-    drivetrain.drive_for(REVERSE, 11, INCHES, 50, PERCENT)
-    
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    drivetrain.turn_to_heading(calibratedAngle(300), DEGREES, wait=True) 
-    drivetrain.drive_for(FORWARD, 28, INCHES, 60, PERCENT)
-    #scanning corner 3
-    
-    (a,d) = search_for_objects(-75)
-    #going to and intaking corner 3
-    drivetrain.turn_to_heading(a, DEGREES, wait=True)    
-    drivetrain.drive_for(FORWARD, d-30, MM, 50, PERCENT)
-    turn_to_balls()
+        drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
 
-    #delivering corner 3 balls
-    drivetrain.turn_to_heading(135, DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
-    drivetrain.turn_to_heading(155, DEGREES, wait=True)
-    (a,d) = search_for_objects(-80)
-    drivetrain.turn_to_heading(a, DEGREES, wait=True)
-    drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
+        turn_to_balls()
+        basket_intake_motor.stop()
+        first_intake.stop()
+        drivetrain.drive_for(REVERSE, 10, INCHES, 40, PERCENT)
+        #finding center goal
+        controller_1.screen.clear_screen()
+        controller_1.screen.set_cursor(2,1)
+        controller_1.screen.print(inertial_sensor.heading(DEGREES))
+        drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
+        #going to and outake center goal
+        move_until_distance(310,'forward',20)
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(FORWARD, 100, PERCENT)
+        toprack.spin(FORWARD, 20, PERCENT)
+        wait(7,SECONDS)
+        toprack.stop()
+        basket_intake_motor.stop()
+        first_intake.stop()
+        #Going to corner 3
+        drivetrain.drive_for(REVERSE, 11, INCHES, 50, PERCENT)
+        
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(REVERSE, 100, PERCENT)
+        drivetrain.turn_to_heading(calibratedAngle(300), DEGREES, wait=True) 
+        drivetrain.drive_for(FORWARD, 28, INCHES, 60, PERCENT)
+        #scanning corner 3
+        
+        (a,d) = search_for_objects(-75)
+        #going to and intaking corner 3
+        drivetrain.turn_to_heading(a, DEGREES, wait=True)    
+        drivetrain.drive_for(FORWARD, d-30, MM, 50, PERCENT)
+        turn_to_balls()
+
+        #delivering corner 3 balls
+        drivetrain.turn_to_heading(135, DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 12, INCHES, 50, PERCENT)
+        drivetrain.turn_to_heading(155, DEGREES, wait=True)
+        (a,d) = search_for_objects(-80)
+        drivetrain.turn_to_heading(a, DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
     return
     #going to corner 4
