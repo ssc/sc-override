@@ -576,6 +576,7 @@ def skills_auton():
 
     if kuba == 1:
     #set up to intake balls
+    #hello
         drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
         drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
         collect_balls()
