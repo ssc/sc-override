@@ -233,12 +233,33 @@ def convert_relative_to_absolute(relative_angle):
     #    absolute_angle = inertial_sensor.heading() + relative_angle
 
     return absolute_angle
-def color_sort(color):
+def color_sort(color, ball_count):
     optical.set_light_power(100)
     optical.set_light(LedStateType.ON)
-    if color == "blue":
-        if optical.hue() < 55 and optical.hue() > 0:
-            drivetrain.turn_to_heading(0, DEGREES, wait=True)
+    balls_sorted = 0
+    first_intake.spin(FORWARD, 50, PERCENT)
+    basket_intake_motor.spin(FORWARD, 50, PERCENT)
+    while ball_count > balls_sorted:
+     if color == "blue":
+        if optical.hue() < 300 and optical.hue() > 60:
+            wait(0.3,SECONDS)
+            toprack.spin(FORWARD, 75, PERCENT)
+            wait(0.7,SECONDS)
+            toprack.stop()
+            balls_sorted += 1
+     elif color == "red":
+        if optical.hue() < 17 and optical.hue() > 3:
+            controller_1.rumble('.-. . -..')    
+            print(optical.hue())
+            wait(0.3,SECONDS)
+            toprack.spin(REVERSE, 75, PERCENT)
+            wait(0.7,SECONDS)
+            toprack.stop()
+            balls_sorted += 1
+    first_intake.stop()
+    basket_intake_motor.stop()
+        
+
 
 
 def search_for_objects(range_degrees):
@@ -838,8 +859,7 @@ def test_function_before_going():
 
 def drive_task():
     global test_function
-    #optical_sensor.set_light_power(25, PERCENT)
-    #brightness = optical_sensor.brightness()
+
     #hue = optical_sensor.hue()
     drive_left = 0
     drive_right = 0
@@ -1114,8 +1134,8 @@ controller_1.screen.print("BlahEnzo12")
 
 #search_for_objects(RIGHT,120)
 #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
-
-drive_task()
+color_sort("red", 4)
+#drive_task()
 # create competition instance
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
