@@ -234,28 +234,44 @@ def convert_relative_to_absolute(relative_angle):
 
     return absolute_angle
 def color_sort(color, ball_count):
+    run_basket = 0
+    saw_ball=0
     optical.set_light_power(100)
     optical.set_light(LedStateType.ON)
     balls_sorted = 0
     first_intake.spin(FORWARD, 50, PERCENT)
     basket_intake_motor.spin(FORWARD, 50, PERCENT)
     while ball_count > balls_sorted:
+     if run_basket < 100:
+            basket_intake_motor.spin(FORWARD, 50, PERCENT)
+            run_basket += 1
+     elif run_basket < 150:
+            basket_intake_motor.stop()
+            run_basket += 1
+     else:
+            run_basket = 0
      if color == "blue":
-        if optical.hue() < 300 and optical.hue() > 60:
-            wait(0.3,SECONDS)
-            toprack.spin(FORWARD, 75, PERCENT)
-            wait(0.7,SECONDS)
+            if optical.hue() < 250 and optical.hue() > 200:
+                wait(0.3,SECONDS)
+                toprack.spin(FORWARD, 75, PERCENT)
+            wait(0.5,SECONDS)
             toprack.stop()
             balls_sorted += 1
      elif color == "red":
-        if optical.hue() < 17 and optical.hue() > 3:
-            controller_1.rumble('.-. . -..')    
-            print(optical.hue())
-            wait(0.3,SECONDS)
-            toprack.spin(REVERSE, 75, PERCENT)
-            wait(0.7,SECONDS)
-            toprack.stop()
-            balls_sorted += 1
+        if optical.hue() < 11 and optical.hue() > 5:
+            if saw_ball < 10:
+                saw_ball += 1
+            else:
+                controller_1.rumble('.-.')    
+                print(optical.hue())
+                wait(0.2,SECONDS)
+                toprack.spin(REVERSE, 75, PERCENT)
+                wait(0.5,SECONDS)
+                toprack.stop()
+                balls_sorted += 1
+        else: 
+            saw_ball = 0
+     wait (0.01,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
         
@@ -1134,8 +1150,8 @@ controller_1.screen.print("BlahEnzo12")
 
 #search_for_objects(RIGHT,120)
 #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
-color_sort("red", 4)
-#drive_task()
+#color_sort("red", 6)
+drive_task()
 # create competition instance
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
