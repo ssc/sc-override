@@ -209,11 +209,14 @@ def find_objects_in_data(data_set):
     print(final_object_angle)    
     return (final_object_angle)
 
-def fix_angle_left(range):
-    final_angle = range
-    if range <180:
-        final_angle = range +360
+def fix_angle_left(range,difference):
+    #if range - difference > 0:
+    #    final_angle = range - difference - 360
+    #else:
+    final_angle = range - difference
 
+    if final_angle > 1:
+        final_angle = final_angle - 360
     return final_angle
     #current_gyro_angle = range
     #if current_gyro_angle < 10 and current_gyro_angle > 0:
@@ -291,38 +294,42 @@ def search_for_objects(range_degrees):
     #     wait(100, MSEC)
     #inertial_sensor.reset_rotation()
 
+
+
     if range_degrees < 0:
         direction = LEFT
     else:
         direction = RIGHT
 
-    range_degrees = convert_relative_to_absolute(range_degrees)
+    
     print("enzo" + str(range_degrees))
     controller_1.screen.clear_screen()
     print("we finished calibrating")
     distance_data = []
 
     if direction == LEFT:
-        print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+        difference = inertial_sensor.heading()
+        #print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)  
-        print (range_degrees)
+        #print (range_degrees)
         print(inertial_sensor.heading())
-        while range_degrees < fix_angle_left(inertial_sensor.heading()):
-            print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
+        while range_degrees < fix_angle_left(inertial_sensor.heading(), difference):
+            print("im in while loop" + "  " +str(fix_angle_left(inertial_sensor.heading(), difference)) + "  " + str(distance_sensor.object_distance(MM))+ str(range_degrees)) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
             left_motors.spin(REVERSE,5,PERCENT)
             right_motors.spin(FORWARD,5,PERCENT)
             wait (100,MSEC)
 
-        print("finished moving motors")    
+        print("finished moving motors" + str(fix_angle_left(inertial_sensor.heading(), difference)))    
 
         right_motors.stop()
         left_motors.stop()
     else:
+        difference = 0
         print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)        
-        while range_degrees > fix_angle_left(inertial_sensor.heading()):
+        while range_degrees > fix_angle_left(inertial_sensor.heading(), difference):
             print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
