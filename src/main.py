@@ -291,7 +291,7 @@ def color_sort(color, ball_count):
 def search_for_objects(range_degrees):
     #global smallest_distance_value
     #global smallest_distance_angle
-    global final_object_angle
+    #global final_object_angle
     print("lucas is cool3")
     #controller_1.rumble('......')
     # while inertial_sensor.is_calibrating():
@@ -333,10 +333,10 @@ def search_for_objects(range_degrees):
         right_motors.stop()
         left_motors.stop()
     else:
-        difference = 0
+        difference = inertial_sensor.heading()
         print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)        
-        while range_degrees > fix_angle_left(inertial_sensor.heading(), difference):
+        while range_degrees > (inertial_sensor.heading() - difference):
             print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
             distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
 
@@ -352,7 +352,7 @@ def search_for_objects(range_degrees):
     print("done gathering data")
     smallest_distance = 100000
     smallest_distance_angle = 0
-    find_objects_in_data(distance_data)
+    final_object_angle = find_objects_in_data(distance_data)
     # for i in distance_data:
     #     if i[1] < smallest_distance:
     #         smallest_distance = i[1]
