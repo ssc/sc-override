@@ -238,7 +238,7 @@ def color_sort(color):
     optical.set_light(LedStateType.ON)
     if color == "blue":
         if optical.hue() < 55 and optical.hue() > 0:
-
+            drivetrain.turn_to_heading(0, DEGREES, wait=True)
 
 
 def search_for_objects(range_degrees):
@@ -253,16 +253,17 @@ def search_for_objects(range_degrees):
     #     controller_1.screen.print("Calibrating Gyro")
     #     wait(100, MSEC)
     #inertial_sensor.reset_rotation()
+
+    if range_degrees < 0:
+        direction = LEFT
+    else:
+        direction = RIGHT
+
     range_degrees = convert_relative_to_absolute(range_degrees)
     print("enzo" + str(range_degrees))
     controller_1.screen.clear_screen()
     print("we finished calibrating")
     distance_data = []
-
-    if range_degrees < 180:
-        direction = RIGHT
-    else:
-        direction = LEFT
 
     if direction == LEFT:
         print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
@@ -837,8 +838,8 @@ def test_function_before_going():
 
 def drive_task():
     global test_function
-    optical_sensor.set_light_power(25, PERCENT)
-    brightness = optical_sensor.brightness()
+    #optical_sensor.set_light_power(25, PERCENT)
+    #brightness = optical_sensor.brightness()
     #hue = optical_sensor.hue()
     drive_left = 0
     drive_right = 0
