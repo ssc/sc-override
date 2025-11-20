@@ -39,6 +39,7 @@ right_tube_spin = 0
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT9)
+distance_sensor_back = Distance(Ports.PORT2)
 inertial_sensor = Inertial(Ports.PORT1)
 optical = Optical(Ports.PORT5)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
@@ -236,13 +237,20 @@ def convert_relative_to_absolute(relative_angle):
     #    absolute_angle = inertial_sensor.heading() + relative_angle
 
     return absolute_angle
+# def turn_until_dist_drop(speed, direction, threshold = 150):
+    
+#     initial_dist = distance_sensor.object_distance(MM)
+#     if direction == "left":
+#         while initial_dist 
+#             left_motors.spin(FORWARD, speed, PERCENT)
+
 def color_sort(color, ball_count):
     run_basket = 0
     saw_ball=0
     optical.set_light_power(100)
     optical.set_light(LedStateType.ON)
     balls_sorted = 0
-    first_intake.spin(FORWARD, 50, PERCENT)
+    first_intake.spin(FORWARD, 35, PERCENT)
     basket_intake_motor.spin(FORWARD, 50, PERCENT)
     while ball_count > balls_sorted:
      if run_basket < 100:
@@ -261,7 +269,7 @@ def color_sort(color, ball_count):
                     print(optical.hue())
                     wait(0.2,SECONDS)
                     toprack.spin(REVERSE, 75, PERCENT)
-                    wait(0.5,SECONDS)
+                    wait(0.65,SECONDS)
                     toprack.stop()
                     balls_sorted += 1
             else: 
@@ -276,7 +284,7 @@ def color_sort(color, ball_count):
                 print(optical.hue())
                 wait(0.2,SECONDS)
                 toprack.spin(REVERSE, 75, PERCENT)
-                wait(0.5,SECONDS)
+                wait(0.65,SECONDS)
                 toprack.stop()
                 balls_sorted += 1
         else: 
@@ -459,44 +467,87 @@ def hopper_pickup():
     drivetrain.turn_for(LEFT, 20 * SCALE_VALUE, DEGREES, 25, PERCENT)
     drivetrain.drive_for(FORWARD, 10, MM, 50, PERCENT)
     
-def turn_until_distance(distance,direction,speed):
-    while distance_sensor.object_distance(MM) > distance:
-        if direction == 'left':
-            if left_motor_c.installed():
-                left_motors.spin(REVERSE,speed,PERCENT)
-                right_motors.spin(FORWARD,speed,PERCENT)
-            else: 
-                left_motors.spin(FORWARD,speed,PERCENT)
-                right_motors.spin(REVERSE,speed,PERCENT)
-        elif direction == 'right':
-            if left_motor_c.installed():
-                left_motors.spin(FORWARD,speed,PERCENT)
-                right_motors.spin(REVERSE,speed,PERCENT)
-            else: 
-                left_motors.spin(REVERSE,speed,PERCENT)
-                right_motors.spin(FORWARD,speed,PERCENT)
+def turn_until_distance(distance,direction,speed, sensor_location):
+    if sensor_location == "FRONT":
+        while distance_sensor.object_distance(MM) > distance:
+            if direction == 'left':
+                if left_motor_c.installed():
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+                else: 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+            elif direction == 'right':
+                if left_motor_c.installed():
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+                else: 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+    else:
+         while distance_sensor_back.object_distance(MM) > distance:
+            if direction == 'left':
+                if left_motor_c.installed():
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+                else: 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+            elif direction == 'right':
+                if left_motor_c.installed():
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+                else: 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+
 
     left_motors.stop()
     right_motors.stop()
     return
 
-def move_until_distance(distance,direction,speed):
-    while distance_sensor.object_distance(MM) > distance:
+def move_until_distance(distance,direction,speed, sensor_location):
+    if sensor_location == "FRONT":
         if direction == 'forward':
-            if left_motor_c.installed(): 
-                left_motors.spin(REVERSE,speed,PERCENT)
-                right_motors.spin(REVERSE,speed,PERCENT)
-            else: 
-                left_motors.spin(FORWARD,speed,PERCENT)
-                right_motors.spin(FORWARD,speed,PERCENT)
+        
+            while distance_sensor.object_distance(MM) > distance:
+                if left_motor_c.installed(): 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+                else: 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
         elif direction == 'reverse':
-            if left_motor_c.installed():
-                left_motors.spin(FORWARD,speed,PERCENT)
-                right_motors.spin(FORWARD,speed,PERCENT)
-            else: 
-                left_motors.spin(REVERSE,speed,PERCENT)
-                right_motors.spin(REVERSE,speed,PERCENT)
+            while distance_sensor.object_distance(MM)< distance:
 
+                if left_motor_c.installed(): 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+                else: 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(REVERSE, speed,PERCENT)
+
+    elif sensor_location == "BACK":
+        if direction == 'forward':
+            while distance_sensor_back.object_distance(MM) < distance:
+
+                if left_motor_c.installed(): 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
+                else: 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+        elif direction == 'reverse':
+            while distance_sensor_back.object_distance(MM) > distance:
+
+                if left_motor_c.installed(): 
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(FORWARD,speed,PERCENT)
+                else: 
+                    left_motors.spin(REVERSE,speed,PERCENT)
+                    right_motors.spin(REVERSE, speed,PERCENT)
+
+        
     left_motors.stop()
     right_motors.stop()
     return
@@ -595,7 +646,7 @@ def skills_auton():
 
 
         drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
-
+        
         turn_to_balls()
         
 
@@ -614,7 +665,7 @@ def skills_auton():
         (a,d) = search_for_objects(-80)
         drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
         #going to and outake center goal
-        move_until_distance(310,'forward',20)
+        move_until_distance(310,'forward',20,"BACK")
         color_sort("blue", 4)
         
         #Going to corner 3
@@ -638,7 +689,7 @@ def skills_auton():
         drivetrain.turn_to_heading(155, DEGREES, wait=True)
         (a,d) = search_for_objects(-80)
         drivetrain.turn_to_heading(a, DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
+        drivetrain.drive_for(FORWARD, 350, MM, 50, PERCENT)
         toprack.spin(FORWARD, 75, PERCENT)
         first_intake.spin(REVERSE, 100, PERCENT)
 
@@ -677,7 +728,7 @@ def skills_auton():
         (a,d) = search_for_objects(-80)
         drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
         #going to and outake center goal
-        move_until_distance(310,'forward',20)
+        move_until_distance(310,'forward',20, "BACK")
         first_intake.spin(FORWARD, 100, PERCENT)
         basket_intake_motor.spin(FORWARD, 100, PERCENT)
         toprack.spin(FORWARD, 20, PERCENT)
@@ -824,12 +875,12 @@ def auton_funct():
 
     
 
-
-      drivetrain.drive_for(FORWARD,12, INCHES, 50, PERCENT )
+    #going toward balls
+      drivetrain.drive_for(FORWARD,13, INCHES, 50, PERCENT )
       #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
       first_intake.spin(FORWARD, 100, PERCENT)
       basket_intake_motor.spin(REVERSE, 100, PERCENT)
-      drivetrain.drive_for(FORWARD, 9, INCHES, 10, PERCENT)
+      drivetrain.drive_for(FORWARD, 12, INCHES, 10, PERCENT)
 
 
      
@@ -846,20 +897,25 @@ def auton_funct():
      
       drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
 
+    #turning toward goal
       if vex_brain_slot == 1:
-         turn_until_distance(750,'left',5)
+         turn_until_distance(750,'left',5, "BACK")
 
       else: 
-         turn_until_distance(750,'right',5)
-
+         turn_until_distance(750,'right',5, "BACK")
      
-
+    #moving toward goal
       first_intake.spin(FORWARD, 50, PERCENT)
       basket_intake_motor.spin(FORWARD, 100, PERCENT)
       brain.screen.print("we made it")
       toprack.spin(REVERSE, 100, PERCENT)
-      move_until_distance(150,'reverse',20)
-      drivetrain.turn_for(LEFT, 8,DEGREES,5,PERCENT)
+      move_until_distance(100,'reverse',20,"BACK")
+
+      if vex_brain_slot == 1:
+          drivetrain.turn_for(RIGHT, 5, DEGREES, 100, PERCENT)
+          print("hi im caleb")
+
+      drivetrain.turn_to_heading(convert_relative_to_absolute(-8))
 
 
 
@@ -880,11 +936,25 @@ def potentiometer_test():
 
 
 def test_function_before_going():
+    while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
     print("we are in the test function before going")
+    
+
+    #move_until_distance (100,'forward',30,"FRONT")
+    move_until_distance(100,'reverse',30,"BACK")
+    drivetrain.drive_for(FORWARD, 5,INCHES)
+
     
     brain.screen.clear_screen()
     brain.screen.print("Testing Function Before Going")
     #wait(2, SECONDS)
+    move_until_distance(50, REVERSE, 30, "BACK")
     drivetrain.turn_to_heading(270,DEGREES,wait=True)
     drivetrain.turn_to_heading(359,DEGREES,wait=True)
     (a,d) = search_for_objects(-90)
@@ -1225,6 +1295,8 @@ controller_1.screen.clear_screen()
 controller_1.screen.set_cursor(2,1)
 controller_1.screen.print("BlahEnzo12")
 
+
+#test_function_before_going()
 
 
 #search_for_objects(RIGHT,120)
