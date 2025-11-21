@@ -899,32 +899,38 @@ def auton_funct():
 
     #turning toward goal
       if vex_brain_slot == 1:
-         turn_until_distance(750,'left',5, "BACK")
+         turn_until_distance(400,'left',5, "BACK")
 
       else: 
-         turn_until_distance(750,'right',5, "BACK")
+         turn_until_distance(400,'right',5, "BACK")
      
     #moving toward goal
-      first_intake.spin(FORWARD, 50, PERCENT)
+      first_intake.spin(FORWARD, 40, PERCENT)
       basket_intake_motor.spin(FORWARD, 100, PERCENT)
       brain.screen.print("we made it")
       toprack.spin(REVERSE, 100, PERCENT)
+      if vex_brain_slot == 2:
+          right_motors.spin(FORWARD, 50, PERCENT)
+          wait(0.1, SECONDS)
+          right_motors.stop()
       move_until_distance(100,'reverse',20,"BACK")
 
       if vex_brain_slot == 1:
-          drivetrain.turn_for(RIGHT, 5, DEGREES, 100, PERCENT)
+          right_motors.spin(REVERSE, 50, PERCENT)
+          wait(0.1, SECONDS)
+          right_motors.stop()
           print("hi im caleb")
 
-      drivetrain.turn_to_heading(convert_relative_to_absolute(-8))
+      #drivetrain.turn_to_heading(convert_relative_to_absolute(-5), DEGREES, wait=True)
 
 
 
-      wait(3, SECONDS)
+      wait(3.5, SECONDS)
       brain.screen.print("we made it 2")
       basket_intake_motor.stop()
       first_intake.stop()
       toprack.stop()
-      drivetrain.drive_for(REVERSE, 2, INCHES, 75 , PERCENT)
+      drivetrain.drive_for(REVERSE, 1, INCHES, 75 , PERCENT)
 
 def potentiometer_test():
     brain.screen.clear_screen()
