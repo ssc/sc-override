@@ -647,7 +647,36 @@ def turn_to_balls():
     collect_balls()
 
 
+def twenty_point_skills(lucas=0):
+   #lucas = 1
+   if not lucas == 1:
+    first_intake.spin(FORWARD,100,PERCENT)
+    basket_intake_motor.spin(REVERSE,100,PERCENT)
+    tube_intake_motor.spin(REVERSE,100,PERCENT)
+    wait(3,SECONDS)
+   #drivetrain.drive_for(REVERSE,5,INCHES)
+    drivetrain.drive_for(FORWARD, 20, INCHES) 
+  # drivetrain.drive_for(REVERSE, 15, INCHES)
+   #drivetrain.drive_for(FORWARD,20,INCHES)
+   #drivetrain.drive_for(REVERSE,5, INCHES)
+   #drivetrain.drive_for(FORWARD,15,INCHES)
+    first_intake.stop()
+    basket_intake_motor.stop()
+    tube_intake_motor.stop()
 
+   else:
+    tube_intake_motor.spin(REVERSE,100,PERCENT)
+    wait (2, SECONDS)
+    tube_intake_motor.stop()
+    drivetrain.drive_for(REVERSE,12,INCHES)
+    drivetrain.turn_to_heading(90)
+    drivetrain.drive_for(FORWARD,18,INCHES)
+    drivetrain.turn_to_heading(convert_relative_to_absolute(60))
+    (a,d) = search_for_objects(-110,)
+    drivetrain.turn_to_heading(a)
+    move_until_distance(30,FORWARD,30,"FRONT")
+    collect_balls()
+   
 def skills_auton():
     global MAX_SPEED
     vex_brain_slot = 1
@@ -663,6 +692,10 @@ def skills_auton():
     if kuba == 1:
     #set up to intake balls
     #hello
+
+        #twenty_point_skills(1)
+
+       
         drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
         drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
         collect_balls()
@@ -742,36 +775,7 @@ def skills_auton():
         # (a,d) = search_for_objects(-80)
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
-def twenty_point_skills(lucas=0):
-   #lucas = 1
-   if not lucas == 1:
-    first_intake.spin(FORWARD,100,PERCENT)
-    basket_intake_motor.spin(REVERSE,100,PERCENT)
-    tube_intake_motor.spin(REVERSE,100,PERCENT)
-    wait(3,SECONDS)
-   #drivetrain.drive_for(REVERSE,5,INCHES)
-    drivetrain.drive_for(FORWARD, 20, INCHES) 
-  # drivetrain.drive_for(REVERSE, 15, INCHES)
-   #drivetrain.drive_for(FORWARD,20,INCHES)
-   #drivetrain.drive_for(REVERSE,5, INCHES)
-   #drivetrain.drive_for(FORWARD,15,INCHES)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    tube_intake_motor.stop()
 
-   else:
-    tube_intake_motor.spin(REVERSE,100,PERCENT)
-    wait (2, SECONDS)
-    tube_intake_motor.stop()
-    drivetrain.drive_for(REVERSE,12,INCHES)
-    drivetrain.turn_to_heading(90)
-    drivetrain.drive_for(FORWARD,18,INCHES)
-    drivetrain.turn_to_heading(convert_relative_to_absolute(60))
-    (a,d) = search_for_objects(-110,)
-    drivetrain.turn_to_heading(a)
-    move_until_distance(30,FORWARD,30,"FRONT")
-    collect_balls()
-   
 
 
 def auton_funct():
@@ -790,7 +794,7 @@ def auton_funct():
           vex_brain_slot = 2
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
-          #skills_auton()]
+          #skills_auton()
           twenty_point_skills(0)
           return
       
