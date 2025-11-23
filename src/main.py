@@ -742,8 +742,20 @@ def skills_auton():
         # (a,d) = search_for_objects(-80)
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
-
-    
+def twenty_point_skills():
+   first_intake.spin(FORWARD,100,PERCENT)
+   basket_intake_motor.spin(REVERSE,100,PERCENT)
+   tube_intake_motor.spin(REVERSE,100,PERCENT)
+   wait(3,SECONDS)
+   #drivetrain.drive_for(REVERSE,5,INCHES)
+   drivetrain.drive_for(FORWARD, 20, INCHES) 
+  # drivetrain.drive_for(REVERSE, 15, INCHES)
+   #drivetrain.drive_for(FORWARD,20,INCHES)
+   #drivetrain.drive_for(REVERSE,5, INCHES)
+   #drivetrain.drive_for(FORWARD,15,INCHES)
+   first_intake.stop()
+   basket_intake_motor.stop()
+   tube_intake_motor.stop()
    
 
 
@@ -763,7 +775,8 @@ def auton_funct():
           vex_brain_slot = 2
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
-          skills_auton()
+          #skills_auton()]
+          twenty_point_skills()
           return
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
@@ -1251,6 +1264,8 @@ controller_1.screen.print("Running")
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
 # create competition instance
-comp = Competition(user_control, autonomous)
+#drive_task()
+twenty_point_skills()
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
