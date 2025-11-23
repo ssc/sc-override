@@ -742,8 +742,8 @@ def skills_auton():
         # (a,d) = search_for_objects(-80)
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
-def twenty_point_skills():
-   lucas = 1
+def twenty_point_skills(lucas=0):
+   #lucas = 1
    if not lucas == 1:
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
@@ -791,7 +791,7 @@ def auton_funct():
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()]
-          twenty_point_skills()
+          twenty_point_skills(0)
           return
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
@@ -1280,7 +1280,7 @@ controller_1.screen.print("Running")
 #outake_empty()
 # create competition instance
 #drive_task()
-twenty_point_skills()
-#comp = Competition(user_control, autonomous)
+#twenty_point_skills(0)
+comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
