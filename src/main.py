@@ -39,6 +39,8 @@ right_tube_spin = 0
 #smallest_distance_angle = 0
 
 # Configure the optical sensor on a specific port (change port number as needed)
+Digin = DigitalIn(brain.three_wire_port.c)
+Digout = DigitalOut(brain.three_wire_port.c)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT9)
@@ -99,6 +101,15 @@ toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 LEFT = 1
 RIGHT = 0
 
+
+def ramp_up(input_percent):
+    if (input_percent < 50):
+        return input_percent * 0.5
+    elif (input_percent < 75):
+        return input_percent * 0.75
+    else:
+        return input_percent
+    
 
 
 def outake_empty():
@@ -648,34 +659,25 @@ def turn_to_balls():
 
 
 def twenty_point_skills(lucas=0):
-   #lucas = 1
+   lucas = 1
    if not lucas == 1:
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     tube_intake_motor.spin(REVERSE,100,PERCENT)
-    wait(3,SECONDS)
+    wait(5,SECONDS)
    #drivetrain.drive_for(REVERSE,5,INCHES)
     drivetrain.drive_for(FORWARD, 20, INCHES) 
-  # drivetrain.drive_for(REVERSE, 15, INCHES)
+   #drivetrain.drive_for(REVERSE, 15, INCHES)
    #drivetrain.drive_for(FORWARD,20,INCHES)
    #drivetrain.drive_for(REVERSE,5, INCHES)
    #drivetrain.drive_for(FORWARD,15,INCHES)
+    wait(10,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
     tube_intake_motor.stop()
 
    else:
-    tube_intake_motor.spin(REVERSE,100,PERCENT)
-    wait (2, SECONDS)
-    tube_intake_motor.stop()
-    drivetrain.drive_for(REVERSE,12,INCHES)
-    drivetrain.turn_to_heading(90)
-    drivetrain.drive_for(FORWARD,18,INCHES)
-    drivetrain.turn_to_heading(convert_relative_to_absolute(60))
-    (a,d) = search_for_objects(-110,)
-    drivetrain.turn_to_heading(a)
-    move_until_distance(30,FORWARD,30,"FRONT")
-    collect_balls()
+    skills_auton()
    
 def skills_auton():
     global MAX_SPEED
@@ -694,54 +696,47 @@ def skills_auton():
     #hello
 
         #twenty_point_skills(1)
-
-       
-        drivetrain.drive_for(FORWARD,23, INCHES, 50, PERCENT)
-        drivetrain.turn_to_heading(calibratedAngle(32), DEGREES, wait=True)
-        collect_balls()
-        #tube_intake_motor.stop()
-        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, 25, INCHES, 25, PERCENT)
+        tube_intake_motor.spin(REVERSE,100,PERCENT)
+        wait (2, SECONDS)
+        tube_intake_motor.stop()
+        drivetrain.drive_for(REVERSE,10,INCHES)
+        drivetrain.turn_to_heading(calibratedAngle(90))
+        drivetrain.drive_for(FORWARD,18,INCHES)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(55))
+        (a,d) = search_for_objects(-70)
+        drivetrain.turn_to_heading(a)
+        drivetrain.drive_for(FORWARD,d-30,MM)
+        turn_to_balls()
+        
+        drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
+        drivetrain.drive_for(FORWARD, 23, INCHES, 25, PERCENT)
         #scanning corner 2
-        drivetrain.turn_to_heading(calibratedAngle(45), DEGREES, wait=True)
-        (a,d) = search_for_objects(-80)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(65), DEGREES, wait=True)
+        (a,d) = search_for_objects(-70)
         #going to and intake corner 2
         
         drivetrain.turn_to_heading(a, DEGREES, wait=True) 
         print("caleb is unhappy")
-
-
-
-
-        drivetrain.drive_for(FORWARD, d-35, MM, 25, PERCENT)
-        
+        drivetrain.drive_for(FORWARD,d-30,MM)
         turn_to_balls()
-        
-
-
-
-   
     
         basket_intake_motor.stop()
         first_intake.stop()
-        drivetrain.drive_for(REVERSE, 10, INCHES, 40, PERCENT)
+      
         #finding center goal
-        controller_1.screen.clear_screen()
-        controller_1.screen.set_cursor(2,1)
-        controller_1.screen.print(inertial_sensor.heading(DEGREES))
-        drivetrain.turn_to_heading(calibratedAngle(275), DEGREES, wait=True)
-        (a,d) = search_for_objects(-80)
-        drivetrain.turn_to_heading(a-2, DEGREES, wait=True)    
+        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        (a,d) = search_for_objects(-90)
+        drivetrain.turn_to_heading(a - 7, DEGREES, wait=True)    
         #going to and outake center goal
-        move_until_distance(380,'forward',50,"FRONT")
+        move_until_distance(400,'forward',50,"FRONT")
         outake_empty()
         move_until_distance(550, 'reverse', 50, "FRONT")
         wait(0.25, SECONDS)
-        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+        drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
         wait(0.25, SECONDS)
-        move_until_distance(650, 'reverse', 50, "BACK")
-        one_wheel_turn_to_heading(265, 'left', REVERSE)
-        go_to_bump()
+        move_until_distance(580, 'reverse', 50, "BACK")
+        one_wheel_turn_to_heading(355, 'left', REVERSE)
+        park_after_bump()
         # color_sort("blue", 3)
         
         # #Going to corner 3
@@ -788,7 +783,7 @@ def auton_funct():
       global MAX_SPEED
       if potentiometer.value() < 1250:
           vex_brain_slot = 1
-          brain.screen.print("right Side Auton")
+          
 
       elif potentiometer.value() > 2250 and potentiometer.value() < 4050:
           vex_brain_slot = 2
@@ -810,11 +805,11 @@ def auton_funct():
     
 
     #going toward balls
-      drivetrain.drive_for(FORWARD,13, INCHES, 50, PERCENT )
+      drivetrain.drive_for(FORWARD,13, INCHES, 75, PERCENT )
       #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
       first_intake.spin(FORWARD, 100, PERCENT)
       basket_intake_motor.spin(REVERSE, 100, PERCENT)
-      drivetrain.drive_for(FORWARD, 12, INCHES, 10, PERCENT)
+      drivetrain.drive_for(FORWARD, 12, INCHES, 20, PERCENT)
 
 
      
@@ -829,7 +824,7 @@ def auton_funct():
 
          drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
      
-      drivetrain.drive_for(FORWARD, 32, INCHES, 35 , PERCENT)
+      drivetrain.drive_for(FORWARD, 32, INCHES, 50 , PERCENT)
 
     #turning toward goal
       if vex_brain_slot == 1:
@@ -839,9 +834,9 @@ def auton_funct():
          turn_until_distance(400,'right',5, "BACK")
      
     #moving toward goal
-      first_intake.spin(FORWARD, 40, PERCENT)
+      first_intake.spin(FORWARD, 50, PERCENT)
       basket_intake_motor.spin(FORWARD, 100, PERCENT)
-      brain.screen.print("we made it")
+      
       toprack.spin(REVERSE, 100, PERCENT)
       if vex_brain_slot == 2:
           right_motors.spin(FORWARD, 50, PERCENT)
@@ -853,14 +848,14 @@ def auton_funct():
           right_motors.spin(REVERSE, 50, PERCENT)
           wait(0.1, SECONDS)
           right_motors.stop()
-          print("hi im caleb")
+          
 
       #drivetrain.turn_to_heading(convert_relative_to_absolute(-5), DEGREES, wait=True)
 
 
 
       wait(3.5, SECONDS)
-      brain.screen.print("we made it 2")
+      
       basket_intake_motor.stop()
       first_intake.stop()
       toprack.stop()
@@ -1033,17 +1028,17 @@ def drive_task():
 
                 # Apply tank drive
                 if left_motor_c.installed():
-                    left_motor_a.spin(FORWARD, drive_left * 100, PERCENT)
-                    left_motor_b.spin(FORWARD, drive_left * 100, PERCENT)
-                    left_motor_c.spin(FORWARD, drive_left * 100, PERCENT)
-                    right_motor_a.spin(FORWARD, drive_right * 100, PERCENT)
-                    right_motor_b.spin(FORWARD, drive_right * 100, PERCENT)
-                    right_motor_c.spin(FORWARD, drive_right * 100, PERCENT)
+                    left_motor_a.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                    left_motor_b.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                    left_motor_c.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                    right_motor_a.spin(FORWARD, ramp_up(drive_right), PERCENT)
+                    right_motor_b.spin(FORWARD, ramp_up(drive_right), PERCENT)
+                    right_motor_c.spin(FORWARD, ramp_up(drive_right), PERCENT)
                 else:
-                    left_motor_a.spin(FORWARD, drive_left * 1, PERCENT)
-                    left_motor_b.spin(FORWARD, drive_left * 1, PERCENT)
-                    right_motor_a.spin(FORWARD, drive_right * 1, PERCENT)
-                    right_motor_b.spin(FORWARD, drive_right * 1, PERCENT)
+                    left_motor_a.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                    left_motor_b.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                    right_motor_a.spin(FORWARD, ramp_up(drive_right), PERCENT)
+                    right_motor_b.spin(FORWARD, ramp_up(drive_right), PERCENT)
 
 
         else:
@@ -1106,7 +1101,13 @@ def drive_task():
         if toprack_control == 0:
             toprack_control = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * 70
 
-
+        if controller_1.buttonX.pressing():
+            Digout.set(True)
+            #controller_1.rumble('......')
+        if controller_1.buttonB.pressing():
+            Digout.set(False)
+            #controller_1.rumble('-----')
+            
 
         if right_tube_spin == 1 and tube_intake_motor_control == 0:
             controller_1.screen.clear_screen()
@@ -1223,36 +1224,40 @@ def ballsucktest():
     inertial_sensor.set_heading(0, DEGREES)
     ball_sucker('left',700, 0)
 
-def nothing_k():
-    controller_1.rumble('......____')
 
 
-dontdoit = False
+
+#dontdoit = False
 
 def park_after_bump():
 
     
-    global dontdoit
+    #global dontdoit
     
-    if (dontdoit == False):
+    #if (dontdoit == False):
         right_motors.stop()
         left_motors.stop()
         wait(1, SECONDS)
-        drivetrain.drive_for(REVERSE, 10, INCHES, 100, PERCENT)    
-        controller_1.rumble('...___')
-        drivetrain.drive_for(FORWARD, 40, INCHES, 100, PERCENT)
-        callback = nothing_k
-        dontdoit = True
+        drivetrain.drive_for(FORWARD, 20, INCHES, 100, PERCENT) 
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(REVERSE, 100, PERCENT)
+        tube_intake_motor.spin(REVERSE, 100, PERCENT)
+        drivetrain.drive_for(FORWARD, 30, INCHES) 
+        wait(5, SECONDS)
+        first_intake.stop()
+        basket_intake_motor.stop()
+        tube_intake_motor.stop()
+        # dontdoit = True
     
 
 
-def go_to_bump():
+# def go_to_bump():
     
-    callback = park_after_bump
-    right_motors.spin(FORWARD, 75, PERCENT)
-    left_motors.spin(FORWARD, 75, PERCENT)
-    wait(0.5, SECONDS)
-    inertial_sensor.collision(callback)
+    
+#     right_motors.spin(FORWARD, 75, PERCENT)
+#     left_motors.spin(FORWARD, 75, PERCENT)
+#     wait(0.5, SECONDS)
+#     inertial_sensor.collision() 
     
     
 
@@ -1283,8 +1288,8 @@ controller_1.screen.print("Running")
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
 # create competition instance
-#drive_task()
+drive_task()
 #twenty_point_skills(0)
-comp = Competition(user_control, autonomous)
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
