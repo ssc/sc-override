@@ -39,6 +39,8 @@ right_tube_spin = 0
 #smallest_distance_angle = 0
 
 # Configure the optical sensor on a specific port (change port number as needed)
+DigInMatch = DigitalIn(brain.three_wire_port.f)
+DigOutMatch = DigitalOut(brain.three_wire_port.f)
 Digin = DigitalIn(brain.three_wire_port.c)
 Digout = DigitalOut(brain.three_wire_port.c)
 bumper = Bumper(brain.three_wire_port.a)
@@ -961,7 +963,10 @@ def test_function_before_going():
 
 def drive_task():
     global test_function
-
+    descorer_out = 0
+    matchloader_out = 0
+    descorer = 0
+    matchloader = 0
     #hue = optical_sensor.hue()
     drive_left = 0
     drive_right = 0
@@ -1102,10 +1107,34 @@ def drive_task():
             toprack_control = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * 70
 
         if controller_1.buttonX.pressing():
-            Digout.set(True)
+            if descorer == 0:
+                descorer = 1
+                if descorer_out == 0:
+                    Digout.set(True)
+                    descorer_out = 1
+                else:
+                    Digout.set(False)
+                    descorer_out = 0
+
+        else:
+            descorer = 0
+
             #controller_1.rumble('......')
+   
+
         if controller_1.buttonB.pressing():
-            Digout.set(False)
+            if matchloader == 0:
+                matchloader = 1
+                if matchloader_out == 0:
+                    DigOutMatch.set(True)
+                    matchloader_out = 1
+                else:
+                    DigOutMatch.set(False)
+                    matchloader_out = 0
+
+        else:
+            matchloader = 0
+            #Digout.set(False)
             #controller_1.rumble('-----')
             
 
