@@ -684,7 +684,8 @@ def twenty_point_skills(lucas=0):
 def skills_auton():
     global MAX_SPEED
     vex_brain_slot = 1
-    kuba = 1
+    kuba = 0
+    caleb = 1
     
     
    
@@ -693,9 +694,25 @@ def skills_auton():
     controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..")
     wait(100, MSEC)  
 
+    if caleb == 1:
+        DigOutMatch.set(False)
+        tube_intake_motor.spin(FORWARD,100,PERCENT)
+        wait(2000,MSEC)
+        tube_intake_motor.stop()
+        one_wheel_turn_to_heading(270, 'left',REVERSE)
+        drivetrain.turn_to_heading(180, DEGREES, wait=True)
+        move_until_distance(540, 'forward', 30, "FRONT")
+        drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
+        move_until_distance(350,"forward",30,"FRONT")
+        DigOutMatch.set(True)
+        drivetrain.drive_for(FORWARD,4,INCHES)
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(REVERSE, 100, PERCENT)
+        
+
     if kuba == 1:
     #set up to intake balls
-    #hello
+    #hellof
 
         #twenty_point_skills(1)
         tube_intake_motor.spin(REVERSE,100,PERCENT)
@@ -792,7 +809,7 @@ def auton_funct():
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()
-          twenty_point_skills(0)
+          skills_auton()
           return
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
@@ -807,15 +824,16 @@ def auton_funct():
     
 
     #going toward balls
-      drivetrain.drive_for(FORWARD,13, INCHES, 75, PERCENT )
-      #drivetrain.turn_to_heading(calibratedAngle(35), DEGREES, wait=True)
       first_intake.spin(FORWARD, 100, PERCENT)
       basket_intake_motor.spin(REVERSE, 100, PERCENT)
-      drivetrain.drive_for(FORWARD, 12, INCHES, 20, PERCENT)
 
+      drivetrain.drive_for(FORWARD,12, INCHES, 35, PERCENT )
+      #drivetrain.drive_for(FORWARD,5, INCHES, 25, PERCENT )
+      move_until_distance(25, "forward",20,"FRONT")
+      DigOutMatch.set(True)
+      drivetrain.drive_for(FORWARD,5, INCHES, 20, PERCENT )
 
-     
-      wait(0.5,SECONDS)
+      wait(1,SECONDS)
       first_intake.stop()
       basket_intake_motor.stop()
 
@@ -826,7 +844,7 @@ def auton_funct():
 
          drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
      
-      drivetrain.drive_for(FORWARD, 32, INCHES, 50 , PERCENT)
+      drivetrain.drive_for(FORWARD, 24, INCHES, 50 , PERCENT)
 
     #turning toward goal
       if vex_brain_slot == 1:
@@ -978,6 +996,7 @@ def drive_task():
     brain.screen.print(potentiometer.value())
     global left_tube_spin
     global right_tube_spin
+    print("very unique")
     while True:
 
         global distance
@@ -1164,8 +1183,6 @@ def drive_task():
         basket_intake_motor.spin(FORWARD, basket_intake_control * MOTOR_MULTIPLIER, PERCENT)    
         toprack.spin(REVERSE, toprack_control * 100, PERCENT)
         tube_intake_motor.spin(FORWARD, tube_intake_motor_control, PERCENT)
-       
-
    
 
         if controller_2.buttonUp.pressing():
@@ -1176,9 +1193,11 @@ def drive_task():
         # Autonomous function (X button on either controller)
         #and controller_2.buttonX.pressing()
         if bumper.pressing():
+            print('Caleb1')
             global bumper_was_pressing
             if bumper_was_pressing == 0:
                 bumper_was_pressing = 1
+                print('Caleb2')
                 auton_funct()
 
         if controller_2.buttonUp.pressing() or controller_1.buttonUp.pressing():
@@ -1317,8 +1336,10 @@ controller_1.screen.print("Running")
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
 # create competition instance
-drive_task()
-#twenty_point_skills(0)
-#comp = Competition(user_control, autonomous)
+
+print("i am before")
+#drive_task()#twenty_point_skills(0)
+print('hello my name is caleb')
+comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
