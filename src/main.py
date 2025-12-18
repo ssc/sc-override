@@ -25,7 +25,7 @@ def calibratedAngle(idealAngle):
     return (idealAngle * gyro_360/360)
         
 distance = 0
-
+collision_funct_stopper = 0
 final_object_angle = []
 # actions to do when the program starts
 brain.screen.clear_screen()
@@ -290,6 +290,21 @@ def convert_relative_to_absolute(relative_angle):
 #     if direction == "left":
 #         while initial_dist 
 #             left_motors.spin(FORWARD, speed, PERCENT)
+def intake_from_tube():
+    global collision_funct_stopper
+    print("collision")
+    if collision_funct_stopper == 1:
+        drivetrain.stop()
+        print("action!")
+        collision_funct_stopper +=1
+        drivetrain.drive_for(REVERSE,0.5,INCHES)
+        first_intake.spin(FORWARD, 100, PERCENT)
+        basket_intake_motor.spin(FORWARD, 100, PERCENT)
+        wait(10000, MSEC)
+        first_intake.stop()
+        basket_intake_motor.stop()
+
+
 
 def color_sort(color, ball_count):
     run_basket = 0
@@ -699,16 +714,16 @@ def skills_auton():
         tube_intake_motor.spin(FORWARD,100,PERCENT)
         wait(2000,MSEC)
         tube_intake_motor.stop()
+        drivetrain.drive_for(REVERSE, 7, INCHES)
         one_wheel_turn_to_heading(270, 'left',REVERSE)
         drivetrain.turn_to_heading(180, DEGREES, wait=True)
         move_until_distance(540, 'forward', 30, "FRONT")
         drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-        move_until_distance(350,"forward",30,"FRONT")
+        move_until_distance(370,"forward",30,"FRONT")
         DigOutMatch.set(True)
-        drivetrain.drive_for(FORWARD,4,INCHES)
-        first_intake.spin(FORWARD, 100, PERCENT)
-        basket_intake_motor.spin(REVERSE, 100, PERCENT)
-        
+        inertial_sensor.collision(intake_from_tube)
+        drivetrain.drive_for(FORWARD,10,INCHES)
+
 
     if kuba == 1:
     #set up to intake balls
