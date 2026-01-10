@@ -39,10 +39,10 @@ right_tube_spin = 0
 #smallest_distance_angle = 0
 
 # Configure the optical sensor on a specific port (change port number as needed)
-DigInMatch = DigitalIn(brain.three_wire_port.f)
-DigOutMatch = DigitalOut(brain.three_wire_port.f)
-Digin = DigitalIn(brain.three_wire_port.c)
-Digout = DigitalOut(brain.three_wire_port.c)
+DigInMatch = DigitalIn(brain.three_wire_port.g)
+DigOutMatch = DigitalOut(brain.three_wire_port.g)
+Digin = DigitalIn(brain.three_wire_port.h)
+Digout = DigitalOut(brain.three_wire_port.h)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT9)
@@ -77,6 +77,7 @@ right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
 right_motor_c = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True)
 left_motor_b.set_reversed(False)
 left_motor_a.set_reversed(False)
+right_motor_a.set_reversed(False)
 if left_motor_c.installed():
     right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
     left_motors = MotorGroup(left_motor_a, left_motor_b, left_motor_c)
@@ -445,8 +446,15 @@ def search_for_objects(range_degrees):
     return (smallest_distance_angle, smallest_distance_value)
     #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
 
-
-
+def back_until_yaw(left_or_right,amount,speed):
+    if left_or_right == "left":
+        while inertial_sensor.heading() > amount:
+            controller_1.screen.clear_screen()
+            controller_1.screen.print(inertial_sensor.heading())
+            left_motors.spin(REVERSE,speed,PERCENT)
+            right_motors.spin(REVERSE,speed,PERCENT)
+        right_motors.stop()
+        left_motors.stop()
 
 def ball_sucker(direction, top_range, bottom_range):
     #forward_dist = distance_sensor.object_distance(MM)
@@ -570,16 +578,21 @@ def turn_until_distance(distance,direction,speed, sensor_location):
     return
 
 def move_until_distance(distance,direction,speed, sensor_location):
+    sensed_once = 0
     if sensor_location == "FRONT":
         if direction == 'forward':
         
-            while distance_sensor.object_distance(MM) > distance:
+            while sensed_once < 1:
                 if left_motor_c.installed(): 
                     left_motors.spin(REVERSE,speed,PERCENT)
                     right_motors.spin(REVERSE,speed,PERCENT)
                 else: 
                     left_motors.spin(FORWARD,speed,PERCENT)
                     right_motors.spin(FORWARD,speed,PERCENT)
+                if distance_sensor.object_distance() < distance:
+                    sensed_once += 1
+                else:
+                    sensed_once = 0
         elif direction == 'reverse':
             while distance_sensor.object_distance(MM)< distance:
 
@@ -614,6 +627,17 @@ def move_until_distance(distance,direction,speed, sensor_location):
     left_motors.stop()
     right_motors.stop()
     return
+
+def outake_four_balls():
+    first_intake.spin(REVERSE,100,PERCENT)
+    basket_intake_motor.spin(FORWARD,100,PERCENT)
+    toprack.spin(REVERSE, 100, PERCENT)
+    wait(10)
+    toprack.stop()
+    first_intake.stop()
+    basket_intake_motor.stop()
+    move_until_distance(40,'forward',30,"BACK")
+    drivetrain.turn_to_heading(45,DEGREES,20,PERCENT)
 
 
 def turnTestingAuton():
@@ -696,18 +720,50 @@ def twenty_point_skills(lucas=0):
    else:
     skills_auton()
    
+
+def stop_motors():
+    left_motors.stop()
+    right_motors.stop()
+
+
 def skills_auton():
+    outake_four_balls()
+    return
     global MAX_SPEED
     vex_brain_slot = 1
     kuba = 0
     caleb = 1
+    lucas = 0
     
     
    
     controller_1.screen.set_cursor(2,1)
 
-    controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..")
+    #controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
     wait(100, MSEC)  
+    if lucas == 1:
+        Digout.set(False)
+        tube_intake_motor.spin(FORWARD,100,PERCENT)
+        wait(2000,MSEC)
+        tube_intake_motor.stop()
+        one_wheel_turn_to_heading(270,'left',REVERSE)
+        drivetrain.drive_for(REVERSE, 6, INCHES)
+        drivetrain.turn_to_heading(180,DEGREES,wait=True)
+        move_until_distance(500,'forward',30,"FRONT")
+        controller_1.rumble("...--")
+        drivetrain.turn_to_heading(270,DEGREES,20,PERCENT)
+        Digout.set(False)
+        first_intake.spin(REVERSE,100,PERCENT)
+        basket_intake_motor.spin(REVERSE,100,PERCENT)
+        left_motors.spin(FORWARD,100,PERCENT)
+        right_motors.spin(FORWARD,100,PERCENT)
+        #nertial_sensor.collision(stop_motors)
+        wait(3,SECONDS)
+        stop_motors()
+
+        #move_until_distance(100,'forward',40,"FRONT")
+        Digout.set(True)
+
 
     if caleb == 1:
         DigOutMatch.set(False)
@@ -723,6 +779,8 @@ def skills_auton():
         DigOutMatch.set(True)
         inertial_sensor.collision(intake_from_tube)
         drivetrain.drive_for(FORWARD,10,INCHES)
+        controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
+
 
 
     if kuba == 1:
@@ -806,6 +864,31 @@ def skills_auton():
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
 
+def load_n_descore_auton():
+
+    while inertial_sensor.is_calibrating():
+         controller_1.screen.set_cursor(2,1)
+         controller_1.screen.print("Calibrating Gyro")
+         wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    global MAX_SPEED
+
+    first_intake.spin(FORWARD,100,PERCENT)
+    basket_intake_motor.spin(FORWARD,100,PERCENT)
+    toprack.spin(REVERSE,100,PERCENT)
+    wait (8,SECONDS)
+    first_intake.stop()
+    basket_intake_motor.stop()
+    toprack.stop()
+    move_until_distance(300,'forward',20,"BACK")
+    drivetrain.turn_to_heading(convert_relative_to_absolute(45))
+    Digout.set(True)
+    move_until_distance(220,'reverse',20,"BACK")
+    drivetrain.turn_to_heading(0)
+    back_until_yaw("left",-4,40)
+    #move_until_distance(1860,'reverse',50,"BACK")
+
 
 def auton_funct():
       while inertial_sensor.is_calibrating():
@@ -824,7 +907,8 @@ def auton_funct():
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()
-          skills_auton()
+          #skills_auton()
+          lucas_auton()
           return
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
@@ -997,8 +1081,10 @@ def test_function_before_going():
 def drive_task():
     global test_function
     descorer_out = 0
+    descorer_out2 = 0
     matchloader_out = 0
     descorer = 0
+    descorer2 = 0
     matchloader = 0
     #hue = optical_sensor.hue()
     drive_left = 0
@@ -1154,20 +1240,32 @@ def drive_task():
             descorer = 0
 
             #controller_1.rumble('......')
-   
+        
+  
 
         if controller_1.buttonB.pressing():
-            if matchloader == 0:
-                matchloader = 1
-                if matchloader_out == 0:
+            if descorer2 == 0:
+                descorer2 = 1
+                if descorer_out2 == 0:
                     DigOutMatch.set(True)
-                    matchloader_out = 1
+                    descorer_out2 = 1
                 else:
                     DigOutMatch.set(False)
-                    matchloader_out = 0
+                    descorer_out2 = 0
 
         else:
-            matchloader = 0
+            descorer2 = 0
+                        # if matchloader == 0:
+            #     matchloader = 1
+            #     if matchloader_out == 0:
+            
+            #         matchloader_out = 1
+            #     else:
+            #         DigOutMatch.set(False)
+            #         matchloader_out = 0
+
+        #else:
+        #    matchloader = 0
             #Digout.set(False)
             #controller_1.rumble('-----')
             
@@ -1355,6 +1453,7 @@ controller_1.screen.print("Running")
 print("i am before")
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
+#skills_auton()
 comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
