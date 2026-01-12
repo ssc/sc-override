@@ -375,7 +375,132 @@ def color_sort(color, ball_count):
 
 
 
-def search_for_objects(range_degrees):
+def search_for_objects(range_degrees,sensor="BACK"):
+    #global smallest_distance_value
+    #global smallest_distance_angle
+    #global final_object_angle
+    print("lucas is cool3")
+    #controller_1.rumble('......')
+    # while inertial_sensor.is_calibrating():
+    #     controller_1.screen.set_cursor(2,1)
+
+    #     controller_1.screen.print("Calibrating Gyro")
+    #     wait(100, MSEC)
+    #inertial_sensor.reset_rotation()
+
+
+
+    if range_degrees < 0:
+        direction = LEFT
+    else:
+        direction = RIGHT
+
+    
+    print("enzo" + str(range_degrees))
+    controller_1.screen.clear_screen()
+    print("we finished calibrating")
+    distance_data = []
+
+    if sensor == "FRONT":
+
+        if direction == LEFT:
+            difference = inertial_sensor.heading()
+            #print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+            #inertial_sensor.set_heading(359, DEGREES)  
+            #print (range_degrees)
+            print(inertial_sensor.heading())
+            while range_degrees < fix_angle_left(inertial_sensor.heading(), difference):
+                print("im in while loop" + "  " +str(fix_angle_left(inertial_sensor.heading(), difference)) + "  " + str(distance_sensor.object_distance(MM))+ str(range_degrees)) 
+                distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+
+                left_motors.spin(REVERSE,5,PERCENT)
+                right_motors.spin(FORWARD,5,PERCENT)
+                wait (100,MSEC)
+
+            print("finished moving motors" + str(fix_angle_left(inertial_sensor.heading(), difference)))    
+
+            right_motors.stop()
+            left_motors.stop()
+        else:
+            difference = inertial_sensor.heading()
+            print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+            #inertial_sensor.set_heading(359, DEGREES)        
+            while range_degrees > (inertial_sensor.heading() - difference):
+                print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
+                distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+
+                left_motors.spin(FORWARD,5,PERCENT)
+                right_motors.spin(REVERSE,5,PERCENT)
+                wait (100,MSEC)
+
+            print("finished moving motors")    
+
+            right_motors.stop()
+            left_motors.stop()
+    else:
+        if direction == LEFT:
+            difference = inertial_sensor.heading()
+            #print("in the left" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+            #inertial_sensor.set_heading(359, DEGREES)  
+            #print (range_degrees)
+            print(inertial_sensor.heading())
+            while range_degrees < fix_angle_left(inertial_sensor.heading(), difference):
+                print("im in while loop" + "  " +str(fix_angle_left(inertial_sensor.heading(), difference)) + "  " + str(distance_sensor_back.object_distance(MM))+ str(range_degrees)) 
+                distance_data.append((inertial_sensor.heading(), distance_sensor_back.object_distance(MM)))
+
+                left_motors.spin(REVERSE,5,PERCENT)
+                right_motors.spin(FORWARD,5,PERCENT)
+                wait (100,MSEC)
+
+            print("finished moving motors" + str(fix_angle_left(inertial_sensor.heading(), difference)))    
+
+            right_motors.stop()
+            left_motors.stop()
+        else:
+            difference = inertial_sensor.heading()
+            print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
+            #inertial_sensor.set_heading(359, DEGREES)        
+            while range_degrees > (inertial_sensor.heading() - difference):
+                print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor_back.object_distance(MM))) 
+                distance_data.append((inertial_sensor.heading(), distance_sensor_back.object_distance(MM)))
+
+                left_motors.spin(FORWARD,5,PERCENT)
+                right_motors.spin(REVERSE,5,PERCENT)
+                wait (100,MSEC)
+
+            print("finished moving motors")    
+
+            right_motors.stop()
+            left_motors.stop()
+
+    print("done gathering data")
+    smallest_distance = 100000
+    smallest_distance_angle = 0
+    final_object_angle = find_objects_in_data(distance_data)
+    # for i in distance_data:
+    #     if i[1] < smallest_distance:
+    #         smallest_distance = i[1]
+    #         smallest_distance_angle = i[0]
+    #     print("((" + str(i[0]) + "),(" + str(i[1]) + ")),")
+    # print("exiting")
+    print("smallest v   distance " + str(smallest_distance) + " at angle " + str(smallest_distance_angle))
+
+    smallest_distance_value = 100000
+    smallest_distance_angle = 0
+    for i in final_object_angle:
+        if i[1] < smallest_distance_value:
+            smallest_distance_value = i[1]
+            smallest_distance_angle = i[0]
+
+    print(smallest_distance_angle)
+    if smallest_distance_value == 100000:
+        smallest_distance_value = -1
+    return (smallest_distance_angle, smallest_distance_value)
+    #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
+
+
+
+def search_for_objects_back(range_degrees):
     #global smallest_distance_value
     #global smallest_distance_angle
     #global final_object_angle
@@ -408,8 +533,8 @@ def search_for_objects(range_degrees):
         #print (range_degrees)
         print(inertial_sensor.heading())
         while range_degrees < fix_angle_left(inertial_sensor.heading(), difference):
-            print("im in while loop" + "  " +str(fix_angle_left(inertial_sensor.heading(), difference)) + "  " + str(distance_sensor.object_distance(MM))+ str(range_degrees)) 
-            distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+            print("im in while loop" + "  " +str(fix_angle_left(inertial_sensor.heading(), difference)) + "  " + str(distance_sensor_back.object_distance(MM))+ str(range_degrees)) 
+            distance_data.append((inertial_sensor.heading(), distance_sensor_back.object_distance(MM)))
 
             left_motors.spin(REVERSE,5,PERCENT)
             right_motors.spin(FORWARD,5,PERCENT)
@@ -424,8 +549,8 @@ def search_for_objects(range_degrees):
         print("in the right" + str(inertial_sensor.heading()) + " " + str(range_degrees))
         #inertial_sensor.set_heading(359, DEGREES)        
         while range_degrees > (inertial_sensor.heading() - difference):
-            print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor.object_distance(MM))) 
-            distance_data.append((inertial_sensor.heading(), distance_sensor.object_distance(MM)))
+            print("im in while loop" + "  " +str(inertial_sensor.heading()) + "  " + str(distance_sensor_back.object_distance(MM))) 
+            distance_data.append((inertial_sensor.heading(), distance_sensor_back.object_distance(MM)))
 
             left_motors.spin(FORWARD,5,PERCENT)
             right_motors.spin(REVERSE,5,PERCENT)
@@ -460,6 +585,7 @@ def search_for_objects(range_degrees):
         smallest_distance_value = -1
     return (smallest_distance_angle, smallest_distance_value)
     #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
+
 
 def back_until_yaw(left_or_right,amount,speed):
     if left_or_right == "left":
@@ -891,6 +1017,42 @@ def skills_auton():
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
+def back_n_align_auton():
+    while inertial_sensor.is_calibrating():
+            controller_1.screen.set_cursor(2,1)
+            controller_1.screen.print("Calibrating Gyro")
+            wait(100, MSEC)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)    
+
+    # first_intake.spin(REVERSE,100,PERCENT)
+    # basket_intake_motor.spin(FORWARD,100,PERCENT)
+    # toprack.spin(REVERSE,100,PERCENT)
+    # #left_motors.spin(FORWARD,5,PERCENT)
+    # #right_motors.spin(FORWARD,5,PERCENT)
+    # for i in range (1,2):
+    #     wait(3,SECONDS)
+    #     DigOutMatch.set(False)
+    #     wait(0.5,SECONDS)
+    #     DigOutMatch.set(True)
+
+    # left_motors.stop()
+    # toprack.stop()
+    # right_motors.stop()
+    # first_intake.stop()
+    # basket_intake_motor.stop()
+    #left_motors.stop()
+    #right_motors.stop()
+    left_motors.spin(REVERSE,20,PERCENT)
+    right_motors.spin(REVERSE,20,PERCENT)
+    wait (2,SECONDS)
+    left_motors.stop()
+    right_motors.stop()
+    drivetrain.turn_to_heading(25,DEGREES)
+    (a,b)=search_for_objects(-50)
+    drivetrain.turn_to_heading(a,DEGREES)
+    move_until_distance(80,"reverse",20,"BACK")
+    wait(20000)
 
 def load_n_descore_auton():
     
@@ -947,7 +1109,8 @@ def auton_funct():
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()
           #skills_auton()
-          load_n_descore_auton()
+          ##load_n_descore_auton()
+          back_n_align_auton()
           #lucas_auton
           
       
