@@ -1017,7 +1017,7 @@ def skills_auton():
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
-def back_n_align_auton():
+def newauton_back_n_align_auton():
     while inertial_sensor.is_calibrating():
             controller_1.screen.set_cursor(2,1)
             controller_1.screen.print("Calibrating Gyro")
@@ -1054,7 +1054,7 @@ def back_n_align_auton():
     move_until_distance(80,"reverse",20,"BACK")
     wait(20000)
 
-def load_n_descore_auton():
+def newauton_load_n_descore_auton():
     
     if True:
         while inertial_sensor.is_calibrating():
@@ -1089,6 +1089,13 @@ def load_n_descore_auton():
     controller_1.rumble("-..-.-..-.-.-")
     wait(200000)
 
+def newauton_mainfunc():
+    #newauton_sweepballs() # notstarted
+    #newauton_drive_and_alignwithtower() # notstarted
+    #newauton_extractballsfromtower() # notstarted
+    #newauton_back_n_align_auton()   # inprogress
+    newauton_load_n_descore_auton() # done and working
+    #newauton_drive_back_to_park() # notstarted    
 
 
 def auton_funct():
@@ -1110,7 +1117,10 @@ def auton_funct():
           #skills_auton()
           #skills_auton()
           ##load_n_descore_auton()
-          back_n_align_auton()
+
+
+          newauton_mainfunc()
+
           #lucas_auton
           
       
