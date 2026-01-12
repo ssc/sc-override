@@ -448,8 +448,12 @@ def search_for_objects(range_degrees):
 
 def back_until_yaw(left_or_right,amount,speed):
     if left_or_right == "left":
-        while inertial_sensor.heading() > amount:
+        inertial_sensor.reset_heading()
+        while inertial_sensor.heading() < amount:
+            wait(50)
             controller_1.screen.clear_screen()
+            controller_1.screen.set_cursor(3,1)
+            controller_1.screen.print("Enzo")
             controller_1.screen.print(inertial_sensor.heading())
             left_motors.spin(REVERSE,speed,PERCENT)
             right_motors.spin(REVERSE,speed,PERCENT)
@@ -628,7 +632,11 @@ def move_until_distance(distance,direction,speed, sensor_location):
     right_motors.stop()
     return
 
+
 def outake_four_balls():
+    controller_1.screen.clear_screen()
+    controller_1.screen.set_cursor(1,1)
+    controller_1.screen.print("Outtake4")
     first_intake.spin(REVERSE,100,PERCENT)
     basket_intake_motor.spin(FORWARD,100,PERCENT)
     toprack.spin(REVERSE, 100, PERCENT)
@@ -865,29 +873,40 @@ def skills_auton():
 
 
 def load_n_descore_auton():
+    
+    if False:
+        while inertial_sensor.is_calibrating():
+            controller_1.screen.set_cursor(2,1)
+            controller_1.screen.print("Calibrating Gyro")
+            wait(100, MSEC)
+        inertial_sensor.reset_rotation()
+        inertial_sensor.set_heading(0, DEGREES)
+    if False:        
+        global MAX_SPEED
 
-    while inertial_sensor.is_calibrating():
-         controller_1.screen.set_cursor(2,1)
-         controller_1.screen.print("Calibrating Gyro")
-         wait(100, MSEC)
-    inertial_sensor.reset_rotation()
-    inertial_sensor.set_heading(0, DEGREES)
-    global MAX_SPEED
-
-    first_intake.spin(FORWARD,100,PERCENT)
-    basket_intake_motor.spin(FORWARD,100,PERCENT)
-    toprack.spin(REVERSE,100,PERCENT)
-    wait (8,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-    move_until_distance(300,'forward',20,"BACK")
-    drivetrain.turn_to_heading(convert_relative_to_absolute(45))
+        #first_intake.spin(FORWARD,100,PERCENT)
+        basket_intake_motor.spin(FORWARD,100,PERCENT)
+        toprack.spin(REVERSE,100,PERCENT)
+        wait (8,SECONDS)
+        #first_intake.stop()
+        basket_intake_motor.stop()
+        toprack.stop()
+        move_until_distance(300,'forward',20,"BACK")
+        drivetrain.turn_to_heading(convert_relative_to_absolute(45))
+        Digout.set(True)
+        move_until_distance(220,'reverse',20,"BACK")
+        drivetrain.turn_to_heading(1)
+    
     Digout.set(True)
-    move_until_distance(220,'reverse',20,"BACK")
-    drivetrain.turn_to_heading(0)
-    back_until_yaw("left",-4,40)
-    #move_until_distance(1860,'reverse',50,"BACK")
+
+
+    back_until_yaw("left",240,40)
+
+
+
+    controller_1.rumble("-..-.-..-.-.-")
+    wait(200000)
+
 
 
 def auton_funct():
@@ -908,8 +927,9 @@ def auton_funct():
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()
           #skills_auton()
-          lucas_auton()
-          return
+          load_n_descore_auton()
+          #lucas_auton
+          
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
           test_function_before_going()
