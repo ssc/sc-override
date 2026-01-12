@@ -285,6 +285,21 @@ def convert_relative_to_absolute(relative_angle):
     #    absolute_angle = inertial_sensor.heading() + relative_angle
 
     return absolute_angle
+
+
+def convert_absolute_to_relative(absolute_angle):
+
+    relative_angle = absolute_angle
+    if relative_angle > 180:
+        relative_angle = relative_angle - 360
+
+
+    #if relative_angle < 0:
+    #    absolute_angle = inertial_sensor.heading() + relative_angle + 360
+    #else:
+    #    absolute_angle = inertial_sensor.heading() + relative_angle
+
+    return relative_angle
 # def turn_until_dist_drop(speed, direction, threshold = 150):
     
 #     initial_dist = distance_sensor.object_distance(MM)
@@ -449,7 +464,7 @@ def search_for_objects(range_degrees):
 def back_until_yaw(left_or_right,amount,speed):
     if left_or_right == "left":
         inertial_sensor.reset_heading()
-        while inertial_sensor.heading() < amount:
+        while convert_absolute_to_relative(inertial_sensor.heading()) > convert_absolute_to_relative(amount):
             wait(50)
             controller_1.screen.clear_screen()
             controller_1.screen.set_cursor(3,1)
@@ -459,6 +474,11 @@ def back_until_yaw(left_or_right,amount,speed):
             right_motors.spin(REVERSE,speed,PERCENT)
         right_motors.stop()
         left_motors.stop()
+        controller_1.screen.clear_screen()
+        controller_1.screen.set_cursor(3,1)
+        controller_1.screen.print("Finished")
+        controller_1.screen.print(convert_absolute_to_relative(amount))
+        
 
 def ball_sucker(direction, top_range, bottom_range):
     #forward_dist = distance_sensor.object_distance(MM)
@@ -874,14 +894,14 @@ def skills_auton():
 
 def load_n_descore_auton():
     
-    if False:
+    if True:
         while inertial_sensor.is_calibrating():
             controller_1.screen.set_cursor(2,1)
             controller_1.screen.print("Calibrating Gyro")
             wait(100, MSEC)
         inertial_sensor.reset_rotation()
         inertial_sensor.set_heading(0, DEGREES)
-    if False:        
+    if True:        
         global MAX_SPEED
 
         #first_intake.spin(FORWARD,100,PERCENT)
@@ -900,7 +920,7 @@ def load_n_descore_auton():
     Digout.set(True)
 
 
-    back_until_yaw("left",240,40)
+    back_until_yaw("left",350,40)
 
 
 
