@@ -19,7 +19,7 @@ from math import atan, degrees, sin, radians, cos
 test_function = 0
 
 brain = Brain()
-gyro_360 = 354
+gyro_360 = 360
 
 def calibratedAngle(idealAngle):
     return (idealAngle * gyro_360/360)
@@ -657,7 +657,7 @@ def ball_sucker(direction, top_range, bottom_range):
         
 
 
-def one_wheel_turn_to_heading(target_heading, side, direction):
+def one_wheel_turn_to_heading(target_heading, side, direction,speed):
     
     #drivetrain.drive_for(REVERSE,12, INCHES, 50, PERCENT )
     if side == 'left':
@@ -665,7 +665,7 @@ def one_wheel_turn_to_heading(target_heading, side, direction):
         # not ( angle < target + 10 and angle > target - 10 )
         # left
         while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
-            left_motors.spin(direction, 25, PERCENT)
+            left_motors.spin(direction, speed, PERCENT)
             controller_1.screen.clear_screen()
             controller_1.screen.set_cursor(1,1)
             controller_1.screen.print(inertial_sensor.heading())
@@ -849,7 +849,7 @@ def turn_to_balls():
     ideal_pickup_angle = inertial_sensor.heading(DEGREES) - 18
     if ideal_pickup_angle < 0:
         ideal_pickup_angle += 360
-    one_wheel_turn_to_heading(ideal_pickup_angle, 'left', REVERSE)
+    one_wheel_turn_to_heading(ideal_pickup_angle, 'left', REVERSE,10)
     collect_balls()
 
 
@@ -881,7 +881,7 @@ def stop_motors():
 
 
 def skills_auton():
-    outake_four_balls()
+    newauton_mainfunc()
     return
     global MAX_SPEED
     vex_brain_slot = 1
@@ -1017,6 +1017,30 @@ def skills_auton():
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
+
+
+
+def newauton_drive_and_alignwithtower():
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print("7777 Hello! Im controller and this code ran.")
+    DigOutMatch.set(False)
+    tube_intake_motor.spin(REVERSE,100,PERCENT)
+    wait(2000,MSEC)
+    tube_intake_motor.stop()
+    drivetrain.drive_for(REVERSE, 7, INCHES)
+    one_wheel_turn_to_heading(270, 'left',REVERSE,20)
+    one_wheel_turn_to_heading(180, 'left', REVERSE,20)
+    print(calibratedAngle)
+    move_until_distance(500, 'forward', 30, "FRONT")
+    drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
+    move_until_distance(370,"forward",30,"FRONT")
+    DigOutMatch.set(True)
+    inertial_sensor.collision(intake_from_tube)
+    drivetrain.drive_for(FORWARD,10,INCHES)
+   # controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
+    wait(20000)
+
+
 def newauton_back_n_align_auton():
     while inertial_sensor.is_calibrating():
             controller_1.screen.set_cursor(2,1)
@@ -1052,6 +1076,7 @@ def newauton_back_n_align_auton():
     (a,b)=search_for_objects(-50)
     drivetrain.turn_to_heading(a,DEGREES)
     move_until_distance(80,"reverse",20,"BACK")
+    
     wait(20000)
 
 def newauton_load_n_descore_auton():
@@ -1091,12 +1116,12 @@ def newauton_load_n_descore_auton():
 
 def newauton_mainfunc():
     #newauton_sweepballs() # notstarted
-    #newauton_drive_and_alignwithtower() # notstarted
-    #newauton_extractballsfromtower() # notstarted
+    newauton_drive_and_alignwithtower() # notstarted
+    #newauton_extractballsfromtower( # notstarted
     #newauton_back_n_align_auton()   # inprogress
-    newauton_load_n_descore_auton() # done and working
+    #newauton_load_n_descore_auton() # done and working
     #newauton_drive_back_to_park() # notstarted    
-
+    
 
 def auton_funct():
       while inertial_sensor.is_calibrating():
@@ -1118,11 +1143,13 @@ def auton_funct():
           #skills_auton()
           ##load_n_descore_auton()
 
-
+          controller_1.screen.set_cursor(2,1)
+          controller_1.screen.print("cccc333 Hello! Im controller and this code ran.")
+    
           newauton_mainfunc()
 
           #lucas_auton
-          
+          return
       
       elif potentiometer.value() < 4100 and potentiometer.value() > 4050:
           test_function_before_going()
@@ -1657,16 +1684,23 @@ controller_1.screen.print("Running")
 #drivetrain.turn_to_heading(smallest_distance_angle, DEGREES, wait=True)
 #color_sort("red", 6)
 #go_to_bump()
+while inertial_sensor.is_calibrating():
+        controller_1.screen.set_cursor(2,1)
+
+        controller_1.screen.print("Calibrating Gyro")
+        wait(100, MSEC)
+inertial_sensor.reset_rotation()
+inertial_sensor.set_heading(0, DEGREES)
 #drive_task()
 # (a,d) = search_for_objects(-120)
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
 # create competition instance
-
+#one_wheel_turn_to_heading(180,'left',REVERSE,20)
 print("i am before")
-#drive_task()#twenty_point_skills(0)
+drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #skills_auton()
-comp = Competition(user_control, autonomous)
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 
