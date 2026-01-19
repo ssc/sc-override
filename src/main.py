@@ -15,7 +15,7 @@ from math import atan, degrees, sin, radians, cos
 
 
 
-
+dont_stop_twice = 0
 test_function = 0
 
 brain = Brain()
@@ -77,7 +77,7 @@ right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
 right_motor_c = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True)
 left_motor_b.set_reversed(False)
 left_motor_a.set_reversed(False)
-right_motor_a.set_reversed(False)
+right_motor_a.set_reversed(True)
 if left_motor_c.installed():
     right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
     left_motors = MotorGroup(left_motor_a, left_motor_b, left_motor_c)
@@ -664,11 +664,15 @@ def one_wheel_turn_to_heading(target_heading, side, direction,speed):
         # while angle is not in the target range
         # not ( angle < target + 10 and angle > target - 10 )
         # left
+
+
         while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
             left_motors.spin(direction, speed, PERCENT)
             controller_1.screen.clear_screen()
             controller_1.screen.set_cursor(1,1)
             controller_1.screen.print(inertial_sensor.heading())
+
+            
     if side == 'right':
         while not (inertial_sensor.heading() > target_heading - 5 and inertial_sensor.heading() < target_heading + 5):
             right_motors.spin(direction, 25, PERCENT)
@@ -853,15 +857,14 @@ def turn_to_balls():
     collect_balls()
 
 
-def twenty_point_skills(lucas=0):
-   lucas = 1
-   if not lucas == 1:
+def twenty_point_skills():
+
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     tube_intake_motor.spin(REVERSE,100,PERCENT)
     wait(5,SECONDS)
    #drivetrain.drive_for(REVERSE,5,INCHES)
-    drivetrain.drive_for(FORWARD, 20, INCHES) 
+    drivetrain.drive_for(FORWARD, 22, INCHES) 
    #drivetrain.drive_for(REVERSE, 15, INCHES)
    #drivetrain.drive_for(FORWARD,20,INCHES)
    #drivetrain.drive_for(REVERSE,5, INCHES)
@@ -871,9 +874,7 @@ def twenty_point_skills(lucas=0):
     basket_intake_motor.stop()
     tube_intake_motor.stop()
 
-   else:
-    skills_auton()
-   
+
 
 def stop_motors():
     left_motors.stop()
@@ -1017,7 +1018,31 @@ def skills_auton():
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
+def stop_motors_on_collision():
+    global dont_stop_twice
+    dont_stop_twice += 1
+    if dont_stop_twice < 2:
+        left_motors.stop()
+        right_motors.stop()
+        one_wheel_turn_to_heading(355,"left",REVERSE,10) #normal 355
+        if distance_sensor.object_distance(MM) < 400:
+            move_until_distance(400,"reverse",20,"FRONT")
+            move_until_distance(425,"forward",20,"FRONT")
+        else:
+            move_until_distance(425,"forward",20,"FRONT")
+        one_wheel_turn_to_heading(85,"left",FORWARD,20) # normal 85
+        twenty_point_skills()
 
+def test_collision():
+    
+    #controller_1.rumble('...')
+    left_motors.spin(FORWARD,100,PERCENT)
+    right_motors.spin(FORWARD,100,PERCENT)
+    inertial_sensor.collision(stop_motors_on_collision)
+    controller_1.rumble('-------')
+
+    wait(10,SECONDS)
+    controller_1.rumble('-------')
 
 
 def newauton_drive_and_alignwithtower():
@@ -1101,7 +1126,7 @@ def newauton_load_n_descore_auton():
         move_until_distance(300,'forward',20,"BACK")
         drivetrain.turn_to_heading(convert_relative_to_absolute(45))
         Digout.set(True)
-        move_until_distance(220,'reverse',20,"BACK")
+        move_until_distance(230,'reverse',20,"BACK")
         drivetrain.turn_to_heading(1)
     
     Digout.set(True)
@@ -1112,18 +1137,38 @@ def newauton_load_n_descore_auton():
 
 
     controller_1.rumble("-..-.-..-.-.-")
-    wait(200000)
+    #wait(200000)
+
+
+def newauton_drive_back_to_park():
+    Digout.set(False)
+    one_wheel_turn_to_heading(350,'left',FORWARD,10)
+    move_until_distance(300,"forward",20,"FRONT")
+    drivetrain.turn_to_heading(80,DEGREES,20,PERCENT)
+    test_collision()
+
+
+
 
 def newauton_mainfunc():
     #newauton_sweepballs() # notstarted
-    newauton_drive_and_alignwithtower() # notstarted
+    #newauton_drive_and_alignwithtower() # notstarted
     #newauton_extractballsfromtower( # notstarted
     #newauton_back_n_align_auton()   # inprogress
-    #newauton_load_n_descore_auton() # done and working
-    #newauton_drive_back_to_park() # notstarted    
+    newauton_load_n_descore_auton() # done and working
+    newauton_drive_back_to_park() # notstarted    
     
 
+
+
+    
+
+
+
 def auton_funct():
+
+      
+
       while inertial_sensor.is_calibrating():
          controller_1.screen.set_cursor(2,1)
          controller_1.screen.print("Calibrating Gyro")
@@ -1698,6 +1743,7 @@ inertial_sensor.set_heading(0, DEGREES)
 # create competition instance
 #one_wheel_turn_to_heading(180,'left',REVERSE,20)
 print("i am before")
+auton_funct()
 drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #skills_auton()
