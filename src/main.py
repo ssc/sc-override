@@ -1036,8 +1036,8 @@ def stop_motors_on_collision():
 def test_collision():
     
     #controller_1.rumble('...')
-    left_motors.spin(FORWARD,100,PERCENT)
-    right_motors.spin(FORWARD,100,PERCENT)
+    left_motors.spin(FORWARD,30,PERCENT)
+    right_motors.spin(FORWARD,30,PERCENT)
     inertial_sensor.collision(stop_motors_on_collision)
     controller_1.rumble('-------')
 
@@ -1063,7 +1063,7 @@ def newauton_drive_and_alignwithtower():
     inertial_sensor.collision(intake_from_tube)
     drivetrain.drive_for(FORWARD,10,INCHES)
    # controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
-    wait(20000)
+    #wait(20000)
 
 
 def newauton_back_n_align_auton():
@@ -1095,6 +1095,7 @@ def newauton_back_n_align_auton():
     left_motors.spin(REVERSE,20,PERCENT)
     right_motors.spin(REVERSE,20,PERCENT)
     wait (2,SECONDS)
+    DigOutMatch.set(False)
     left_motors.stop()
     right_motors.stop()
     drivetrain.turn_to_heading(25,DEGREES)
@@ -1102,7 +1103,7 @@ def newauton_back_n_align_auton():
     drivetrain.turn_to_heading(a,DEGREES)
     move_until_distance(80,"reverse",20,"BACK")
     
-    wait(20000)
+    #wait(20000)
 
 def newauton_load_n_descore_auton():
     
@@ -1152,9 +1153,9 @@ def newauton_drive_back_to_park():
 
 def newauton_mainfunc():
     #newauton_sweepballs() # notstarted
-    #newauton_drive_and_alignwithtower() # notstarted
+    newauton_drive_and_alignwithtower() # notstarted
     #newauton_extractballsfromtower( # notstarted
-    #newauton_back_n_align_auton()   # inprogress
+    newauton_back_n_align_auton()   # inprogress
     newauton_load_n_descore_auton() # done and working
     newauton_drive_back_to_park() # notstarted    
     
