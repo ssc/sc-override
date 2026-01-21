@@ -1019,11 +1019,16 @@ def skills_auton():
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
 
 def stop_motors_on_collision():
+    controller_1.screen.clear_screen
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print("dsafasdf enzo today")
+    left_motors.stop()
+    right_motors.stop()
+    
+
     global dont_stop_twice
     dont_stop_twice += 1
     if dont_stop_twice < 2:
-        left_motors.stop()
-        right_motors.stop()
         one_wheel_turn_to_heading(355,"left",REVERSE,10) #normal 355
         if distance_sensor.object_distance(MM) < 400:
             move_until_distance(400,"reverse",20,"FRONT")
@@ -1033,16 +1038,20 @@ def stop_motors_on_collision():
         one_wheel_turn_to_heading(85,"left",FORWARD,20) # normal 85
         twenty_point_skills()
 
+
 def test_collision():
     
     #controller_1.rumble('...')
-    left_motors.spin(FORWARD,30,PERCENT)
-    right_motors.spin(FORWARD,30,PERCENT)
+    left_motors.spin(FORWARD,60,PERCENT)
+    right_motors.spin(FORWARD,60,PERCENT)
+    controller_1.screen.clear_screen
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print("Before collision")
     inertial_sensor.collision(stop_motors_on_collision)
-    controller_1.rumble('-------')
+    controller_1.rumble('--')
 
     wait(10,SECONDS)
-    controller_1.rumble('-------')
+    controller_1.rumble('--')
 
 
 def newauton_drive_and_alignwithtower():
@@ -1745,8 +1754,9 @@ inertial_sensor.set_heading(0, DEGREES)
 #one_wheel_turn_to_heading(180,'left',REVERSE,20)
 print("i am before")
 auton_funct()
-drive_task()#twenty_point_skills(0)
+#drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
+#test_collision()
 #skills_auton()
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
