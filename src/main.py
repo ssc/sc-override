@@ -1021,7 +1021,9 @@ def stop_motors_on_collision():
     controller_1.screen.print("dsafasdf enzo today")
     left_motors.stop()
     right_motors.stop()
-    
+    drivetrain.drive_for(REVERSE,5,INCHES, 100, PERCENT)
+    drivetrain.drive_for(FORWARD,20,INCHES, 100, PERCENT)
+    return
 
     global dont_stop_twice
     dont_stop_twice += 1
@@ -1033,7 +1035,7 @@ def stop_motors_on_collision():
         else:
             move_until_distance(425,"forward",20,"FRONT")
         one_wheel_turn_to_heading(85,"left",FORWARD,20) # normal 85
-        drivetrain.drive_for(FORWARD, 22, INCHES) 
+        drivetrain.drive_for(FORWARD, 22, INCHES, 50, PERCENT) 
 
 
 
@@ -1043,10 +1045,12 @@ def stop_all_motors():
 
 
 def test_collision():
+
+
     
     #controller_1.rumble('...')
-    left_motors.spin(FORWARD,60,PERCENT)
-    right_motors.spin(FORWARD,60,PERCENT)
+    left_motors.spin(FORWARD,40,PERCENT)
+    right_motors.spin(FORWARD,40,PERCENT)
     controller_1.screen.clear_screen
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print("Before collision")
@@ -1071,12 +1075,12 @@ def newauton_drive_and_alignwithtower():
     move_until_distance(500, 'forward', 30, "FRONT")
     drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
     DigOutMatch.set(True)
-    move_until_distance(370,"forward",30,"FRONT")
+    move_until_distance(360,"forward",30,"FRONT")
 
-    left_motors.spin(FORWARD,100,PERCENT)
-    right_motors.spin(FORWARD,100,PERCENT)
-    inertial_sensor.collision(stop_all_motors)
-    wait(5,SECONDS)
+    left_motors.spin(FORWARD,55,PERCENT)
+    right_motors.spin(FORWARD,55,PERCENT)
+    #inertial_sensor.collision(stop_all_motors)
+    wait(0.5,SECONDS)
     left_motors.stop()
     right_motors.stop()
    # drivetrain.drive_for(FORWARD,10,INCHES)
@@ -1112,12 +1116,12 @@ def newauton_back_n_align_auton():
     #right_motors.stop()
     left_motors.spin(REVERSE,20,PERCENT)
     right_motors.spin(REVERSE,20,PERCENT)
-    wait (2,SECONDS)
+    wait (1.5,SECONDS)
     DigOutMatch.set(False)
     left_motors.stop()
     right_motors.stop()
     drivetrain.turn_to_heading(25,DEGREES)
-    (a,b)=search_for_objects(-50)
+    (a,b)=search_for_objects(-70)
     drivetrain.turn_to_heading(a,DEGREES)
     move_until_distance(80,"reverse",20,"BACK")
     
@@ -1145,30 +1149,45 @@ def newauton_load_n_descore_auton():
         move_until_distance(300,'forward',20,"BACK")
         drivetrain.turn_to_heading(convert_relative_to_absolute(45))
         Digout.set(True)
-        move_until_distance(230,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(1)
+        move_until_distance(250,'reverse',20,"BACK")
+        drivetrain.turn_to_heading(0)
     
     Digout.set(True)
 
 
-    back_until_yaw("left",350,40)
+    back_until_yaw("left",350,60)
 
 
 
     controller_1.rumble("-..-.-..-.-.-")
     #wait(200000)
 def newauton_extractballsfromtower():
+    left_motors.spin(FORWARD, 40, PERCENT)
+    right_motors.spin(FORWARD, 40, PERCENT)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
-    wait(10,SECONDS)
+    for i in range (1,13):
+     wait(0.3,SECONDS)
+     left_motors.spin(REVERSE, 40, PERCENT)
+     right_motors.spin(REVERSE, 40, PERCENT)
+     wait(0.2, SECONDS)
+     left_motors.spin(FORWARD, 40, PERCENT)
+     right_motors.spin(FORWARD, 40, PERCENT)
+
+    wait(0.2, SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
-
+    left_motors.stop()
+    right_motors.stop()
+    drivetrain.drive_for(REVERSE, 5, INCHES)
+    drivetrain.turn_to_heading(290,DEGREES)
+    (a,b)=search_for_objects(-40)
+    drivetrain.turn_to_heading(a,DEGREES)
 def newauton_drive_back_to_park():
     Digout.set(False)
     one_wheel_turn_to_heading(350,'left',FORWARD,10)
-    move_until_distance(300,"forward",20,"FRONT")
-    drivetrain.turn_to_heading(80,DEGREES,20,PERCENT)
+    move_until_distance(310,"forward",20,"FRONT")
+    drivetrain.turn_to_heading(75,DEGREES,20,PERCENT)
     test_collision()
 
 
