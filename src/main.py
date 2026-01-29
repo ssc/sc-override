@@ -886,106 +886,106 @@ def stop_motors():
 def skills_auton():
     newauton_mainfunc()
     return
-    global MAX_SPEED
-    vex_brain_slot = 1
-    kuba = 0
-    caleb = 1
-    lucas = 0
+    # global MAX_SPEED
+    # vex_brain_slot = 1
+    # kuba = 0
+    # caleb = 1
+    # lucas = 0
     
     
    
-    controller_1.screen.set_cursor(2,1)
+    # controller_1.screen.set_cursor(2,1)
 
-    #controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
-    wait(100, MSEC)  
-    if lucas == 1:
-        Digout.set(False)
-        tube_intake_motor.spin(FORWARD,100,PERCENT)
-        wait(2000,MSEC)
-        tube_intake_motor.stop()
-        one_wheel_turn_to_heading(270,'left',REVERSE)
-        drivetrain.drive_for(REVERSE, 6, INCHES)
-        drivetrain.turn_to_heading(180,DEGREES,wait=True)
-        move_until_distance(500,'forward',30,"FRONT")
-        controller_1.rumble("...--")
-        drivetrain.turn_to_heading(270,DEGREES,20,PERCENT)
-        Digout.set(False)
-        first_intake.spin(REVERSE,100,PERCENT)
-        basket_intake_motor.spin(REVERSE,100,PERCENT)
-        left_motors.spin(FORWARD,100,PERCENT)
-        right_motors.spin(FORWARD,100,PERCENT)
-        #nertial_sensor.collision(stop_motors)
-        wait(3,SECONDS)
-        stop_motors()
+    # #controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
+    # wait(100, MSEC)  
+    # if lucas == 1:
+    #     Digout.set(False)
+    #     tube_intake_motor.spin(FORWARD,100,PERCENT)
+    #     wait(2000,MSEC)
+    #     tube_intake_motor.stop()
+    #     one_wheel_turn_to_heading(270,'left',REVERSE)
+    #     drivetrain.drive_for(REVERSE, 6, INCHES)
+    #     drivetrain.turn_to_heading(180,DEGREES,wait=True)
+    #     move_until_distance(500,'forward',30,"FRONT")
+    #     controller_1.rumble("...--")
+    #     drivetrain.turn_to_heading(270,DEGREES,20,PERCENT)
+    #     Digout.set(False)
+    #     first_intake.spin(REVERSE,100,PERCENT)
+    #     basket_intake_motor.spin(REVERSE,100,PERCENT)
+    #     left_motors.spin(FORWARD,100,PERCENT)
+    #     right_motors.spin(FORWARD,100,PERCENT)
+    #     #nertial_sensor.collision(stop_motors)
+    #     wait(3,SECONDS)
+    #     stop_motors()
 
-        #move_until_distance(100,'forward',40,"FRONT")
-        Digout.set(True)
-
-
-    if caleb == 1:
-        DigOutMatch.set(False)
-        tube_intake_motor.spin(FORWARD,100,PERCENT)
-        wait(2000,MSEC)
-        tube_intake_motor.stop()
-        drivetrain.drive_for(REVERSE, 7, INCHES)
-        one_wheel_turn_to_heading(270, 'left',REVERSE)
-        drivetrain.turn_to_heading(180, DEGREES, wait=True)
-        move_until_distance(540, 'forward', 30, "FRONT")
-        drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-        move_until_distance(370,"forward",30,"FRONT")
-        DigOutMatch.set(True)
-        inertial_sensor.collision(intake_from_tube)
-        drivetrain.drive_for(FORWARD,10,INCHES)
-        controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
+    #     #move_until_distance(100,'forward',40,"FRONT")
+    #     Digout.set(True)
 
 
+    # if caleb == 1:
+    #     DigOutMatch.set(False)
+    #     tube_intake_motor.spin(FORWARD,100,PERCENT)
+    #     wait(2000,MSEC)
+    #     tube_intake_motor.stop()
+    #     drivetrain.drive_for(REVERSE, 7, INCHES)
+    #     one_wheel_turn_to_heading(270, 'left',REVERSE)
+    #     drivetrain.turn_to_heading(180, DEGREES, wait=True)
+    #     move_until_distance(540, 'forward', 30, "FRONT")
+    #     drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
+    #     move_until_distance(370,"forward",30,"FRONT")
+    #     DigOutMatch.set(True)
+    #     inertial_sensor.collision(intake_from_tube)
+    #     drivetrain.drive_for(FORWARD,10,INCHES)
+    #     controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
 
-    if kuba == 1:
-    #set up to intake balls
-    #hellof
 
-        #twenty_point_skills(1)
-        tube_intake_motor.spin(REVERSE,100,PERCENT)
-        wait (2, SECONDS)
-        tube_intake_motor.stop()
-        drivetrain.drive_for(REVERSE,10,INCHES)
-        drivetrain.turn_to_heading(calibratedAngle(90))
-        drivetrain.drive_for(FORWARD,18,INCHES)
-        drivetrain.turn_to_heading(convert_relative_to_absolute(55))
-        (a,d) = search_for_objects(-70)
-        drivetrain.turn_to_heading(a)
-        drivetrain.drive_for(FORWARD,d-30,MM)
-        turn_to_balls()
+
+    # if kuba == 1:
+    # #set up to intake balls
+    # #hellof
+
+    #     #twenty_point_skills(1)
+    #     tube_intake_motor.spin(REVERSE,100,PERCENT)
+    #     wait (2, SECONDS)
+    #     tube_intake_motor.stop()
+    #     drivetrain.drive_for(REVERSE,10,INCHES)
+    #     drivetrain.turn_to_heading(calibratedAngle(90))
+    #     drivetrain.drive_for(FORWARD,18,INCHES)
+    #     drivetrain.turn_to_heading(convert_relative_to_absolute(55))
+    #     (a,d) = search_for_objects(-70)
+    #     drivetrain.turn_to_heading(a)
+    #     drivetrain.drive_for(FORWARD,d-30,MM)
+    #     turn_to_balls()
         
-        drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
-        drivetrain.drive_for(FORWARD, 23, INCHES, 25, PERCENT)
-        #scanning corner 2
-        drivetrain.turn_to_heading(convert_relative_to_absolute(65), DEGREES, wait=True)
-        (a,d) = search_for_objects(-70)
-        #going to and intake corner 2
+    #     drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
+    #     drivetrain.drive_for(FORWARD, 23, INCHES, 25, PERCENT)
+    #     #scanning corner 2
+    #     drivetrain.turn_to_heading(convert_relative_to_absolute(65), DEGREES, wait=True)
+    #     (a,d) = search_for_objects(-70)
+    #     #going to and intake corner 2
         
-        drivetrain.turn_to_heading(a, DEGREES, wait=True) 
-        print("caleb is unhappy")
-        drivetrain.drive_for(FORWARD,d-30,MM)
-        turn_to_balls()
+    #     drivetrain.turn_to_heading(a, DEGREES, wait=True) 
+    #     print("caleb is unhappy")
+    #     drivetrain.drive_for(FORWARD,d-30,MM)
+    #     turn_to_balls()
     
-        basket_intake_motor.stop()
-        first_intake.stop()
+    #     basket_intake_motor.stop()
+    #     first_intake.stop()
       
-        #finding center goal
-        drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
-        (a,d) = search_for_objects(-90)
-        drivetrain.turn_to_heading(a - 7, DEGREES, wait=True)    
-        #going to and outake center goal
-        move_until_distance(400,'forward',50,"FRONT")
-        outake_empty()
-        move_until_distance(550, 'reverse', 50, "FRONT")
-        wait(0.25, SECONDS)
-        drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
-        wait(0.25, SECONDS)
-        move_until_distance(580, 'reverse', 50, "BACK")
-        one_wheel_turn_to_heading(355, 'left', REVERSE)
-        park_after_bump()
+    #     #finding center goal
+    #     drivetrain.turn_to_heading(calibratedAngle(0), DEGREES, wait=True)
+    #     (a,d) = search_for_objects(-90)
+    #     drivetrain.turn_to_heading(a - 7, DEGREES, wait=True)    
+    #     #going to and outake center goal
+    #     move_until_distance(400,'forward',50,"FRONT")
+    #     outake_empty()
+    #     move_until_distance(550, 'reverse', 50, "FRONT")
+    #     wait(0.25, SECONDS)
+    #     drivetrain.turn_to_heading(calibratedAngle(92), DEGREES, wait=True)
+    #     wait(0.25, SECONDS)
+    #     move_until_distance(580, 'reverse', 50, "BACK")
+    #     one_wheel_turn_to_heading(355, 'left', REVERSE)
+    #     park_after_bump()
         # color_sort("blue", 3)
         
         # #Going to corner 3
@@ -1028,10 +1028,6 @@ def stop_motors_on_collision():
     right_motors.stop()
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
-    drivetrain.drive_for(REVERSE,5,INCHES, 100, PERCENT)
-    drivetrain.drive_for(FORWARD,20,INCHES, 100, PERCENT)
-    
-    return
 
     global dont_stop_twice
     dont_stop_twice += 1
@@ -1052,7 +1048,7 @@ def stop_all_motors():
     right_motors.stop()
 
 
-def test_collision():
+def collision_and_park():
 
 
     
@@ -1158,7 +1154,7 @@ def newauton_load_n_descore_auton():
         move_until_distance(300,'forward',20,"BACK")
         drivetrain.turn_to_heading(convert_relative_to_absolute(45))
         Digout.set(True)
-        move_until_distance(255,'reverse',20,"BACK")
+        move_until_distance(235,'reverse',20,"BACK")
         drivetrain.turn_to_heading(1)
     
     Digout.set(True)
@@ -1197,7 +1193,7 @@ def newauton_drive_back_to_park():
     one_wheel_turn_to_heading(350,'left',FORWARD,10)
     move_until_distance(310,"forward",20,"FRONT")
     drivetrain.turn_to_heading(75,DEGREES,20,PERCENT)
-    test_collision()
+    collision_and_park()
 
 def on_collision_1():
     print("collided 1")
@@ -1814,7 +1810,7 @@ print("i am before")
 #auton_funct()
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
-#test_collision()
+#collision_and_park()
 #skills_auton()
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
