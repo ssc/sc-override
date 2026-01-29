@@ -89,6 +89,11 @@ else:
 #REVERSE = FORWARD
 tube_intake_motor = Motor(Ports.PORT3, GearSetting.RATIO_18_1, True)
 
+
+#set_position Sets the starting position of the tube intake motor to 0 degrees so that it will not block distance sensor
+tube_intake_motor.set_position(0, DEGREES)
+
+
 # Construct a 4-Motor Drivetrain
 # Parameters: circumference, distance between wheels on axle, distance between axles, units, gear ratio
 #drivetrain = DriveTrain(left_motors, right_motors, 330, 335, 231, MM, 1)
@@ -1021,8 +1026,11 @@ def stop_motors_on_collision():
     controller_1.screen.print("dsafasdf enzo today")
     left_motors.stop()
     right_motors.stop()
+    first_intake.spin(FORWARD, 100, PERCENT)
+    basket_intake_motor.spin(REVERSE,100,PERCENT)
     drivetrain.drive_for(REVERSE,5,INCHES, 100, PERCENT)
     drivetrain.drive_for(FORWARD,20,INCHES, 100, PERCENT)
+    
     return
 
     global dont_stop_twice
@@ -1068,6 +1076,7 @@ def newauton_drive_and_alignwithtower():
     tube_intake_motor.spin(REVERSE,100,PERCENT)
     wait(2000,MSEC)
     tube_intake_motor.stop()
+    tube_intake_motor.spin_to_position(15,DEGREES)
     drivetrain.drive_for(REVERSE, 7, INCHES)
     one_wheel_turn_to_heading(270, 'left',REVERSE,20)
     one_wheel_turn_to_heading(180, 'left', REVERSE,20)
@@ -1149,8 +1158,8 @@ def newauton_load_n_descore_auton():
         move_until_distance(300,'forward',20,"BACK")
         drivetrain.turn_to_heading(convert_relative_to_absolute(45))
         Digout.set(True)
-        move_until_distance(250,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(0)
+        move_until_distance(255,'reverse',20,"BACK")
+        drivetrain.turn_to_heading(1)
     
     Digout.set(True)
 
@@ -1190,7 +1199,11 @@ def newauton_drive_back_to_park():
     drivetrain.turn_to_heading(75,DEGREES,20,PERCENT)
     test_collision()
 
+def on_collision_1():
+    print("collided 1")
 
+def on_collision_2():
+    print("collided 2")
 
 
 def newauton_mainfunc():
@@ -1780,6 +1793,17 @@ while inertial_sensor.is_calibrating():
 inertial_sensor.reset_rotation()
 inertial_sensor.set_heading(0, DEGREES)
 
+def PointWhackerArm():
+    controller_1.screen.clear_screen()
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print("Point Whacker Test")
+    tube_intake_motor.spin_to_position(200, DEGREES)
+    wait(1, SECONDS)
+    tube_intake_motor.spin_to_position(300, DEGREES)
+    wait(1, SECONDS)
+    tube_intake_motor.spin_to_position(10, DEGREES)
+
+#PointWhackerArm()
 drive_task()
 # (a,d) = search_for_objects(-120)
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
@@ -1794,4 +1818,4 @@ print('hello my name is caleb')
 #skills_auton()
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
-
+#newauton_load_n_descore_auton()
