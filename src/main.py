@@ -1154,7 +1154,7 @@ def newauton_load_n_descore_auton():
         move_until_distance(300,'forward',20,"BACK")
         drivetrain.turn_to_heading(convert_relative_to_absolute(45))
         Digout.set(True)
-        move_until_distance(235,'reverse',20,"BACK")
+        move_until_distance(245,'reverse',20,"BACK")
         drivetrain.turn_to_heading(1)
     
     Digout.set(True)
@@ -1179,7 +1179,7 @@ def newauton_extractballsfromtower():
      left_motors.spin(FORWARD, 40, PERCENT)
      right_motors.spin(FORWARD, 40, PERCENT)
 
-    wait(0.2, SECONDS)
+    wait(0.4, SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
     left_motors.stop()
