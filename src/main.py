@@ -11,9 +11,9 @@
 
 # Library imports
 from vex import *
-from math import atan, degrees, sin, radians, cos
+from math import atan, degrees, sin, radians, cos, ceil, floor,sqrt, tan, asin
 
-
+#DO NOT ADD PI KUBA!!!!!!
 
 dont_stop_twice = 0
 test_function = 0
@@ -1032,6 +1032,7 @@ def stop_motors_on_collision():
     global dont_stop_twice
     dont_stop_twice += 1
     if dont_stop_twice < 2:
+        drivetrain.drive_for(REVERSE, 3, INCHES, 50, PERCENT)
         one_wheel_turn_to_heading(355,"left",REVERSE,10) #normal 355
         if distance_sensor.object_distance(MM) < 400:
             move_until_distance(425,"reverse",20,"FRONT")
@@ -1053,8 +1054,8 @@ def collision_and_park():
 
     
     #controller_1.rumble('...')
-    left_motors.spin(FORWARD,40,PERCENT)
-    right_motors.spin(FORWARD,40,PERCENT)
+    left_motors.spin(FORWARD,60,PERCENT)
+    right_motors.spin(FORWARD,60,PERCENT)
     controller_1.screen.clear_screen
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print("Before collision")
@@ -1072,7 +1073,7 @@ def newauton_drive_and_alignwithtower():
     tube_intake_motor.spin(REVERSE,100,PERCENT)
     wait(2000,MSEC)
     tube_intake_motor.stop()
-    tube_intake_motor.spin_to_position(15,DEGREES)
+    tube_intake_motor.spin_to_position(-2520,DEGREES)
     drivetrain.drive_for(REVERSE, 7, INCHES)
     one_wheel_turn_to_heading(270, 'left',REVERSE,20)
     one_wheel_turn_to_heading(180, 'left', REVERSE,20)
@@ -1094,13 +1095,8 @@ def newauton_drive_and_alignwithtower():
 
 
 def newauton_back_n_align_auton():
-    while inertial_sensor.is_calibrating():
-            controller_1.screen.set_cursor(2,1)
-            controller_1.screen.print("Calibrating Gyro")
-            wait(100, MSEC)
-    inertial_sensor.reset_rotation()
-    inertial_sensor.set_heading(0, DEGREES)    
-
+   
+    
     # first_intake.spin(REVERSE,100,PERCENT)
     # basket_intake_motor.spin(FORWARD,100,PERCENT)
     # toprack.spin(REVERSE,100,PERCENT)
@@ -1125,22 +1121,15 @@ def newauton_back_n_align_auton():
     DigOutMatch.set(False)
     left_motors.stop()
     right_motors.stop()
-    drivetrain.turn_to_heading(25,DEGREES)
-    (a,b)=search_for_objects(-70)
+    drivetrain.turn_to_heading(300,DEGREES)
+    (a,b)=search_for_objects(-60)
     drivetrain.turn_to_heading(a,DEGREES)
-    move_until_distance(80,"reverse",20,"BACK")
+    move_until_distance(120,"reverse",20,"BACK")
     
     #wait(20000)
 
 def newauton_load_n_descore_auton():
-    
-    if True:
-        while inertial_sensor.is_calibrating():
-            controller_1.screen.set_cursor(2,1)
-            controller_1.screen.print("Calibrating Gyro")
-            wait(100, MSEC)
-        inertial_sensor.reset_rotation()
-        inertial_sensor.set_heading(0, DEGREES)
+
     if True:        
         global MAX_SPEED
 
@@ -1151,16 +1140,16 @@ def newauton_load_n_descore_auton():
         first_intake.stop()
         basket_intake_motor.stop()
         toprack.stop()
-        move_until_distance(300,'forward',20,"BACK")
-        drivetrain.turn_to_heading(convert_relative_to_absolute(45))
+        move_until_distance(180,'forward',20,"BACK")
+        drivetrain.turn_to_heading(convert_relative_to_absolute(90))
         Digout.set(True)
-        move_until_distance(245,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(1)
+        move_until_distance(170,'reverse',20,"BACK")
+        drivetrain.turn_to_heading(270)
     
     Digout.set(True)
 
 
-    back_until_yaw("left",350,60)
+    back_until_yaw("left",260,60)
 
 
 
@@ -1184,10 +1173,13 @@ def newauton_extractballsfromtower():
     basket_intake_motor.stop()
     left_motors.stop()
     right_motors.stop()
-    drivetrain.drive_for(REVERSE, 5, INCHES)
-    drivetrain.turn_to_heading(290,DEGREES)
-    (a,b)=search_for_objects(-40)
+    drivetrain.drive_for(REVERSE, 6, INCHES)
+    drivetrain.turn_to_heading(300,DEGREES)
+    #drivetrain.turn_to_heading(240,DEGREES)
+    (a,b)=search_for_objects(-60)
     drivetrain.turn_to_heading(a,DEGREES)
+   # drivetrain.turn_to_heading(a,DEGREES)
+
 def newauton_drive_back_to_park():
     Digout.set(False)
     one_wheel_turn_to_heading(350,'left',FORWARD,10)
@@ -1798,7 +1790,7 @@ def PointWhackerArm():
     tube_intake_motor.spin_to_position(300, DEGREES)
     wait(1, SECONDS)
     tube_intake_motor.spin_to_position(10, DEGREES)
-
+#ball_sucker('left',700, 0)
 #PointWhackerArm()
 drive_task()
 # (a,d) = search_for_objects(-120)
