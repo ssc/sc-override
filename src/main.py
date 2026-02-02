@@ -594,7 +594,7 @@ def search_for_objects_back(range_degrees):
 
 def back_until_yaw(left_or_right,amount,speed):
     if left_or_right == "left":
-        inertial_sensor.reset_heading()
+        # inertial_sensor.reset_heading()
         while convert_absolute_to_relative(inertial_sensor.heading()) > convert_absolute_to_relative(amount):
             wait(50)
             controller_1.screen.clear_screen()
@@ -1019,7 +1019,8 @@ def skills_auton():
         # (a,d) = search_for_objects(-80)
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
-
+def PID():
+    return
 def stop_motors_on_collision():
     controller_1.screen.clear_screen
     controller_1.screen.set_cursor(2,1)
@@ -1027,19 +1028,23 @@ def stop_motors_on_collision():
     left_motors.stop()
     right_motors.stop()
     first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE,100,PERCENT)
+    basket_intake_motor.spin(FORWARD,100,PERCENT)
+    toprack.spin(FORWARD,100,PERCENT)
+    tube_intake_motor.spin(REVERSE,100,PERCENT)
+
 
     global dont_stop_twice
     dont_stop_twice += 1
     if dont_stop_twice < 2:
-        drivetrain.drive_for(REVERSE, 3, INCHES, 50, PERCENT)
-        one_wheel_turn_to_heading(355,"left",REVERSE,10) #normal 355
+        drivetrain.drive_for(REVERSE, 6, INCHES, 50, PERCENT)
+        one_wheel_turn_to_heading(270,"left",REVERSE,10) #normal 355
         if distance_sensor.object_distance(MM) < 400:
             move_until_distance(425,"reverse",20,"FRONT")
             move_until_distance(425,"forward",20,"FRONT")
         else:
             move_until_distance(425,"forward",20,"FRONT")
-        one_wheel_turn_to_heading(85,"left",FORWARD,20) # normal 85
+        one_wheel_turn_to_heading(0,"left",FORWARD,20) # normal 85
+        #DigOutMatch.set(True)
         drivetrain.drive_for(FORWARD, 22, INCHES, 50, PERCENT) 
 
 
@@ -1054,8 +1059,8 @@ def collision_and_park():
 
     
     #controller_1.rumble('...')
-    left_motors.spin(FORWARD,60,PERCENT)
-    right_motors.spin(FORWARD,60,PERCENT)
+    left_motors.spin(FORWARD,70,PERCENT)
+    right_motors.spin(FORWARD,70,PERCENT)
     controller_1.screen.clear_screen
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print("Before collision")
@@ -1122,7 +1127,7 @@ def newauton_back_n_align_auton():
     left_motors.stop()
     right_motors.stop()
     drivetrain.turn_to_heading(300,DEGREES)
-    (a,b)=search_for_objects(-60)
+    (a,b)=search_for_objects(-50)
     drivetrain.turn_to_heading(a,DEGREES)
     move_until_distance(120,"reverse",20,"BACK")
     
@@ -1141,10 +1146,10 @@ def newauton_load_n_descore_auton():
         basket_intake_motor.stop()
         toprack.stop()
         move_until_distance(180,'forward',20,"BACK")
-        drivetrain.turn_to_heading(convert_relative_to_absolute(90))
+        drivetrain.turn_to_heading(0, DEGREES)
         Digout.set(True)
         move_until_distance(170,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(270)
+        drivetrain.turn_to_heading(282, DEGREES)
     
     Digout.set(True)
 
@@ -1155,36 +1160,40 @@ def newauton_load_n_descore_auton():
 
     controller_1.rumble("-..-.-..-.-.-")
     #wait(200000)
+
+
 def newauton_extractballsfromtower():
+
     left_motors.spin(FORWARD, 40, PERCENT)
     right_motors.spin(FORWARD, 40, PERCENT)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
+    wait(1,SECONDS)
     for i in range (1,13):
-     wait(0.3,SECONDS)
+     wait(0.7,SECONDS)
      left_motors.spin(REVERSE, 40, PERCENT)
      right_motors.spin(REVERSE, 40, PERCENT)
      wait(0.2, SECONDS)
      left_motors.spin(FORWARD, 40, PERCENT)
      right_motors.spin(FORWARD, 40, PERCENT)
 
-    wait(0.4, SECONDS)
+    wait(0.9, SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
     left_motors.stop()
     right_motors.stop()
-    drivetrain.drive_for(REVERSE, 6, INCHES)
-    drivetrain.turn_to_heading(300,DEGREES)
+    drivetrain.drive_for(REVERSE, 8, INCHES)
+    drivetrain.turn_to_heading(290,DEGREES)
     #drivetrain.turn_to_heading(240,DEGREES)
-    (a,b)=search_for_objects(-60)
+    (a,b)=search_for_objects(-50)
     drivetrain.turn_to_heading(a,DEGREES)
    # drivetrain.turn_to_heading(a,DEGREES)
 
 def newauton_drive_back_to_park():
     Digout.set(False)
-    one_wheel_turn_to_heading(350,'left',FORWARD,10)
+    one_wheel_turn_to_heading(270,'left',FORWARD,10)
     move_until_distance(310,"forward",20,"FRONT")
-    drivetrain.turn_to_heading(75,DEGREES,20,PERCENT)
+    drivetrain.turn_to_heading(350,DEGREES,20,PERCENT)
     collision_and_park()
 
 def on_collision_1():
