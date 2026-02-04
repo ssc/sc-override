@@ -1067,7 +1067,7 @@ def collision_and_park():
     inertial_sensor.collision(stop_motors_on_collision)
     controller_1.rumble('--')
 
-    wait(10,SECONDS)
+    wait(3,SECONDS)
     controller_1.rumble('--')
 
 
@@ -1801,14 +1801,14 @@ def PointWhackerArm():
     tube_intake_motor.spin_to_position(10, DEGREES)
 #ball_sucker('left',700, 0)
 #PointWhackerArm()
-drive_task()
+#drive_task()
 # (a,d) = search_for_objects(-120)
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
 # create competition instance
 #one_wheel_turn_to_heading(180,'left',REVERSE,20)
 print("i am before")
-#auton_funct()
+auton_funct()
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #collision_and_park()
