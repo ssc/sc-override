@@ -1019,6 +1019,43 @@ def skills_auton():
         # (a,d) = search_for_objects(-80)
         # drivetrain.turn_to_heading(a, DEGREES, wait=True)
         # drivetrain.drive_for(FORWARD, d, MM, 50, PERCENT)
+    
+# | Pid code, currently unused.
+# V 
+
+class PIDController:
+    def __init__(self, Kp, Ki, Kd, setpoint):
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        self.setpoint = setpoint
+        self.previous_error = 0
+        self.integral = 0
+
+    def compute(self, process_variable, dt):
+        # Calculate error
+        error = self.setpoint - process_variable
+        
+        # Proportional term
+        P_out = self.Kp * error
+        
+        # Integral term
+        self.integral += error * dt
+        I_out = self.Ki * self.integral
+        
+        # Derivative term
+        derivative = (error - self.previous_error) / dt
+        D_out = self.Kd * derivative
+        
+        # Compute total output
+        output = P_out + I_out + D_out
+        
+        # Update previous error
+        self.previous_error = error
+        
+        return output
+    
+
 def PID():
     return
 def stop_motors_on_collision():
@@ -1030,29 +1067,45 @@ def stop_motors_on_collision():
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD,100,PERCENT)
     toprack.spin(FORWARD,100,PERCENT)
-    tube_intake_motor.spin(REVERSE,100,PERCENT)
-
+    controller_1.screen.set_cursor(3,1)
 
     global dont_stop_twice
     dont_stop_twice += 1
     if dont_stop_twice < 2:
         drivetrain.drive_for(REVERSE, 6, INCHES, 50, PERCENT)
         one_wheel_turn_to_heading(270,"left",REVERSE,10) #normal 355
-        if distance_sensor.object_distance(MM) < 400:
+        print("we are done turning") 
+        if distance_sensor.object_distance(DistanceUnits.MM) < 424:
+            print("we are in the if statement") 
             move_until_distance(425,"reverse",20,"FRONT")
             move_until_distance(425,"forward",20,"FRONT")
+      
         else:
+            print("we are in the else statement") 
             move_until_distance(425,"forward",20,"FRONT")
         one_wheel_turn_to_heading(0,"left",FORWARD,20) # normal 85
+        print("we are done with the if statement") 
         #DigOutMatch.set(True)
         drivetrain.drive_for(FORWARD, 22, INCHES, 50, PERCENT) 
+        
+        controller_1.screen.set_cursor(2,1)
+        controller_1.screen.print("In")
+        wait(5,SECONDS)
+        first_intake.stop()
+        basket_intake_motor.stop()
+        toprack.stop()
+        
+        
+        
 
 
 
 def stop_all_motors():
-    left_motors.stop()
-    right_motors.stop()
-
+    drivetrain.stop()
+    first_intake.stop()
+    basket_intake_motor.stop()
+    toprack.stop()
+    tube_intake_motor.stop()
 
 def collision_and_park():
 
@@ -1067,7 +1120,7 @@ def collision_and_park():
     inertial_sensor.collision(stop_motors_on_collision)
     controller_1.rumble('--')
 
-    wait(3,SECONDS)
+    wait(30,SECONDS)
     controller_1.rumble('--')
 
 
@@ -1083,6 +1136,10 @@ def newauton_drive_and_alignwithtower():
     one_wheel_turn_to_heading(270, 'left',REVERSE,20)
     one_wheel_turn_to_heading(180, 'left', REVERSE,20)
     print(calibratedAngle)
+    drivetrain.set_stopping(BrakeType.COAST)
+    drivetrain.drive_for(FORWARD,13,INCHES,60,PERCENT)
+    wait(1, SECONDS)
+    drivetrain.turn_to_heading(180, DEGREES, 50, wait=True)
     move_until_distance(500, 'forward', 30, "FRONT")
     drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
     DigOutMatch.set(True)
@@ -1148,7 +1205,7 @@ def newauton_load_n_descore_auton():
         move_until_distance(180,'forward',20,"BACK")
         drivetrain.turn_to_heading(0, DEGREES)
         Digout.set(True)
-        move_until_distance(170,'reverse',20,"BACK")
+        move_until_distance(165,'reverse',20,"BACK")
         drivetrain.turn_to_heading(282, DEGREES)
     
     Digout.set(True)
@@ -1163,13 +1220,13 @@ def newauton_load_n_descore_auton():
 
 
 def newauton_extractballsfromtower():
-
+    
     left_motors.spin(FORWARD, 40, PERCENT)
     right_motors.spin(FORWARD, 40, PERCENT)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     wait(1,SECONDS)
-    for i in range (1,13):
+    for i in range (1,12):
      wait(0.7,SECONDS)
      left_motors.spin(REVERSE, 40, PERCENT)
      right_motors.spin(REVERSE, 40, PERCENT)
@@ -1183,14 +1240,14 @@ def newauton_extractballsfromtower():
     left_motors.stop()
     right_motors.stop()
     drivetrain.drive_for(REVERSE, 8, INCHES)
+    DigOutMatch.set(False)
     drivetrain.turn_to_heading(290,DEGREES)
     #drivetrain.turn_to_heading(240,DEGREES)
     (a,b)=search_for_objects(-50)
-    drivetrain.turn_to_heading(a,DEGREES)
+    drivetrain.turn_to_heading(a - 5,DEGREES)
    # drivetrain.turn_to_heading(a,DEGREES)
 
 def newauton_drive_back_to_park():
-    Digout.set(False)
     one_wheel_turn_to_heading(270,'left',FORWARD,10)
     move_until_distance(310,"forward",20,"FRONT")
     drivetrain.turn_to_heading(350,DEGREES,20,PERCENT)
@@ -1801,7 +1858,8 @@ def PointWhackerArm():
     tube_intake_motor.spin_to_position(10, DEGREES)
 #ball_sucker('left',700, 0)
 #PointWhackerArm()
-#drive_task()
+drive_task()
+#stop_motors_on_collision()
 # (a,d) = search_for_objects(-120)
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
@@ -1812,7 +1870,18 @@ auton_funct()
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #collision_and_park()
-#skills_auton()
+skills_auton()
 #comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
+
+
+
+
+
+
+
+
+
+
+#A CODE CLEANUP WOULD BE MUCH APPRECIATED 
