@@ -74,10 +74,13 @@ left_motor_c = Motor(Ports.PORT20, GearSetting.RATIO_18_1, False)
 # Create the right Motors and group them under the MotorGroup "right_motors"
 right_motor_a = Motor(Ports.PORT14, GearSetting.RATIO_18_1, True)
 right_motor_b = Motor(Ports.PORT16, GearSetting.RATIO_18_1, True)
-right_motor_c = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True)
+right_motor_c = Motor(Ports.PORT17, GearSetting.RATIO_18_1, True)
 left_motor_b.set_reversed(False)
 left_motor_a.set_reversed(False)
+left_motor_c.set_reversed(False)
 right_motor_a.set_reversed(True)
+right_motor_b.set_reversed(True)
+right_motor_c.set_reversed(True)
 if left_motor_c.installed():
     right_motors = MotorGroup(right_motor_a, right_motor_b, right_motor_c)
     left_motors = MotorGroup(left_motor_a, left_motor_b, left_motor_c)
@@ -1324,11 +1327,11 @@ def auton_funct():
         return
 
       elif potentiometer.value() < 1250:
-          vex_brain_slot = 1
+          vex_brain_slot = 2
           
 
       elif potentiometer.value() > 2250 and potentiometer.value() < 4050:
-          vex_brain_slot = 2
+          vex_brain_slot = 1
 
       elif potentiometer.value() < 2250 and potentiometer.value() > 1250 :
           #skills_auton()
@@ -1363,31 +1366,35 @@ def auton_funct():
       first_intake.spin(FORWARD, 100, PERCENT)
       basket_intake_motor.spin(REVERSE, 100, PERCENT)
 
-      drivetrain.drive_for(FORWARD,12, INCHES, 35, PERCENT )
+      drivetrain.drive_for(FORWARD,18, INCHES, 35, PERCENT )
+      drivetrain.drive_for(FORWARD,4,INCHES,10,PERCENT)
       #drivetrain.drive_for(FORWARD,5, INCHES, 25, PERCENT )
-      move_until_distance(25, "forward",20,"FRONT")
-      DigOutMatch.set(True)
-      drivetrain.drive_for(FORWARD,5, INCHES, 20, PERCENT )
+      #move_until_distance(25, "forward",20,"FRONT")
+      #DigOutMatch.set(False)
+      #drivetrain.drive_for(FORWARD,5, INCHES, 20, PERCENT )
 
       wait(1,SECONDS)
       first_intake.stop()
       basket_intake_motor.stop()
 
       if vex_brain_slot == 1:
-         drivetrain.turn_to_heading(calibratedAngle(115), DEGREES, wait=True)
+         drivetrain.turn_to_heading(calibratedAngle(135), DEGREES, wait=True)
 
       else:
 
-         drivetrain.turn_to_heading(calibratedAngle(245), DEGREES, wait=True)
+         drivetrain.turn_to_heading(calibratedAngle(248), DEGREES, wait=True)
      
-      drivetrain.drive_for(FORWARD, 24, INCHES, 50 , PERCENT)
+      drivetrain.drive_for(FORWARD, 30, INCHES, 50 , PERCENT)
 
     #turning toward goal
       if vex_brain_slot == 1:
-         turn_until_distance(400,'left',5, "BACK")
+         turn_until_distance(550,'left',5, "BACK")
 
       else: 
-         turn_until_distance(400,'right',5, "BACK")
+         turn_until_distance(550,'right',5, "BACK")
+
+
+      
      
     #moving toward goal
       first_intake.spin(FORWARD, 50, PERCENT)
@@ -1395,15 +1402,14 @@ def auton_funct():
       
       toprack.spin(REVERSE, 100, PERCENT)
       if vex_brain_slot == 2:
-          right_motors.spin(FORWARD, 50, PERCENT)
-          wait(0.1, SECONDS)
-          right_motors.stop()
-      move_until_distance(100,'reverse',20,"BACK")
+          #right_motors.spin(FORWARD, 50, PERCENT)
+          #wait(0.1, SECONDS)
+          #right_motors.stop()
+          move_until_distance(100,'reverse',20,"BACK")
 
       if vex_brain_slot == 1:
-          right_motors.spin(REVERSE, 50, PERCENT)
-          wait(0.1, SECONDS)
-          right_motors.stop()
+          move_until_distance(100,'reverse',20,"BACK")
+
           
 
       #drivetrain.turn_to_heading(convert_relative_to_absolute(-5), DEGREES, wait=True)
@@ -1416,6 +1422,170 @@ def auton_funct():
       first_intake.stop()
       toprack.stop()
       drivetrain.drive_for(REVERSE, 1, INCHES, 75 , PERCENT)
+
+
+def isZero(heading):
+    if (heading < 0.2 and heading > -0.2):
+        return True
+    else:
+        return False
+
+def getPatchedHeading(target_heading):
+    current_heading = inertial_sensor.heading()
+    
+    if isZero(current_heading):
+
+        # if we are turning to the left we want to make sure our heading is 360 not 0
+        if (target_heading>180 and target_heading < 360):
+            current_heading +=360
+            print("in patched heading")
+        else:
+            # this handles situations where it is reading 359.9 we want have the heading be 0
+            current_heading = 0.0
+    return current_heading
+      
+def P_turn(target_heading, right_or_left, max_speed):
+    #max_speed = 100
+    current_speed = 0
+    TOL = 2
+
+    rel_target_heading = convert_absolute_to_relative(target_heading)
+
+
+
+    #current_heading = getPatchedHeading(target_heading)
+    rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+
+
+    
+    while not(rel_current_heading > rel_target_heading - TOL and rel_current_heading < rel_target_heading + TOL):
+        error_degrees = rel_target_heading - rel_current_heading
+
+        current_speed = error_degrees
+
+        #max speed is max_speed.. make sure to handle negative
+        if current_speed > max_speed:
+            current_speed = max_speed
+        else:
+            if current_speed < (0 - max_speed):
+                current_speed = (0 - max_speed)
+
+
+
+        print("rel_current_heading", rel_current_heading)
+        print("current_speed", current_speed)
+       
+        left_motors.spin(FORWARD, current_speed, PERCENT)
+        right_motors.spin(REVERSE, current_speed, PERCENT)    
+        
+
+       
+        
+
+        rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+        #wait(10)
+    stop_motors()
+    return
+
+
+"""
+        if current_speed > 0:
+            #If i am turning right then the right motor goes backwards and the left one goes forwards
+            right_motors.spin(REVERSE, current_speed, PERCENT)
+            left_motors.spin(FORWARD, current_speed, PERCENT)    
+        else: 
+            #If i am turning Left then the right motor goes forwards and the left one goes backwards
+            right_motors.spin(FORWARD, (0-current_speed), PERCENT)
+            left_motors.spin(REVERSE, (0-current_speed), PERCENT)    
+        """
+
+
+def old_P_turn(target_heading, right_or_left, max_speed):
+    #max_speed = 100
+    current_speed = 0
+    TOL = 5
+
+
+    current_heading = getPatchedHeading(target_heading)
+    
+    while not(current_heading > target_heading - TOL and current_heading < target_heading + TOL):
+        error_degrees = target_heading - current_heading
+
+        current_speed = error_degrees
+
+        #max speed is max_speed.. make sure to handle negative
+        if current_speed > max_speed:
+            current_speed = max_speed
+        else:
+            if current_speed < (0 - max_speed):
+                current_speed = (0 - max_speed)
+
+
+
+        print("current_heading", current_heading)
+        print("current_speed", current_speed)
+       
+        left_motors.spin(FORWARD, current_speed, PERCENT)
+        right_motors.spin(REVERSE, current_speed, PERCENT)    
+        
+
+       
+        
+
+        current_heading = getPatchedHeading(target_heading)
+        wait(10)
+    stop_motors()
+    return
+
+
+"""
+        if current_speed > 0:
+            #If i am turning right then the right motor goes backwards and the left one goes forwards
+            right_motors.spin(REVERSE, current_speed, PERCENT)
+            left_motors.spin(FORWARD, current_speed, PERCENT)    
+        else: 
+            #If i am turning Left then the right motor goes forwards and the left one goes backwards
+def P_turn(target_heading, right_or_left, max_speed):
+    #max_speed = 100
+    current_speed = 0
+    TOL = 5
+
+
+    current_heading = getPatchedHeading(target_heading)
+    
+    while not(current_heading > target_heading - TOL and current_heading < target_heading + TOL):
+        error_degrees = target_heading - current_heading
+
+        current_speed = error_degrees
+
+        #max speed is max_speed.. make sure to handle negative
+        if current_speed > max_speed:
+            current_speed = max_speed
+        else:
+            if current_speed < (0 - max_speed):
+                current_speed = (0 - max_speed)
+
+
+
+        print("current_heading", current_heading)
+        print("current_speed", current_speed)
+       
+        left_motors.spin(FORWARD, current_speed, PERCENT)
+        right_motors.spin(REVERSE, current_speed, PERCENT)    
+        
+
+       
+        
+
+        current_heading = getPatchedHeading(target_heading)
+        wait(10)
+    stop_motors()
+    return
+
+
+"""
+
+
 
 def potentiometer_test():
     brain.screen.clear_screen()
@@ -1588,20 +1758,11 @@ def drive_task():
                 if abs(drive_right) < deadband:
                     drive_right = 0
 
-                # Apply tank drive
-                if left_motor_c.installed():
-                    left_motor_a.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                    left_motor_b.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                    left_motor_c.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                    right_motor_a.spin(FORWARD, ramp_up(drive_right), PERCENT)
-                    right_motor_b.spin(FORWARD, ramp_up(drive_right), PERCENT)
-                    right_motor_c.spin(FORWARD, ramp_up(drive_right), PERCENT)
-                else:
-                    left_motor_a.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                    left_motor_b.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                    right_motor_a.spin(FORWARD, ramp_up(drive_right), PERCENT)
-                    right_motor_b.spin(FORWARD, ramp_up(drive_right), PERCENT)
-
+                # Apply tank drive withGroups
+                left_motors.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                right_motors.spin(FORWARD, ramp_up(drive_right), PERCENT)
+                print ("drive_left", drive_left)
+                print ("drive_right", drive_right)
 
         else:
             # Arcade control mode (Controller 1)
@@ -1914,10 +2075,17 @@ print("i am before")
 print('hello my name is caleb')
 #collision_and_park()
 # skills_auton()
-comp = Competition(user_control, autonomous)
+#comp = Competition(user_control, autonomous)
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
 
+P_turn(90, "hello" , 70)
+wait(1000)
+P_turn(181, "hello" , 70)
+wait(1000)
+P_turn(271, "hello" , 70)
+wait(1000)
+P_turn(359, "hello" , 70)
 
 
 
@@ -1926,5 +2094,4 @@ comp = Competition(user_control, autonomous)
 
 
 
-
-#A CODE CLEANUP WOULD BE MUCH APPRECIATED 
+#A CODE CLEANUP WOULD BE MUCH APPRECIATED ppppppp
