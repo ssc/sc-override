@@ -402,7 +402,17 @@ def color_sort(color, ball_count):
     basket_intake_motor.stop()
         
 
+def matchloader_up():
+    DigOutMatch.set(False)
 
+def matchloader_down():
+    DigOutMatch.set(True)
+
+def descorer_up():
+    Digout.set(False)
+
+def descorer_down():
+    Digout.set(True)
 
 def search_for_objects(range_degrees,sensor="BACK"):
     #global smallest_distance_value
@@ -923,7 +933,7 @@ def skills_auton():
     # #controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
     # wait(100, MSEC)  
     # if lucas == 1:
-    #     Digout.set(False)
+    #     descorer_down()
     #     tube_intake_motor.spin(FORWARD,100,PERCENT)
     #     wait(2000,MSEC)
     #     tube_intake_motor.stop()
@@ -933,7 +943,7 @@ def skills_auton():
     #     move_until_distance(500,'forward',30,"FRONT")
     #     controller_1.rumble("...--")
     #     drivetrain.turn_to_heading(270,DEGREES,20,PERCENT)
-    #     Digout.set(False)
+    #     descorer_down()
     #     first_intake.spin(REVERSE,100,PERCENT)
     #     basket_intake_motor.spin(REVERSE,100,PERCENT)
     #     left_motors.spin(FORWARD,100,PERCENT)
@@ -943,11 +953,11 @@ def skills_auton():
     #     stop_motors()
 
     #     #move_until_distance(100,'forward',40,"FRONT")
-    #     Digout.set(True)
+    #     descorer_up()
 
 
     # if caleb == 1:
-    #     DigOutMatch.set(False)
+    #     matchloader_up()
     #     tube_intake_motor.spin(FORWARD,100,PERCENT)
     #     wait(2000,MSEC)
     #     tube_intake_motor.stop()
@@ -957,7 +967,7 @@ def skills_auton():
     #     move_until_distance(540, 'forward', 30, "FRONT")
     #     drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
     #     move_until_distance(370,"forward",30,"FRONT")
-    #     DigOutMatch.set(True)
+    #     DOutMatch.set(True)
     #     inertial_sensor.collision(intake_from_tube)
     #     drivetrain.drive_for(FORWARD,10,INCHES)
     #     controller_1.rumble("....--.-.- -. -.--- .---.---.---.- ..--.-..-..-.-..-.----.-.-.-..-.-----.-...-.-...-.-...-.--.-..-.-.-..-.-...")
@@ -1225,25 +1235,26 @@ def P_turn(target_heading, max_speed):
 def newauton_drive_and_alignwithtower():
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print("7777 Hello! Im controller and this code ran.")
-    DigOutMatch.set(False)
+    matchloader_up()
     tube_intake_motor.spin(REVERSE,100,PERCENT)
     wait(571,MSEC)
     tube_intake_motor.stop()
     tube_intake_motor.spin_to_position(-720,DEGREES)
     #drivetrain.drive_for(REVERSE, 7, INCHES)
-    one_wheel_turn_to_heading(300, 'left',REVERSE,30)
+    one_wheel_turn_to_heading(310, 'left',REVERSE,30)
 
     # one_wheel_turn_to_heading(180, 'left', REVERSE,30)
     print(calibratedAngle)
     #drivetrain.set_stopping(BrakeType.COAST)
-    drivetrain.drive_for(REVERSE,8,INCHES,60,PERCENT)
-    P_turn(185,50)
+    drivetrain.drive_for(REVERSE,11,INCHES,40,PERCENT)
+    P_turn(0,50)
     wait(0.5, SECONDS)
-    drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
-    move_until_distance(510, 'forward', 30, "FRONT")
+    # drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
+    move_until_distance(450, 'reverse', 30, "BACK")
     #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-    P_turn(calibratedAngle(270),50)
-    DigOutMatch.set(True)
+    P_turn(calibratedAngle(270),30)
+    matchloader_down()
+    wait(400)
     move_until_distance(360,"forward",50,"FRONT")
 
     left_motors.spin(FORWARD,55,PERCENT)
@@ -1267,7 +1278,7 @@ def newauton_back_n_align_auton():
     # #right_motors.spin(FORWARD,5,PERCENT)
     # for i in range (1,2):
     #     wait(3,SECONDS)
-    #     DigOutMatch.set(False)
+    #     matchloader_up()
     #     wait(0.5,SECONDS)
     #     DigOutMatch.set(True)
 
@@ -1281,12 +1292,13 @@ def newauton_back_n_align_auton():
     left_motors.spin(REVERSE,20,PERCENT)
     right_motors.spin(REVERSE,20,PERCENT)
     wait (1.5,SECONDS)
-    DigOutMatch.set(False)
+    matchloader_up()
     left_motors.stop()
     right_motors.stop()
     drivetrain.turn_to_heading(310,DEGREES)
     (a,b)=search_for_objects(-60)
-    drivetrain.turn_to_heading(a-4,DEGREES)
+    #drivetrain.turn_to_heading(a-4,DEGREES)
+    P_turn(a, 30)
     move_until_distance(120,"reverse",20,"BACK")
     
     #wait(20000)
@@ -1312,11 +1324,11 @@ def newauton_load_n_descore_auton():
         toprack.stop()
         move_until_distance(180,'forward',20,"BACK")
         drivetrain.turn_to_heading(0, DEGREES)
-        Digout.set(True)
+        descorer_down()
         move_until_distance(165,'reverse',20,"BACK")
         drivetrain.turn_to_heading(282, DEGREES)
     
-    Digout.set(True)
+    descorer_up()
 
 
     back_until_yaw("left",260,60)
@@ -1348,8 +1360,12 @@ def newauton_extractballsfromtower():
     left_motors.stop()
     right_motors.stop()
     drivetrain.drive_for(REVERSE, 8, INCHES)
-    DigOutMatch.set(False)
-    drivetrain.turn_to_heading(275,DEGREES)
+    matchloader_up()
+
+    #drivetrain.turn_to_heading(275,DEGREES)
+    P_turn(275,40)
+
+
     #drivetrain.turn_to_heading(240,DEGREES)
     #(a,b)=search_for_objects(-50)
     #drivetrain.turn_to_heading(a - 5,DEGREES)
@@ -1357,8 +1373,12 @@ def newauton_extractballsfromtower():
 
 def newauton_drive_back_to_park():
     one_wheel_turn_to_heading(270,'left',FORWARD,10)
-    Digout.set(False)   
-    move_until_distance(930,"forward",40,"FRONT")
+    descorer_down()
+    drivetrain.drive_for(FORWARD,25,INCHES,40,PERCENT)
+
+    #We want this to work: not running for some reason
+    #move_until_distance(930,"forward",40,"FRONT")
+
     drivetrain.turn_to_heading(325,DEGREES,20,PERCENT)
     collision_and_park()
 
@@ -1447,7 +1467,7 @@ def auton_funct():
       drivetrain.drive_for(FORWARD,4,INCHES,10,PERCENT)
       #drivetrain.drive_for(FORWARD,5, INCHES, 25, PERCENT )
       #move_until_distance(25, "forward",20,"FRONT")
-      #DigOutMatch.set(False)
+      #matchloader_up()
       #drivetrain.drive_for(FORWARD,5, INCHES, 20, PERCENT )
 
       wait(1,SECONDS)
@@ -1862,10 +1882,10 @@ def drive_task():
             if descorer == 0:
                 descorer = 1
                 if descorer_out == 0:
-                    Digout.set(True)
+                    descorer_up()
                     descorer_out = 1
                 else:
-                    Digout.set(False)
+                    descorer_down()
                     descorer_out = 0
 
         else:
@@ -1879,10 +1899,10 @@ def drive_task():
             if descorer2 == 0:
                 descorer2 = 1
                 if descorer_out2 == 0:
-                    DigOutMatch.set(True)
+                    matchloader_down()
                     descorer_out2 = 1
                 else:
-                    DigOutMatch.set(False)
+                    matchloader_up()
                     descorer_out2 = 0
 
         else:
@@ -1893,12 +1913,12 @@ def drive_task():
             
             #         matchloader_out = 1
             #     else:
-            #         DigOutMatch.set(False)
+            #         matchloader_up()
             #         matchloader_out = 0
 
         #else:
         #    matchloader = 0
-            #Digout.set(False)
+            #descorer_down()
             #controller_1.rumble('-----')
             
 
@@ -2110,16 +2130,16 @@ print('hello my name is caleb')
 #collision_and_park()
 # skills_auton()
 #comp = Competition(user_control, autonomous)
-#newauton_mainfunc()
+newauton_mainfunc()
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
 # 
-wait(1000)
-P_turn(calibratedAngle(175),90) # slighly off from 180 enough so we know what direction to go
-P_turn(calibratedAngle(180),90)
-wait(1000)
-P_turn(calibratedAngle(355),90)
-P_turn(calibratedAngle(0),90)
+# wait(1000)
+# P_turn(calibratedAngle(175),90) # slighly off from 180 enough so we know what direction to go
+# P_turn(calibratedAngle(180),90)
+# wait(1000)
+# P_turn(calibratedAngle(355),90)
+# P_turn(calibratedAngle(0),90)
 
 
 
