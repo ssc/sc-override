@@ -11,7 +11,7 @@
 
 # Library imports
 from vex import *
-from math import atan, degrees, sin, radians, cos, ceil, floor,sqrt, tan, asin
+from math import atan, degrees, sin, radians, cos, ceil, floor,sqrt, tan, asin, 
 
 #DO NOT ADD PI KUBA!!!!!!
 
@@ -20,7 +20,6 @@ test_function = 0
 
 brain = Brain()
 gyro_360 = 360
-
 def calibratedAngle(idealAngle):
     return (idealAngle * gyro_360/360)
         
@@ -108,6 +107,7 @@ first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
+drivetrain.set_stopping(BrakeType.BRAKE)
 
 LEFT = 1
 RIGHT = 0
@@ -1148,6 +1148,80 @@ def collision_and_park():
     controller_1.rumble('--')
 
 
+"""
+example usage of P_turn (cut and paste into your code)
+
+when turning a full 180 from current direction and you want to control which direction
+clockwise or counter clockwise try this:
+
+P_turn(calibratedAngle(175),90) # slighly off from 180 enough so we know what direction to go
+P_turn(calibratedAngle(180),90)
+wait(1000)
+P_turn(calibratedAngle(355),90)
+P_turn(calibratedAngle(0),90)
+"""
+
+def P_turn(target_heading, max_speed):
+    #max_speed = 100
+    current_speed = 0
+    TOL = 2
+
+    rel_target_heading = convert_absolute_to_relative(target_heading)
+
+
+
+    #current_heading = getPatchedHeading(target_heading)
+    rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+    print("====================================================")
+    print("Calebg123", rel_target_heading," ", rel_current_heading)
+
+    
+    while not(rel_current_heading > rel_target_heading - TOL and rel_current_heading < rel_target_heading + TOL):
+        
+        #turning wrong direction when target heading was negative and current heading was positive
+        if rel_target_heading < 0 and rel_current_heading > 0:
+            rel_current_heading -=360 # according to angle math adding or subtracting 360 doesn't change the angle
+
+
+        if rel_target_heading > rel_current_heading +180:
+            rel_current_heading += 360
+        error_degrees = rel_target_heading - rel_current_heading
+
+        # go slower if less than this
+        # 
+        # using max_speed because faster you go takes longer so slow down
+        slowdown_cutoff = max_speed 
+
+
+        # when far go fast, when close go slow
+        current_speed = error_degrees * 0.5        
+        if abs(error_degrees) > slowdown_cutoff:
+            current_speed= error_degrees
+
+
+        #max speed is max_speed.. make sure to handle negative
+        if current_speed > max_speed:
+            current_speed = max_speed
+        else:
+            if current_speed < (0 - max_speed):
+                current_speed = (0 - max_speed)
+
+        #print("rel_current_heading", rel_current_heading)
+       # print("current_speed", current_speed)
+       
+        left_motors.spin(FORWARD, current_speed, PERCENT)
+        right_motors.spin(REVERSE, current_speed, PERCENT)    
+        
+
+       
+        
+
+        rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+        #wait(10)
+    stop_motors()
+    return
+
+
 def newauton_drive_and_alignwithtower():
     controller_1.screen.set_cursor(2,1)
     controller_1.screen.print("7777 Hello! Im controller and this code ran.")
@@ -1156,16 +1230,19 @@ def newauton_drive_and_alignwithtower():
     wait(571,MSEC)
     tube_intake_motor.stop()
     tube_intake_motor.spin_to_position(-720,DEGREES)
-    drivetrain.drive_for(REVERSE, 7, INCHES)
-    one_wheel_turn_to_heading(270, 'left',REVERSE,30)
-    one_wheel_turn_to_heading(180, 'left', REVERSE,30)
+    #drivetrain.drive_for(REVERSE, 7, INCHES)
+    one_wheel_turn_to_heading(300, 'left',REVERSE,30)
+
+    # one_wheel_turn_to_heading(180, 'left', REVERSE,30)
     print(calibratedAngle)
-    drivetrain.set_stopping(BrakeType.COAST)
-    drivetrain.drive_for(FORWARD,20,INCHES,60,PERCENT)
+    #drivetrain.set_stopping(BrakeType.COAST)
+    drivetrain.drive_for(REVERSE,8,INCHES,60,PERCENT)
+    P_turn(185,50)
     wait(0.5, SECONDS)
     drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
-    move_until_distance(500, 'forward', 30, "FRONT")
-    drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
+    move_until_distance(510, 'forward', 30, "FRONT")
+    #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
+    P_turn(calibratedAngle(270),50)
     DigOutMatch.set(True)
     move_until_distance(360,"forward",50,"FRONT")
 
@@ -1207,8 +1284,8 @@ def newauton_back_n_align_auton():
     DigOutMatch.set(False)
     left_motors.stop()
     right_motors.stop()
-    drivetrain.turn_to_heading(290,DEGREES)
-    (a,b)=search_for_objects(-40)
+    drivetrain.turn_to_heading(310,DEGREES)
+    (a,b)=search_for_objects(-60)
     drivetrain.turn_to_heading(a-4,DEGREES)
     move_until_distance(120,"reverse",20,"BACK")
     
@@ -1444,49 +1521,6 @@ def getPatchedHeading(target_heading):
             current_heading = 0.0
     return current_heading
       
-def P_turn(target_heading, right_or_left, max_speed):
-    #max_speed = 100
-    current_speed = 0
-    TOL = 2
-
-    rel_target_heading = convert_absolute_to_relative(target_heading)
-
-
-
-    #current_heading = getPatchedHeading(target_heading)
-    rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
-
-
-    
-    while not(rel_current_heading > rel_target_heading - TOL and rel_current_heading < rel_target_heading + TOL):
-        error_degrees = rel_target_heading - rel_current_heading
-
-        current_speed = error_degrees
-
-        #max speed is max_speed.. make sure to handle negative
-        if current_speed > max_speed:
-            current_speed = max_speed
-        else:
-            if current_speed < (0 - max_speed):
-                current_speed = (0 - max_speed)
-
-
-
-        print("rel_current_heading", rel_current_heading)
-        print("current_speed", current_speed)
-       
-        left_motors.spin(FORWARD, current_speed, PERCENT)
-        right_motors.spin(REVERSE, current_speed, PERCENT)    
-        
-
-       
-        
-
-        rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
-        #wait(10)
-    stop_motors()
-    return
-
 
 """
         if current_speed > 0:
@@ -2076,21 +2110,16 @@ print('hello my name is caleb')
 #collision_and_park()
 # skills_auton()
 #comp = Competition(user_control, autonomous)
+#newauton_mainfunc()
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
-
-P_turn(90, "hello" , 70)
+# 
 wait(1000)
-P_turn(181, "hello" , 70)
+P_turn(calibratedAngle(175),90) # slighly off from 180 enough so we know what direction to go
+P_turn(calibratedAngle(180),90)
 wait(1000)
-P_turn(271, "hello" , 70)
-wait(1000)
-P_turn(359, "hello" , 70)
-
-
-
-
-
+P_turn(calibratedAngle(355),90)
+P_turn(calibratedAngle(0),90)
 
 
 
