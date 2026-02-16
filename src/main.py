@@ -1104,6 +1104,7 @@ def stop_motors_on_collision():
     controller_1.screen.set_cursor(3,1)
 
     global dont_stop_twice
+    wait ( 1, SECONDS)
     dont_stop_twice += 1
     if dont_stop_twice < 2:
         drivetrain.drive_for(REVERSE, 6, INCHES, 50, PERCENT)
@@ -1111,16 +1112,17 @@ def stop_motors_on_collision():
         print("we are done turning") 
         if distance_sensor.object_distance(DistanceUnits.MM) < 489:
             print("we are in the if statement") 
-            move_until_distance(490,"reverse",20,"FRONT")
+            move_until_distance(2,"reverse",20,"FRONT")
             
       
         else:
             print("we are in the else statement") 
-            move_until_distance(490,"forward",20,"FRONT")
+            move_until_distance(250,"forward",20,"FRONT")
         one_wheel_turn_to_heading(0,"left",FORWARD,40) # normal 85
         print("we are done with the if statement") 
         #DigOutMatch.set(True)
-        drivetrain.drive_for(FORWARD, 22, INCHES, 50, PERCENT) 
+        drivetrain.drive_for(REVERSE, 3, INCHES, 100, PERCENT)
+        drivetrain.drive_for(FORWARD, 25, INCHES, 100, PERCENT) 
         
         controller_1.screen.set_cursor(2,1)
         controller_1.screen.print("In")
@@ -1247,12 +1249,12 @@ def newauton_drive_and_alignwithtower():
     print(calibratedAngle)
     #drivetrain.set_stopping(BrakeType.COAST)
     drivetrain.drive_for(REVERSE,11,INCHES,40,PERCENT)
-    P_turn(0,50)
+    P_turn(0,55)
     wait(0.5, SECONDS)
     # drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
-    move_until_distance(450, 'reverse', 30, "BACK")
+    move_until_distance(540, 'reverse', 30, "BACK")
     #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-    P_turn(calibratedAngle(270),30)
+    P_turn(calibratedAngle(270),50)
     matchloader_down()
     wait(400)
     move_until_distance(360,"forward",50,"FRONT")
@@ -1295,10 +1297,10 @@ def newauton_back_n_align_auton():
     matchloader_up()
     left_motors.stop()
     right_motors.stop()
-    drivetrain.turn_to_heading(310,DEGREES)
-    (a,b)=search_for_objects(-60)
+    drivetrain.turn_to_heading(300,DEGREES)
+    (a,b)=search_for_objects(-45)
     #drivetrain.turn_to_heading(a-4,DEGREES)
-    P_turn(a, 30)
+    P_turn(a, 40)
     move_until_distance(120,"reverse",20,"BACK")
     
     #wait(20000)
@@ -1315,6 +1317,9 @@ def newauton_load_n_descore_auton():
         # first_intake.stop()
         # basket_intake_motor.stop()
         # toprack.stop()
+        drivetrain.drive(REVERSE)
+        wait(0.5, SECONDS)
+        drivetrain.stop()
         right_motors.spin(FORWARD,20,PERCENT)
         wait(0.1,SECONDS)
         right_motors.stop()   
@@ -1325,8 +1330,8 @@ def newauton_load_n_descore_auton():
         move_until_distance(180,'forward',20,"BACK")
         drivetrain.turn_to_heading(0, DEGREES)
         descorer_down()
-        move_until_distance(165,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(282, DEGREES)
+        move_until_distance(150,'reverse',20,"BACK")
+        drivetrain.turn_to_heading(277, DEGREES)
     
     descorer_up()
 
@@ -1372,7 +1377,7 @@ def newauton_extractballsfromtower():
    # drivetrain.turn_to_heading(a,DEGREES)
 
 def newauton_drive_back_to_park():
-    one_wheel_turn_to_heading(270,'left',FORWARD,10)
+    one_wheel_turn_to_heading(269,'left',FORWARD,10)
     descorer_down()
     drivetrain.drive_for(FORWARD,25,INCHES,40,PERCENT)
 
@@ -1388,7 +1393,9 @@ def on_collision_1():
 def on_collision_2():
     print("collided 2")
 
-
+def Backwars_n_forwards_For_Park():
+    drivetrain.drive_for(REVERSE, 8, INCHES,80, PERCENT)
+    drivetrain.drive_for(FORWARD, 28, INCHES,80, PERCENT)
 def newauton_mainfunc():
     #newauton_sweepballs() # notstarted
     newauton_drive_and_alignwithtower() # notstarted
@@ -2128,9 +2135,10 @@ print("i am before")
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #collision_and_park()
+Backwars_n_forwards_For_Park()
 # skills_auton()
 #comp = Competition(user_control, autonomous)
-newauton_mainfunc()
+#newauton_mainfunc()
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
 # 
