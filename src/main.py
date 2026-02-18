@@ -917,6 +917,16 @@ def stop_motors():
     right_motors.stop()
 
 
+def Backwars_n_forwards_For_Park():
+
+    drivetrain.drive_for(REVERSE,5,INCHES)
+    wait(0.5,SECONDS)
+    drivetrain.stop()
+
+    drivetrain.drive_for(FORWARD,20,INCHES,100,PERCENT)
+    wait(2, SECONDS)
+    drivetrain.stop()
+
 def skills_auton():
     newauton_mainfunc()
     return
@@ -1112,18 +1122,16 @@ def stop_motors_on_collision():
         print("we are done turning") 
         if distance_sensor.object_distance(DistanceUnits.MM) < 489:
             print("we are in the if statement") 
-            move_until_distance(2,"reverse",20,"FRONT")
+            move_until_distance(270,"reverse",20,"FRONT")
             
       
         else:
             print("we are in the else statement") 
-            move_until_distance(250,"forward",20,"FRONT")
+            move_until_distance(270,"forward",20,"FRONT")
         one_wheel_turn_to_heading(0,"left",FORWARD,40) # normal 85
         print("we are done with the if statement") 
         #DigOutMatch.set(True)
-        drivetrain.drive_for(REVERSE, 3, INCHES, 100, PERCENT)
-        drivetrain.drive_for(FORWARD, 25, INCHES, 100, PERCENT) 
-        
+        Backwars_n_forwards_For_Park()
         controller_1.screen.set_cursor(2,1)
         controller_1.screen.print("In")
         wait(5,SECONDS)
@@ -1235,13 +1243,6 @@ def P_turn(target_heading, max_speed):
 
 
 def newauton_drive_and_alignwithtower():
-    controller_1.screen.set_cursor(2,1)
-    controller_1.screen.print("7777 Hello! Im controller and this code ran.")
-    matchloader_up()
-    tube_intake_motor.spin(REVERSE,100,PERCENT)
-    wait(571,MSEC)
-    tube_intake_motor.stop()
-    tube_intake_motor.spin_to_position(-720,DEGREES)
     #drivetrain.drive_for(REVERSE, 7, INCHES)
     one_wheel_turn_to_heading(310, 'left',REVERSE,30)
 
@@ -1254,7 +1255,7 @@ def newauton_drive_and_alignwithtower():
     # drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
     move_until_distance(540, 'reverse', 30, "BACK")
     #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-    P_turn(calibratedAngle(270),50)
+    P_turn(calibratedAngle(270),35)
     matchloader_down()
     wait(400)
     move_until_distance(360,"forward",50,"FRONT")
@@ -1331,12 +1332,12 @@ def newauton_load_n_descore_auton():
         drivetrain.turn_to_heading(0, DEGREES)
         descorer_down()
         move_until_distance(150,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(277, DEGREES)
+        drivetrain.turn_to_heading(285, DEGREES)
     
     descorer_up()
 
 
-    back_until_yaw("left",260,60)
+    back_until_yaw("left",260,30)
 
 
 
@@ -1377,12 +1378,12 @@ def newauton_extractballsfromtower():
    # drivetrain.turn_to_heading(a,DEGREES)
 
 def newauton_drive_back_to_park():
-    one_wheel_turn_to_heading(269,'left',FORWARD,10)
+    one_wheel_turn_to_heading(265,'left',FORWARD,10)
     descorer_down()
-    drivetrain.drive_for(FORWARD,25,INCHES,40,PERCENT)
+    #drivetrain.drive_for(FORWARD,25,INCHES,40,PERCENT)
 
     #We want this to work: not running for some reason
-    #move_until_distance(930,"forward",40,"FRONT")
+    move_until_distance(930,"forward",40,"FRONT")
 
     drivetrain.turn_to_heading(325,DEGREES,20,PERCENT)
     collision_and_park()
@@ -1393,11 +1394,20 @@ def on_collision_1():
 def on_collision_2():
     print("collided 2")
 
-def Backwars_n_forwards_For_Park():
-    drivetrain.drive_for(REVERSE, 8, INCHES,80, PERCENT)
-    drivetrain.drive_for(FORWARD, 28, INCHES,80, PERCENT)
+
+def newauton_sweepballs():
+    controller_1.screen.set_cursor(2,1)
+    controller_1.screen.print("7777 Hello! Im controller and this code ran.")
+    matchloader_up()
+    tube_intake_motor.spin(REVERSE,100,PERCENT)
+    wait(571,MSEC)
+    tube_intake_motor.stop()
+    tube_intake_motor.spin_to_position(-720,DEGREES)
+    
+
+
 def newauton_mainfunc():
-    #newauton_sweepballs() # notstarted
+    newauton_sweepballs() # notstarted
     newauton_drive_and_alignwithtower() # notstarted
     newauton_extractballsfromtower() # notstarted
     newauton_back_n_align_auton()   # inprogress
@@ -2135,9 +2145,9 @@ print("i am before")
 #drive_task()#twenty_point_skills(0)
 print('hello my name is caleb')
 #collision_and_park()
-Backwars_n_forwards_For_Park()
+#Backwars_n_forwards_For_Park()
 # skills_auton()
-#comp = Competition(user_control, autonomous)
+comp = Competition(user_control, autonomous)
 #newauton_mainfunc()
 #turn_until_distance(100,'left',20)
 #newauton_load_n_descore_auton()
