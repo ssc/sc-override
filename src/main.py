@@ -114,8 +114,13 @@ RIGHT = 0
 
 
 def ramp_up(input_percent):
-    if (input_percent < 50):
+    if (input_percent < 25):
+        return input_percent * 0.25
+    
+    elif (input_percent < 50):
         return input_percent * 0.5
+    
+    
     elif (input_percent < 75):
         return input_percent * 0.75
     else:
@@ -922,8 +927,8 @@ def Backwars_n_forwards_For_Park():
     drivetrain.drive_for(REVERSE,5,INCHES)
     wait(0.5,SECONDS)
     drivetrain.stop()
-
-    drivetrain.drive_for(FORWARD,20,INCHES,100,PERCENT)
+    one_wheel_turn_to_heading(0,'right',FORWARD,20)
+    drivetrain.drive_for(FORWARD,39,INCHES,100,PERCENT)
     wait(2, SECONDS)
     drivetrain.stop()
 
@@ -1117,20 +1122,21 @@ def stop_motors_on_collision():
     wait ( 1, SECONDS)
     dont_stop_twice += 1
     if dont_stop_twice < 2:
-        drivetrain.drive_for(REVERSE, 6, INCHES, 50, PERCENT)
+        drivetrain.drive_for(REVERSE, 10, INCHES, 50, PERCENT)
         one_wheel_turn_to_heading(270,"left",REVERSE,30) #normal 355
         print("we are done turning") 
-        if distance_sensor.object_distance(DistanceUnits.MM) < 489:
+        if distance_sensor.object_distance(DistanceUnits.MM) < 335:
             print("we are in the if statement") 
-            move_until_distance(270,"reverse",20,"FRONT")
+            move_until_distance(335,"reverse",20,"FRONT")
             
       
         else:
             print("we are in the else statement") 
-            move_until_distance(270,"forward",20,"FRONT")
+            move_until_distance(335,"forward",20,"FRONT")
         one_wheel_turn_to_heading(0,"left",FORWARD,40) # normal 85
         print("we are done with the if statement") 
         #DigOutMatch.set(True)
+    
         Backwars_n_forwards_For_Park()
         controller_1.screen.set_cursor(2,1)
         controller_1.screen.print("In")
@@ -1249,13 +1255,13 @@ def newauton_drive_and_alignwithtower():
     # one_wheel_turn_to_heading(180, 'left', REVERSE,30)
     print(calibratedAngle)
     #drivetrain.set_stopping(BrakeType.COAST)
-    drivetrain.drive_for(REVERSE,11,INCHES,40,PERCENT)
+    drivetrain.drive_for(REVERSE,16,INCHES,40,PERCENT)
     P_turn(0,55)
     wait(0.5, SECONDS)
     # drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
-    move_until_distance(540, 'reverse', 30, "BACK")
+    move_until_distance(500, 'reverse', 30, "BACK")
     #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-    P_turn(calibratedAngle(270),35)
+    P_turn(calibratedAngle(280),35)
     matchloader_down()
     wait(400)
     move_until_distance(360,"forward",50,"FRONT")
@@ -1330,11 +1336,11 @@ def newauton_load_n_descore_auton():
         toprack.stop()
         move_until_distance(180,'forward',20,"BACK")
         drivetrain.turn_to_heading(0, DEGREES)
-        descorer_down()
+        #descorer_down()
         move_until_distance(150,'reverse',20,"BACK")
         drivetrain.turn_to_heading(285, DEGREES)
     
-    descorer_up()
+    #descorer_up()
 
 
     back_until_yaw("left",260,30)
@@ -1391,7 +1397,7 @@ def newauton_drive_back_to_park():
 def on_collision_1():
     print("collided 1")
 
-def on_collision_2():
+def on_collision_2(): 
     print("collided 2")
 
 
@@ -1830,10 +1836,29 @@ def drive_task():
                     drive_right = 0
 
                 # Apply tank drive withGroups
-                left_motors.spin(FORWARD, ramp_up(drive_left), PERCENT)
-                right_motors.spin(FORWARD, ramp_up(drive_right), PERCENT)
+
+
+
+                #if the left stick is postive
+                if drive_left > 0:
+                    #make the left wheels go fast forward
+                    left_motors.spin(FORWARD, ramp_up(drive_left), PERCENT)
+                else:
+                    #make the left wheels go fast backwards
+                    left_motors.spin(REVERSE, ramp_up(0 - drive_left), PERCENT)
+
+                if drive_right > 0:
+                    #make th right wheels go fast forward
+                    right_motors.spin(FORWARD, ramp_up(drive_right), PERCENT)
+                else:
+                    #make the right wheels go fast backwards
+                    right_motors.spin(REVERSE, ramp_up(0 - drive_right), PERCENT)
+
+
+
                 print ("drive_left", drive_left)
                 print ("drive_right", drive_right)
+
 
         else:
             # Arcade control mode (Controller 1)
