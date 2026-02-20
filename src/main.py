@@ -150,7 +150,7 @@ def outake_empty():
 def jiggle_angle(goal_angle, jspeed):
     drivetrain.drive_for(FORWARD,1.5,INCHES, jspeed, PERCENT)
     drivetrain.drive_for(REVERSE,1.8,INCHES, jspeed, PERCENT)
-    P_turn(goal_angle, 40)
+    # P_turn(goal_angle, 40)
 
     
     
@@ -940,9 +940,11 @@ def stop_motors():
 
 def Backwars_n_forwards_For_Park():
 
-    drivetrain.drive_for(REVERSE,5,INCHES)
+    drivetrain.drive_for(REVERSE,3,INCHES)
     wait(0.5,SECONDS)
     drivetrain.stop()
+
+    #right before last forward
     one_wheel_turn_to_heading(357,'right',FORWARD,20)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD,100,PERCENT)
@@ -1153,7 +1155,7 @@ def stop_motors_on_collision():
         else:
             print("we are in the else statement") 
             move_until_distance(415,"forward",20,"FRONT")
-        one_wheel_turn_to_heading(0,"left",FORWARD,40) # normal 85
+        one_wheel_turn_to_heading(0,"left",FORWARD,30) # normal 85
         print("we are done with the if statement") 
         #DigOutMatch.set(True)
     
@@ -1364,7 +1366,7 @@ def newauton_load_n_descore_auton(goal_angle):
         drivetrain.turn_to_heading(0, DEGREES)
         #descorer_down()
         move_until_distance(150,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(280, DEGREES)
+        drivetrain.turn_to_heading(284, DEGREES)
     
     #descorer_up()
 
@@ -1417,7 +1419,7 @@ def newauton_drive_back_to_park():
     #We want this to work: not running for some reason
     move_until_distance(930,"forward",40,"FRONT")
 
-    drivetrain.turn_to_heading(325,DEGREES,20,PERCENT)
+    drivetrain.turn_to_heading(322,DEGREES,20,PERCENT)
     collision_and_park()
 
 def on_collision_1():
