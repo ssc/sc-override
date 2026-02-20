@@ -113,6 +113,68 @@ LEFT = 1
 RIGHT = 0
 
 
+
+def P_turn(target_heading, max_speed):
+    #max_speed = 100
+    current_speed = 0
+    TOL = 2
+
+    rel_target_heading = convert_absolute_to_relative(target_heading)
+
+
+
+    #current_heading = getPatchedHeading(target_heading)
+    rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+    print("====================================================")
+    print("Calebg123", rel_target_heading," ", rel_current_heading)
+
+    
+    while not(rel_current_heading > rel_target_heading - TOL and rel_current_heading < rel_target_heading + TOL):
+        
+        #turning wrong direction when target heading was negative and current heading was positive
+        if rel_target_heading < 0 and rel_current_heading > 0:
+            rel_current_heading -=360 # according to angle math adding or subtracting 360 doesn't change the angle
+
+
+        if rel_target_heading > rel_current_heading +180:
+            rel_current_heading += 360
+        error_degrees = rel_target_heading - rel_current_heading
+
+        # go slower if less than this
+        # 
+        # using max_speed because faster you go takes longer so slow down
+        slowdown_cutoff = max_speed 
+
+
+        # when far go fast, when close go slow
+        current_speed = error_degrees * 0.5        
+        if abs(error_degrees) > slowdown_cutoff:
+            current_speed= error_degrees
+
+
+        #max speed is max_speed.. make sure to handle negative
+        if current_speed > max_speed:
+            current_speed = max_speed
+        else:
+            if current_speed < (0 - max_speed):
+                current_speed = (0 - max_speed)
+
+        #print("rel_current_heading", rel_current_heading)
+       # print("current_speed", current_speed)
+       
+        left_motors.spin(FORWARD, current_speed, PERCENT)
+        right_motors.spin(REVERSE, current_speed, PERCENT)    
+        
+
+       
+        
+
+        rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
+        #wait(10)
+    stop_motors()
+    return
+
+
 def ramp_up(input_percent):
     if (input_percent < 25):
         return input_percent * 0.25
@@ -739,8 +801,196 @@ def one_wheel_turn_to_heading(target_heading, side, direction,speed):
     left_motors.stop()
     right_motors.stop()
     return()
+def P_drive_dist(maxs, targ_dist, directionA):
+    thespeed = 0
+    
+
+    # start motors
+
+    if directionA == "forward":
+        # increase the speed to max
+        # curdistance = distance_sensor.object_distance(MM)
+        curdistance = distance_sensor.object_distance(MM)
+        travel_dist = curdistance - targ_dist
+        travel_steps = travel_dist / 2
+        cons_acc = 0.5
+      
+
+        while (distance_sensor.object_distance(MM) > travel_steps):
+            if thespeed == maxs:
+                thespeed = maxs - 1
+            else:
+                thespeed += cons_acc
+            left_motors.set_velocity(thespeed, PERCENT)
+            right_motors.set_velocity(thespeed, PERCENT)
+        print("1st done")
 
 
+        while (distance_sensor.object_distance(MM) > 0):
+            if thespeed == maxs:
+                thespeed = maxs - 1
+            else:
+                thespeed -= cons_acc
+            left_motors.set_velocity(thespeed, PERCENT)
+            right_motors.set_velocity(thespeed, PERCENT)
+        print("3rd done")
+
+    if directionA == "back":
+        curdistance = distance_sensor_back.object_distance(MM)
+        travel_dist = curdistance - targ_dist
+        travel_steps = travel_dist / 3
+
+        # increase the speed to max
+        while (distance_sensor_back.object_distance(MM) > travel_steps * 2):
+            if thespeed == maxs:
+                thespeed = maxs - 1
+            else:
+                thespeed += 1
+            left_motors.set_velocity(-thespeed, PERCENT)
+            right_motors.set_velocity(-thespeed, PERCENT)
+        print("1st done")
+
+        while (distance_sensor_back.object_distance(MM) > travel_steps):
+            left_motors.set_velocity(-maxs, PERCENT)
+            right_motors.set_velocity(-maxs, PERCENT)
+        print("2nd done")
+
+        while (distance_sensor_back.object_distance(MM) > travel_steps * 0):
+            if thespeed == maxs:
+                thespeed = maxs - 1
+            else:
+                thespeed -= 1
+            left_motors.set_velocity(-thespeed, PERCENT)
+            right_motors.set_velocity(-thespeed, PERCENT)
+        print("3rd done")
+        
+
+    # drive some time
+   
+    
+    left_motors.stop()
+    right_motors.stop()
+
+
+
+
+# def P_drive_max(maxs, targ_dist, directionA):
+#     thespeed = 0
+    
+
+#     # start motors
+
+#     if directionA == "forward":
+#         # increase the speed to max
+#         # curdistance = distance_sensor.object_distance(MM)
+#         curdistance = targ_dist
+
+#         travel_steps = curdistance / 2
+#         cons_acc = 0.5
+      
+
+#         while (distance_sensor.object_distance(MM) > travel_steps):
+#             if thespeed == maxs:
+#                 thespeed = maxs - 1
+#             else:
+#                 thespeed += cons_acc
+#             left_motors.set_velocity(thespeed, PERCENT)
+#             right_motors.set_velocity(thespeed, PERCENT)
+#         print("1st done")
+
+
+#         while (distance_sensor.object_distance(MM) > 0):
+#             if thespeed == maxs:
+#                 thespeed = maxs - 1
+#             else:
+#                 thespeed -= cons_acc
+#             left_motors.set_velocity(thespeed, PERCENT)
+#             right_motors.set_velocity(thespeed, PERCENT)
+#         print("3rd done")
+
+#     if directionA == "back":
+#         curdistance = distance_sensor_back.object_distance(MM)
+#         travel_dist = curdistance - targ_dist
+#         travel_steps = travel_dist / 3
+
+#         # increase the speed to max
+#         while (distance_sensor_back.object_distance(MM) > travel_steps * 2):
+#             if thespeed == maxs:
+#                 thespeed = maxs - 1
+#             else:
+#                 thespeed += 1
+#             left_motors.set_velocity(-thespeed, PERCENT)
+#             right_motors.set_velocity(-thespeed, PERCENT)
+#         print("1st done")
+
+#         while (distance_sensor_back.object_distance(MM) > travel_steps):
+#             left_motors.set_velocity(-maxs, PERCENT)
+#             right_motors.set_velocity(-maxs, PERCENT)
+#         print("2nd done")
+
+#         while (distance_sensor_back.object_distance(MM) > travel_steps * 0):
+#             if thespeed == maxs:
+#                 thespeed = maxs - 1
+#             else:
+#                 thespeed -= 1
+#             left_motors.set_velocity(-thespeed, PERCENT)
+#             right_motors.set_velocity(-thespeed, PERCENT)
+#         print("3rd done")
+        
+
+#     # drive some time
+   
+    
+#     left_motors.stop()
+#     right_motors.stop()
+
+
+def P_drive_max_done(maxs, targ_dist):
+    thespeed = 5
+    curdistance = distance_sensor.object_distance(MM)
+    myerror = curdistance - targ_dist
+
+    
+
+    # start motors
+
+    left_motors.spin(FORWARD,thespeed, PERCENT)    
+    right_motors.spin(FORWARD, thespeed, PERCENT)    
+    # increase the speed to max
+    while (thespeed < maxs):
+        thespeed += 1
+        left_motors.set_velocity(thespeed, PERCENT)
+        right_motors.set_velocity(thespeed, PERCENT)
+        wait(10)
+
+    # drive some time
+   
+    curdistance = distance_sensor.object_distance(MM)
+    while (thespeed > 5):
+        
+        myerror = curdistance - targ_dist
+        if (myerror > maxs):
+            myerror = maxs
+        thespeed = myerror / 1.2
+        left_motors.set_velocity(thespeed, PERCENT)
+        right_motors.set_velocity(thespeed, PERCENT)
+        wait(0.01, SECONDS)
+        curdistance = distance_sensor.object_distance(MM)
+
+    # stop motors
+    left_motors.stop()
+    right_motors.stop()
+
+
+
+
+
+
+            
+        
+        
+            
+        
 
 
 
@@ -940,7 +1190,7 @@ def stop_motors():
 
 def Backwars_n_forwards_For_Park():
 
-    drivetrain.drive_for(REVERSE,3,INCHES)
+    drivetrain.drive_for(REVERSE,2,INCHES)
     wait(0.5,SECONDS)
     drivetrain.stop()
 
@@ -952,7 +1202,7 @@ def Backwars_n_forwards_For_Park():
     drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
     drivetrain.drive_for(FORWARD,27,INCHES,100,PERCENT)
     wait(0.5, SECONDS)
-    drivetrain.drive_for(FORWARD,5,INCHES,100,PERCENT)
+    drivetrain.drive_for(FORWARD,8,INCHES,100,PERCENT)
     wait(2, SECONDS)
     drivetrain.stop()
 
@@ -1209,65 +1459,6 @@ P_turn(calibratedAngle(355),90)
 P_turn(calibratedAngle(0),90)
 """
 
-def P_turn(target_heading, max_speed):
-    #max_speed = 100
-    current_speed = 0
-    TOL = 2
-
-    rel_target_heading = convert_absolute_to_relative(target_heading)
-
-
-
-    #current_heading = getPatchedHeading(target_heading)
-    rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
-    print("====================================================")
-    print("Calebg123", rel_target_heading," ", rel_current_heading)
-
-    
-    while not(rel_current_heading > rel_target_heading - TOL and rel_current_heading < rel_target_heading + TOL):
-        
-        #turning wrong direction when target heading was negative and current heading was positive
-        if rel_target_heading < 0 and rel_current_heading > 0:
-            rel_current_heading -=360 # according to angle math adding or subtracting 360 doesn't change the angle
-
-
-        if rel_target_heading > rel_current_heading +180:
-            rel_current_heading += 360
-        error_degrees = rel_target_heading - rel_current_heading
-
-        # go slower if less than this
-        # 
-        # using max_speed because faster you go takes longer so slow down
-        slowdown_cutoff = max_speed 
-
-
-        # when far go fast, when close go slow
-        current_speed = error_degrees * 0.5        
-        if abs(error_degrees) > slowdown_cutoff:
-            current_speed= error_degrees
-
-
-        #max speed is max_speed.. make sure to handle negative
-        if current_speed > max_speed:
-            current_speed = max_speed
-        else:
-            if current_speed < (0 - max_speed):
-                current_speed = (0 - max_speed)
-
-        #print("rel_current_heading", rel_current_heading)
-       # print("current_speed", current_speed)
-       
-        left_motors.spin(FORWARD, current_speed, PERCENT)
-        right_motors.spin(REVERSE, current_speed, PERCENT)    
-        
-
-       
-        
-
-        rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
-        #wait(10)
-    stop_motors()
-    return
 
 
 def newauton_drive_and_alignwithtower():
@@ -1326,11 +1517,13 @@ def newauton_back_n_align_auton():
     matchloader_up()
     left_motors.stop()
     right_motors.stop()
+    oangle = inertial_sensor.heading()
     drivetrain.turn_to_heading(300,DEGREES)
+    
     (a,b)=search_for_objects(-45)
     #drivetrain.turn_to_heading(a-4,DEGREES)
     if a > -3 and a < 3:
-        a = 270
+        a = oangle
         print ("doing the kuba")
                
 
@@ -1363,6 +1556,7 @@ def newauton_load_n_descore_auton(goal_angle):
         basket_intake_motor.stop()
         toprack.stop()
         move_until_distance(180,'forward',20,"BACK")
+        wait(0.5, SECONDS)
         drivetrain.turn_to_heading(0, DEGREES)
         #descorer_down()
         move_until_distance(150,'reverse',20,"BACK")
@@ -1370,8 +1564,8 @@ def newauton_load_n_descore_auton(goal_angle):
     
     #descorer_up()
 
-
-    back_until_yaw("left",260,30)
+        drivetrain.drive_for(REVERSE, 8, INCHES, 30, PERCENT)    
+        back_until_yaw("left",260,60)
 
 
 
@@ -2191,6 +2385,7 @@ def PointWhackerArm():
 # (a,d) = search_for_objects(-120)
 # drivetrain.turn_to_heading(a, DEGREES, wait=True) 
 #outake_empty()
+#P_drive("forward", 24, 100)
 # create competition instance
 #one_wheel_turn_to_heading(180,'left',REVERSE,20)
 print("i am before")
