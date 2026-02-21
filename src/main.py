@@ -1197,7 +1197,7 @@ def Backwars_n_forwards_For_Park():
     #drivetrain.drive_for(FORWARD,32,INCHES,100,PERCENT)
     left_motors.spin(FORWARD,100,PERCENT)
     right_motors.spin(FORWARD,100,PERCENT)
-    wait(3, SECONDS)
+    wait(2.25, SECONDS)
     left_motors.stop()
     right_motors.stop()
 
