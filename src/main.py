@@ -220,12 +220,8 @@ def outake_until_no_resistance(goal_angle):
     first_intake.spin(FORWARD, 75, PERCENT)
     basket_intake_motor.spin(FORWARD, 75, PERCENT)
     toprack.spin(REVERSE, 100, PERCENT)
-    #was a jiggle
-    #was a stop
-    #jiggle_angle(goal_angle, 100)
-    first_intake.spin(FORWARD, 75, PERCENT)
-    basket_intake_motor.spin(FORWARD, 75, PERCENT)
-    toprack.spin(REVERSE, 100, PERCENT)
+    wait(3,SECONDS)
+  
     low_volt = 0
     ball_time = 0
     while low_volt < 55 and ball_time < 800:
@@ -1192,8 +1188,8 @@ def Backwars_n_forwards_For_Park():
     #right before last forward
     one_wheel_turn_to_heading(355,'right',FORWARD,20)
     first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD,100,PERCENT)
-    toprack.spin(REVERSE,100,PERCENT)
+    basket_intake_motor.spin(REVERSE,100,PERCENT)
+    #toprack.spin(REVERSE,100,PERCENT)
     #drivetrain.drive_for(FORWARD,32,INCHES,100,PERCENT)
     left_motors.spin(FORWARD,100,PERCENT)
     right_motors.spin(FORWARD,100,PERCENT)
