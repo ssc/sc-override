@@ -220,20 +220,16 @@ def outake_until_no_resistance(goal_angle):
     first_intake.spin(FORWARD, 75, PERCENT)
     basket_intake_motor.spin(FORWARD, 75, PERCENT)
     toprack.spin(REVERSE, 100, PERCENT)
-    wait(1,SECONDS)
-    jiggle_angle(goal_angle, 100)
-    wait(1,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-    jiggle_angle(goal_angle, 100)
+    #was a jiggle
+    #was a stop
+    #jiggle_angle(goal_angle, 100)
     first_intake.spin(FORWARD, 75, PERCENT)
     basket_intake_motor.spin(FORWARD, 75, PERCENT)
     toprack.spin(REVERSE, 100, PERCENT)
     low_volt = 0
     ball_time = 0
     while low_volt < 55 and ball_time < 800:
-        if toprack.current() > 1.4:
+        if toprack.current() > 1.2:
             low_volt = 0
         else:
             low_volt += 1
@@ -242,7 +238,7 @@ def outake_until_no_resistance(goal_angle):
         print("current = ", toprack.current())
         ball_time += 1
         
-    wait(0.5,SECONDS)
+    wait(1,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
     toprack.stop()
@@ -1190,21 +1186,20 @@ def stop_motors():
 
 def Backwars_n_forwards_For_Park():
 
-    drivetrain.drive_for(REVERSE,2,INCHES)
-    wait(0.5,SECONDS)
-    drivetrain.stop()
+    drivetrain.drive_for(REVERSE,6,INCHES)
+   
 
     #right before last forward
-    one_wheel_turn_to_heading(357,'right',FORWARD,20)
+    one_wheel_turn_to_heading(355,'right',FORWARD,20)
     first_intake.spin(FORWARD, 100, PERCENT)
     basket_intake_motor.spin(FORWARD,100,PERCENT)
     toprack.spin(REVERSE,100,PERCENT)
-    drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
-    drivetrain.drive_for(FORWARD,27,INCHES,100,PERCENT)
-    wait(0.5, SECONDS)
-    drivetrain.drive_for(FORWARD,8,INCHES,100,PERCENT)
-    wait(2, SECONDS)
-    drivetrain.stop()
+    #drivetrain.drive_for(FORWARD,32,INCHES,100,PERCENT)
+    left_motors.spin(FORWARD,100,PERCENT)
+    right_motors.spin(FORWARD,100,PERCENT)
+    wait(3, SECONDS)
+    left_motors.stop()
+    right_motors.stop()
 
 def skills_auton():
     newauton_mainfunc()
@@ -1560,12 +1555,12 @@ def newauton_load_n_descore_auton(goal_angle):
         drivetrain.turn_to_heading(0, DEGREES)
         #descorer_down()
         move_until_distance(150,'reverse',20,"BACK")
-        drivetrain.turn_to_heading(284, DEGREES)
+        drivetrain.turn_to_heading(279, DEGREES)
     
     #descorer_up()
 
-        drivetrain.drive_for(REVERSE, 8, INCHES, 30, PERCENT)    
-        back_until_yaw("left",260,60)
+      #  drivetrain.drive_for(REVERSE, 8, INCHES, 30, PERCENT)    
+        back_until_yaw("left",260,30)
 
 
 
@@ -1720,7 +1715,7 @@ def auton_funct():
       basket_intake_motor.stop()
 
       if vex_brain_slot == 1:
-         drivetrain.turn_to_heading(calibratedAngle(135), DEGREES, wait=True)
+         drivetrain.turn_to_heading(calibratedAngle(112), DEGREES, wait=True)
 
       else:
 
