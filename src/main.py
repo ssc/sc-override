@@ -1009,8 +1009,8 @@ def turn_until_distance(distance,direction,speed, sensor_location):
                     left_motors.spin(FORWARD,speed,PERCENT)
                     right_motors.spin(REVERSE,speed,PERCENT)
                 else: 
-                    left_motors.spin(REVERSE,speed,PERCENT)
-                    right_motors.spin(FORWARD,speed,PERCENT)
+                    left_motors.spin(FORWARD,speed,PERCENT)
+                    right_motors.spin(REVERSE,speed,PERCENT)
     else:
          while distance_sensor_back.object_distance(MM) > distance:
             if direction == 'left':
@@ -1642,9 +1642,14 @@ def newauton_mainfunc():
     newauton_drive_back_to_park() # notstarted    
     
 
-def newgame_auton():
+def newgame_auton(Game_slot):
     distance_to_go = 0
-    one_wheel_turn_to_heading(17,'left',FORWARD,50)
+
+    if Game_slot == 1:
+        one_wheel_turn_to_heading(17,'left',FORWARD,50)
+    else:
+        one_wheel_turn_to_heading(convert_relative_to_absolute(-17),'right',FORWARD,50)
+
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     drivetrain.drive_for(FORWARD,11,INCHES,25,PERCENT)
@@ -1653,17 +1658,42 @@ def newgame_auton():
     basket_intake_motor.stop()
     first_intake.stop()
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
-    drivetrain.turn_to_heading(convert_relative_to_absolute(-50),DEGREES,20,PERCENT)
-    turn_until_distance(1000, "left", 10, "FRONT")
+
+    if Game_slot == 1:
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-50),DEGREES,20,PERCENT)
+    else:
+        drivetrain.turn_to_heading(convert_relative_to_absolute(50),DEGREES,20,PERCENT)
+
+    if distance_sensor.object_distance(MM) < 100:
+        tube_intake_motor.spin(FORWARD,100,PERCENT)
+        wait (1,SECONDS)
+        tube_intake_motor.stop()
+
+
+    if Game_slot ==1:    
+        turn_until_distance(1000, "left", 10, "FRONT")
+    else:
+        turn_until_distance(1000, "right", 10, "FRONT")
+    
     distance_to_go = distance_sensor.object_distance(MM)
-    turn_back_degrees = -10
+    
+    if Game_slot == 1:
+        turn_back_degrees = -10
+    else:
+        turn_back_degrees = 25
+    
+
+
     P_turn(inertial_sensor.heading() + turn_back_degrees, 15)
     drivetrain.drive_for(FORWARD,distance_to_go - 300,MM,20,PERCENT)
-    first_intake.spin(REVERSE,60,PERCENT)
+    toprack.spin(FORWARD,100,PERCENT)
+    first_intake.spin(FORWARD,60,PERCENT)
     basket_intake_motor.spin(FORWARD,70,PERCENT)
     wait(4,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
+    toprack.stop()
+    drivetrain.drive_for(FORWARD,1,INCHES)
     #turn_until_distance(100, "left", 10, "FRONT")
     #P_turn(convert_relative_to_absolute(-4), 10)
     #move_until_distance(1100, "reverse", 50, "FRONT")
@@ -1857,13 +1887,22 @@ def auton_funct():
 
         #test_function_before_going()
         
+
+
+      if potentiometer.value() < 1250:
+        vex_brain_slot = 2
+      else:
+        vex_brain_slot = 1
+            
       
 
 
       if potentiometer.value() < 4100 and potentiometer.value() > 3800:
-            newgame_auton()
-      
-
+            newgame_auton(vex_brain_slot)
+            return
+      if potentiometer.value() < 1250:
+            newgame_auton(vex_brain_slot)
+            return
 
 
 
@@ -1883,9 +1922,7 @@ def auton_funct():
 
       ## This is old game auton
       
-      if potentiometer.value() < 1250:
-          vex_brain_slot = 2
-          
+
 
       elif potentiometer.value() > 2250 and potentiometer.value() < 3750:
             vex_brain_slot = 1
