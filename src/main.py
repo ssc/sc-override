@@ -1511,16 +1511,19 @@ def newauton_back_n_align_auton():
     oangle = inertial_sensor.heading()
     drivetrain.turn_to_heading(300,DEGREES)
     
-    (a,b)=search_for_objects(-45)
+    #(a,b)=search_for_objects(-45)
     #drivetrain.turn_to_heading(a-4,DEGREES)
-    if a > -3 and a < 3:
-        a = oangle
-        print ("doing the kuba")
-               
+    # if a > -3 and a < 3:
+    #     a = oangle
+    #     print ("doing the kuba")
 
-    P_turn(a, 40)
+               
+    turn_until_distance(400, "right", 10, "BACK")
+    P_turn(convert_relative_to_absolute(1), 10)
+
+    # P_turn(a, 40)
     move_until_distance(120,"reverse",20,"BACK")
-    return a
+    #
     
     #wait(20000)
 
