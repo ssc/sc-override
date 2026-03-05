@@ -1645,7 +1645,7 @@ def newauton_mainfunc():
 def newgame_auton(Game_slot):
     distance_to_go = 0
 
-    drivetrain.drive_for(FORWARD,10,INCHES,25,PERCENT)
+    drivetrain.drive_for(FORWARD,10,INCHES,40,PERCENT)
     if Game_slot == 1: #Right
         print("")
         #NONE
@@ -1662,13 +1662,13 @@ def newgame_auton(Game_slot):
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     tube_intake_motor.spin(REVERSE, 20, PERCENT)
-    drivetrain.drive_for(FORWARD,11,INCHES,5,PERCENT)
-    drivetrain.drive_for(FORWARD,13,INCHES,5,PERCENT)
-    wait(2,SECONDS)
+    drivetrain.drive_for(FORWARD,13,INCHES,7.5,PERCENT)
+    #drivetrain.drive_for(FORWARD,9,INCHES,5,PERCENT)
+    #wait(2,SECONDS)
     basket_intake_motor.stop()
     first_intake.stop()
     tube_intake_motor.spin_to_position(tube_intake_motor.position(DEGREES) - (tube_intake_motor.position(DEGREES) % 360),DEGREES)
-    drivetrain.drive_for(REVERSE,10,INCHES,15,PERCENT)
+    #drivetrain.drive_for(REVERSE,8,INCHES,15,PERCENT)
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
 
     if Game_slot == 1:
@@ -1692,11 +1692,11 @@ def newgame_auton(Game_slot):
     if Game_slot == 1:
         turn_back_degrees = -10
     else:
-        turn_back_degrees = 20
+        turn_back_degrees = 12
     
 
 
-    P_turn(inertial_sensor.heading() + turn_back_degrees, 15)
+    P_turn(inertial_sensor.heading() + turn_back_degrees, 45)
     drivetrain.drive_for(FORWARD,distance_to_go - 350,MM,20,PERCENT)
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
@@ -1708,7 +1708,7 @@ def newgame_auton(Game_slot):
     first_intake.stop()
     basket_intake_motor.stop()
     toprack.stop()
-    drivetrain.drive_for(FORWARD,1,INCHES)
+    drivetrain.drive_for(FORWARD,2,INCHES)
     #turn_until_distance(100, "left", 10, "FRONT")
     #P_turn(convert_relative_to_absolute(-4), 10)
     #move_until_distance(1100, "reverse", 50, "FRONT")
