@@ -1648,6 +1648,8 @@ def newgame_auton(Game_slot):
     drivetrain.drive_for(FORWARD,10,INCHES,40,PERCENT)
     if Game_slot == 1: #Right
         print("")
+        turn_until_distance(300, "right", 10, "FRONT")
+        drivetrain.turn_to_heading(convert_relative_to_absolute(10),DEGREES,10,PERCENT)
         #NONE
         #one_wheel_turn_to_heading(17,'left',FORWARD,50)
     else: # hey this is the Left auto (new version)
@@ -1672,7 +1674,7 @@ def newgame_auton(Game_slot):
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
 
     if Game_slot == 1:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-50),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-46),DEGREES,10,PERCENT)
     else:
         drivetrain.turn_to_heading(convert_relative_to_absolute(46),DEGREES,10,PERCENT)
 
@@ -1690,19 +1692,25 @@ def newgame_auton(Game_slot):
     distance_to_go = distance_sensor.object_distance(MM)
     
     if Game_slot == 1:
-        turn_back_degrees = -10
+        turn_back_degrees = 0
     else:
         turn_back_degrees = 12
     
 
 
     P_turn(inertial_sensor.heading() + turn_back_degrees, 45)
-    drivetrain.drive_for(FORWARD,distance_to_go - 350,MM,20,PERCENT)
+    if Game_slot == 1:
+        drivetrain.drive_for(FORWARD,distance_to_go - 300,MM,20,PERCENT)        
+    else:
+        drivetrain.drive_for(FORWARD,distance_to_go - 350,MM,20,PERCENT)
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
         first_intake.spin(REVERSE,60,PERCENT)
     else:
         first_intake.spin(FORWARD,60,PERCENT)
+
+
+
     basket_intake_motor.spin(FORWARD,70,PERCENT)
     wait(4,SECONDS)
     first_intake.stop()
@@ -2224,6 +2232,7 @@ def test_function_before_going():
 
 
 def drive_task():
+    controller_1.rumble('.')
     global test_function
     descorer_out = 0
     descorer_out2 = 0
@@ -2317,8 +2326,8 @@ def drive_task():
 
 
 
-                print ("drive_left", drive_left)
-                print ("drive_right", drive_right)
+                # print ("drive_left", drive_left)
+                # print ("drive_right", drive_right)
 
 
         else:
