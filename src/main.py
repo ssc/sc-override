@@ -1645,26 +1645,38 @@ def newauton_mainfunc():
 def newgame_auton(Game_slot):
     distance_to_go = 0
 
-    if Game_slot == 1:
-        one_wheel_turn_to_heading(17,'left',FORWARD,50)
-    else:
-        one_wheel_turn_to_heading(convert_relative_to_absolute(-17),'right',FORWARD,50)
+    drivetrain.drive_for(FORWARD,10,INCHES,25,PERCENT)
+    if Game_slot == 1: #Right
+        print("")
+        #NONE
+        #one_wheel_turn_to_heading(17,'left',FORWARD,50)
+    else: # hey this is the Left auto (new version)
+        turn_until_distance(300, "left", 10, "FRONT")
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-20),DEGREES,10,PERCENT)
+
+        #turn_back_degrees = 15
+        #P_turn(inertial_sensor.heading() + turn_back_degrees, 15)
+        
+        #one_wheel_turn_to_heading(convert_relative_to_absolute(-17),'right',FORWARD,50)
 
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
-    drivetrain.drive_for(FORWARD,11,INCHES,25,PERCENT)
-    drivetrain.drive_for(FORWARD,19,INCHES,15,PERCENT)
+    tube_intake_motor.spin(REVERSE, 20, PERCENT)
+    drivetrain.drive_for(FORWARD,11,INCHES,5,PERCENT)
+    drivetrain.drive_for(FORWARD,13,INCHES,5,PERCENT)
     wait(2,SECONDS)
     basket_intake_motor.stop()
     first_intake.stop()
+    tube_intake_motor.spin_to_position(tube_intake_motor.position(DEGREES) - (tube_intake_motor.position(DEGREES) % 360),DEGREES)
+    drivetrain.drive_for(REVERSE,10,INCHES,15,PERCENT)
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
 
     if Game_slot == 1:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-50),DEGREES,20,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-50),DEGREES,10,PERCENT)
     else:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(50),DEGREES,20,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(46),DEGREES,10,PERCENT)
 
-    if distance_sensor.object_distance(MM) < 100:
+    if distance_sensor.object_distance(MM) < 125:
         tube_intake_motor.spin(FORWARD,100,PERCENT)
         wait (1,SECONDS)
         tube_intake_motor.stop()
@@ -1680,14 +1692,17 @@ def newgame_auton(Game_slot):
     if Game_slot == 1:
         turn_back_degrees = -10
     else:
-        turn_back_degrees = 25
+        turn_back_degrees = 20
     
 
 
     P_turn(inertial_sensor.heading() + turn_back_degrees, 15)
-    drivetrain.drive_for(FORWARD,distance_to_go - 300,MM,20,PERCENT)
+    drivetrain.drive_for(FORWARD,distance_to_go - 350,MM,20,PERCENT)
     toprack.spin(FORWARD,100,PERCENT)
-    first_intake.spin(FORWARD,60,PERCENT)
+    if Game_slot == 1:
+        first_intake.spin(REVERSE,60,PERCENT)
+    else:
+        first_intake.spin(FORWARD,60,PERCENT)
     basket_intake_motor.spin(FORWARD,70,PERCENT)
     wait(4,SECONDS)
     first_intake.stop()
@@ -1890,8 +1905,10 @@ def auton_funct():
 
 
       if potentiometer.value() < 1250:
+        #left
         vex_brain_slot = 2
       else:
+        #right
         vex_brain_slot = 1
             
       

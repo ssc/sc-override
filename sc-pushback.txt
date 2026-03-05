@@ -1,0 +1,117 @@
+2026-02-20 40c6119 [lucas] I lied about the last comit (-_-). The real last commit !!!!! :D
+2026-02-20 d3a51dd [lucas] fixed parking in skills (yay last committt!!!!) :D
+2026-02-20 d84f8b0 [Caleb] fixed right side game auton
+2026-02-20 dd3b343 [lucas + kuba + caleb] angle 284 on descore in skillsauton added back along with starting to do p drive
+2026-02-20 77db96f [kuba] descore angle and parking adjustments
+2026-02-19 34d8899 [kuba, lucas] added jiggle and tuned auton
+2026-02-18 5028d53 [lucas + enzo] added more to skills and fixed
+2026-02-17 449a1f2 [charlie] fixed turn to tower
+2026-02-15 1e7df55 [Enzo] Fixed some bugs and made working parking function
+2026-02-13 2e231d5 [Caleb] Renamed Pneumatic movement and put P_turn in auton
+2026-02-13 af3b774 [Caleb] fixed P_turn with improved slowing down
+2026-02-11 0c6bc74 [Enzo + Caleb] Implemented P_turn
+2026-02-06 29dc1df [lucas + kuba + caleb] outtake until no resistance, tweaks to skills auto reduce time < 1min, adjust parking angle and loader angle, setup for competition
+2026-02-05 2821f7c [kuba] fixed parking + minor teaks
+2026-02-04 0146586 [Enzo] Got Auton to work and finnish
+2026-02-01 a69d951 [kuba + lucas] fixed skills auton
+2026-02-01 c3ab62d [kuba, licas, enzo] worked on skills auton and removed yaw resets
+2026-01-30 9ccf4be [kuba] got remaining balls from tower
+2026-01-28 c292600 [caleb] renamed collision funct for clarity
+2026-01-28 c131f93 [enzo] fixed descorer angle and tower arm. Fixed collision scripts
+2026-01-25 3321641 [kuba + lucas] did work on skills_auton
+2026-01-21 d072355 [lucas] added more work to collisions for skills_auton
+2026-01-21 f407487 [Enzo] Fixed Collsion
+2026-01-18 08f128f [lucas] added some more to the skills auton
+2026-01-18 6f81a55 [lucas] added return to home function
+2026-01-16 5ea09ca [caleb+lucas] fixed driveandalignwithtower code
+2026-01-11 436556b [lucas] organized new skills autons
+2026-01-11 91de254 [lucas] added back and align function for skills auton
+2026-01-11 a33ef4f [lucas + enzo] made tweaks to back_until_yaw, and added convert_absolute_to_relative function
+2026-01-11 d5c3799 [Enzo] maybe fixed back_until_yaw
+2026-01-09 065704a [lucas] Added load and descore part to skills auton
+2025-12-18 f8f46f7 [caleb] initial collision stopper
+2025-12-17 86a5e8a [caleb] auton changes
+2025-12-03 1c6ff87 [lucas] pnuematics for match loader and descorer
+2025-11-30 424f98c [lucas + enzo] added in pnuematic descorer code
+2025-11-23 6a2c903 [lucas] fixed code so that the auton works off of comp trigger
+2025-11-22 349616f [lucas] added in default to twenty point auton
+2025-11-22 d894309 [lucas] added in new start to auton to whap balls (skills)
+2025-11-22 9a30ddc [lucas] added in twentypoint auton cheepo mode
+2025-11-22 4005fd2 [kuba + caleb] added in collision detection with gyro and skills auton work
+2025-11-20 a8b09a7 [kuba] deleted old skills auton
+2025-11-20 7d5e189 [kuba] fixed comp auton
+2025-11-19 a064da8 [Caleb + Enzo + Lucas] back sensor implement, auton debugging
+2025-11-16 62cefa8 [kuba] fixed search for objects
+2025-11-16 925b6db Merge branch 'main' of https://github.com/ssc/sc-pushback
+2025-11-16 8d07346 [kuab] worked on auton
+2025-11-16 574a95a [kuba] worked on auton
+2025-11-16 397fcb6 Merge branch 'main' of https://github.com/ssc/sc-pushback
+2025-11-16 95bb716 [kuba] added color sort to auton
+2025-11-16 2a9bb87 [lucas] fixed search_for_objects functions
+2025-11-16 e05e282 [lucas + kuba] fixed color sorting function to toprack
+2025-11-16 8fdbfa5 Merge branch 'main' of https://github.com/ssc/sc-pushback
+2025-11-16 92b95ac [kuba] worked on color sort
+2025-11-16 58e7c17 [caleb] worked on auton
+2025-11-14 8c95685 [kuba] started to work on color sensor
+2025-11-14 292530a [caleb, kuba] pickup corner 3
+2025-11-12 6cfd496 [kuba, lucas, caleb, enzo] fixed search for object and removed the yaw reset
+2025-11-11 d571d28 [kuba] worked on auton
+2025-11-11 6ba4c6d [enzo] Deleted unused code
+2025-11-11 94275b9 [enzo] skills_auton runs and visionTask commented out
+2025-11-08 9bf8b7f cuba broke code
+2025-11-07 8b29fbe [lucas+kuba+charlie] distance sensor to detect second set of balls and deliver to top of center in skills_auton
+2025-11-05 e2db5b1 [Enzo] vision obj coords
+2025-11-04 9534f83 [lucas] prototyped listing for search_for_objects
+2025-11-04 1ac3b09 [lucas] testing new search for objects function
+2025-11-04 ccf0b0c [kuba] add conversion from radians to degrees updated actual_distance
+2025-11-02 42649e6 [lucas] continued work on ball_sucker
+2025-11-01 79c18af [Lucas + Caleb + Charlie] change ports
+2025-10-29 778d499 [lucas + kuba] fixed auton and changed the tube intake motor to be on a different port
+2025-10-23 29c54f9 Merge remote-tracking branch 'origin/reverting-to-new-branch'
+2025-10-23 16981b4 [kuba, lucas, charlie] dublin tournament changes 10/18
+2025-10-23 baef69a Merge remote-tracking branch 'origin/reverting-to-new-branch'
+2025-10-17 099cfd2 [lucas] changed in game auton for right left and added small blind turn before outtake
+2025-10-17 60105e4 [lucas] fixed parking on skills auton
+2025-10-17 ae175e0 [kuba + lucas] skill autons improvements + tower arm tuck in + tube intake on controller2
+2025-10-17 18bd86a [kuba} fixed auton
+2025-10-16 c1583bf Merge remote-tracking branch 'origin/reverting-to-new-branch'
+2025-10-16 62e766a Revert "[lucas] fixed auton and drivetrain with 6 motors"
+2025-10-16 219975b [steve] add settings.json to gitignore mac vs pc
+2025-10-14 d62113c [lucas] changed skills auton to deliver to center bottom goal instead of long goals
+2025-10-14 2ace410 [lucas] commented skills auton second half
+2025-10-14 0778053 [lucas] fixed turn angle in skills auton to go to long goal after picking balls
+2025-10-14 d7b86a2 [lucas] fixed turn to balls in skills auton
+2025-10-14 2f07dbf [lucas] fixed first forward in skills auton
+2025-10-14 a99b662 [kuba + caleb + lucas] added in skills auton
+2025-10-12 f3434d5 [lucas + kuba] added in tube_intake_motor controls to drivetrain in main
+2025-10-12 505a086 syg
+2025-10-08 0cfd707 [lucas] added in potentiometer code to decide which side auton. Fixed right side auton
+2025-10-08 9369ef5 [lucas] added pid file
+2025-10-08 5814477 [lucas] added smart drive gyro heading turn to code, added in a test auton program for said smart drive
+2025-09-27 8981ffd [kuba] fixed 6 moto driving
+2025-09-27 7a3df21 [kuba] fixed forward funct
+2025-09-20 a64d9e4 [lucas] fixed auton and drivetrain with 6 motors
+2025-09-14 3d9fafc [lucas] fixed auton to add distance sensor
+2025-09-14 18d2f2e [lucas] fixed 4 wheel drive
+2025-09-14 7573862 [lucas] fixed json to run main
+2025-09-14 fc420ab [lucas] moved everything on to main again, added turnuntildistance
+2025-09-14 19938c7 [lucas + kuba] added 6 motor drivetrain and added in drivetask 2 distance sense
+2025-09-03 6729f88 [charlie] both remotes work fully
+2025-09-03 226e3a3 [charlie] added competition template
+2025-09-02 7413518 [lucas] added in two key ignition to auton
+2025-09-02 3947630 [lucas] deleted unnesecary files and combined code onto main.py
+2025-09-02 a56593a [kuba] changing dual_controller file to solved
+2025-09-02 ed7cd29 [kuba] deleted dual_controller file
+2025-09-02 839a804 [lucas] color sensor fixed on port 2
+2025-09-01 78d2aa6 (k, c) color sorter
+2025-08-30 e7f6474 (kuba) changed slot, wrote second controller code
+2025-08-29 27968d8 [lucas + kuba] added in button b for jiggle and fixed autons
+2025-08-27 ec401f6 [kuba + lucas] added in new button for top rack (A) and added in dual controller control and fixed left back wheel port
+2025-08-24 9e1739b Merge branch 'main' of https://github.com/ssc/TestTestPython
+2025-08-24 ac352c3 [lucas] move to slot 1
+2025-08-24 1b7340f [lucas] add support for multiple motors on intake
+2025-08-18 a81fa98 [lucas] added auton to drive in square and forward backward buttons on r1 and r2 (bumpers)
+2025-08-18 9b2a143 [lucas] added auton to drive in square and forward backward buttons on r1 and r2 (bumpers)
+2025-08-16 58e6ce4 [lucas + caleb] add auton + port18change to 15 and add top rack
+2025-08-07 ea24217 [lucas] added controller mode toggle and fixed drive control logic
+2025-08-06 e7da9e9 [lucas] initial commit, tank drive and l1 for intake
