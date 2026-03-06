@@ -489,6 +489,8 @@ def descorer_up():
 def descorer_down():
     Digout.set(True)
 
+  
+    
 def search_for_objects(range_degrees,sensor="BACK"):
     #global smallest_distance_value
     #global smallest_distance_angle
@@ -1642,10 +1644,36 @@ def newauton_mainfunc():
     newauton_drive_back_to_park() # notstarted    
     
 
+def no_jam_arm():
+    global keeprunning
+    keeprunning = True
+    wait(0.2, SECONDS)
+    while keeprunning == True:
+        tube_intake_motor.spin(REVERSE, 15, PERCENT)
+        low_volt = 0
+        ball_time = 0
+        while low_volt < 30 and ball_time < 800:
+            if tube_intake_motor.current() < 0.8:
+                low_volt = 0
+            else:
+                low_volt += 1
+                wait(0.01, SECONDS)
+                
+                ball_time += 1
+            
+        tube_intake_motor.spin(FORWARD, 100, PERCENT)
+        wait(0.5, SECONDS)
+        tube_intake_motor.stop()
+        keeprunning = False
+    tube_intake_motor.stop()
+
 def newgame_auton(Game_slot):
+    global keeprunning
+
     distance_to_go = 0
 
     drivetrain.drive_for(FORWARD,10,INCHES,40,PERCENT)
+    #turn to balls - caleb
     if Game_slot == 1: #Right
         print("")
         turn_until_distance(300, "right", 10, "FRONT")
@@ -1654,7 +1682,7 @@ def newgame_auton(Game_slot):
         #one_wheel_turn_to_heading(17,'left',FORWARD,50)
     else: # hey this is the Left auto (new version)
         turn_until_distance(300, "left", 10, "FRONT")
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-20),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-17),DEGREES,10,PERCENT)
 
         #turn_back_degrees = 15
         #P_turn(inertial_sensor.heading() + turn_back_degrees, 15)
@@ -1663,18 +1691,21 @@ def newgame_auton(Game_slot):
 
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
-    tube_intake_motor.spin(REVERSE, 20, PERCENT)
-    drivetrain.drive_for(FORWARD,13,INCHES,7.5,PERCENT)
+    Thread(no_jam_arm)
+    drivetrain.drive_for(FORWARD,17.8,INCHES,7.5,PERCENT)
+    wait(300)
     #drivetrain.drive_for(FORWARD,9,INCHES,5,PERCENT)
     #wait(2,SECONDS)
     basket_intake_motor.stop()
     first_intake.stop()
-    tube_intake_motor.spin_to_position(tube_intake_motor.position(DEGREES) - (tube_intake_motor.position(DEGREES) % 360),DEGREES)
+    tube_intake_motor.stop()
+    keeprunning = False
+    # tube_intake_motor.spin_to_position(tube_intake_motor.position(DEGREES) - (tube_intake_motor.position(DEGREES) % 360),DEGREES)
     #drivetrain.drive_for(REVERSE,8,INCHES,15,PERCENT)
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
 
     if Game_slot == 1:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-46),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-45),DEGREES,10,PERCENT)
     else:
         drivetrain.turn_to_heading(convert_relative_to_absolute(46),DEGREES,10,PERCENT)
 
@@ -1685,9 +1716,9 @@ def newgame_auton(Game_slot):
 
 
     if Game_slot ==1:    
-        turn_until_distance(1000, "left", 10, "FRONT")
+        turn_until_distance(700, "left", 10, "FRONT")
     else:
-        turn_until_distance(1000, "right", 10, "FRONT")
+        turn_until_distance(700, "right", 10, "FRONT")
     
     distance_to_go = distance_sensor.object_distance(MM)
     
@@ -1700,9 +1731,9 @@ def newgame_auton(Game_slot):
 
     P_turn(inertial_sensor.heading() + turn_back_degrees, 45)
     if Game_slot == 1:
-        drivetrain.drive_for(FORWARD,distance_to_go - 300,MM,20,PERCENT)        
+        drivetrain.drive_for(FORWARD,distance_to_go - 290,MM,20,PERCENT)        
     else:
-        drivetrain.drive_for(FORWARD,distance_to_go - 350,MM,20,PERCENT)
+        drivetrain.drive_for(FORWARD,distance_to_go - 330,MM,20,PERCENT)
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
         first_intake.spin(REVERSE,60,PERCENT)
@@ -2256,6 +2287,7 @@ def drive_task():
 
         global distance
         #brain.screen.print(optical_sensor.hue())
+        
         brain.screen.print(distance)
         distance = distance_sensor.object_distance(MM)
        
@@ -2626,6 +2658,18 @@ def PointWhackerArm():
     tube_intake_motor.spin_to_position(300, DEGREES)
     wait(1, SECONDS)
     tube_intake_motor.spin_to_position(10, DEGREES)
+global keeprunning
+keeprunning = True
+def temp_detect():
+    print("detecting temp")
+    while True:
+        if Motor.temperature(right_motor_b) > 50 or Motor.temperature(left_motor_b) > 50:
+            while True:
+                brain.screen.print("MOTORS TOO HOT!!!!!!!!")
+
+                brain.screen.clear_screen(Color.RED)
+                brain.screen.set_pen_color(Color.GREEN)
+Thread(temp_detect)
 #ball_sucker('left',700, 0)
 #PointWhackerArm()
 #outake_until_no_resistance()
