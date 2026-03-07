@@ -1716,16 +1716,16 @@ def newgame_auton(Game_slot):
 
 
     if Game_slot ==1:    
-        turn_until_distance(700, "left", 10, "FRONT")
+        turn_until_distance(800, "left", 10, "FRONT")
     else:
         turn_until_distance(700, "right", 10, "FRONT")
     
     distance_to_go = distance_sensor.object_distance(MM)
     
     if Game_slot == 1:
-        turn_back_degrees = 0
+        turn_back_degrees = -10
     else:
-        turn_back_degrees = 12
+        turn_back_degrees = 22
     
 
 
