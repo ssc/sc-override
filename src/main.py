@@ -2673,7 +2673,7 @@ def temp_detect():
         elif Motor.temperature(right_motor_b) > 55 or Motor.temperature(left_motor_b) > 55 or Motor.temperature(left_motor_a) > 55 or Motor.temperature(right_motor_a) > 55:
             brain.screen.clear_screen(Color.RED)
             brain.screen.set_pen_color(Color.GREEN)
-        elif Motor.temperature(right_motor_b) > 10 or Motor.temperature(left_motor_b) > 60 or Motor.temperature(left_motor_a) > 60 or Motor.temperature(right_motor_a) > 60:
+        elif Motor.temperature(right_motor_b) > 60 or Motor.temperature(left_motor_b) > 60 or Motor.temperature(left_motor_a) > 60 or Motor.temperature(right_motor_a) > 60:
             brain.screen.set_fill_color(Color(139, 0, 0))
             brain.screen.draw_rectangle(0, 0, 480, 240)
 
