@@ -2661,14 +2661,22 @@ def PointWhackerArm():
 global keeprunning
 keeprunning = True
 def temp_detect():
+    dark_red = Color(139, 0, 0)
+
     print("detecting temp")
     while True:
-        if Motor.temperature(right_motor_b) > 50 or Motor.temperature(left_motor_b) > 50:
+        if Motor.temperature(right_motor_b) > 50 or Motor.temperature(left_motor_b) > 50 or Motor.temperature(left_motor_a) > 50 or Motor.temperature(right_motor_a) > 50:
             while True:
-                brain.screen.print("MOTORS TOO HOT!!!!!!!!")
 
-                brain.screen.clear_screen(Color.RED)
+                brain.screen.clear_screen(Color.ORANGE)
                 brain.screen.set_pen_color(Color.GREEN)
+        elif Motor.temperature(right_motor_b) > 55 or Motor.temperature(left_motor_b) > 55 or Motor.temperature(left_motor_a) > 55 or Motor.temperature(right_motor_a) > 55:
+            brain.screen.clear_screen(Color.RED)
+            brain.screen.set_pen_color(Color.GREEN)
+        elif Motor.temperature(right_motor_b) > 10 or Motor.temperature(left_motor_b) > 60 or Motor.temperature(left_motor_a) > 60 or Motor.temperature(right_motor_a) > 60:
+            brain.screen.set_fill_color(Color(139, 0, 0))
+            brain.screen.draw_rectangle(0, 0, 480, 240)
+
 Thread(temp_detect)
 #ball_sucker('left',700, 0)
 #PointWhackerArm()
