@@ -18,6 +18,8 @@ from math import atan, degrees, sin, radians, cos, ceil, floor,sqrt, tan, asin
 dont_stop_twice = 0
 test_function = 0
 
+EXTREME_RIGHT = 1
+
 brain = Brain()
 gyro_360 = 360
 def calibratedAngle(idealAngle):
@@ -1672,12 +1674,12 @@ def newgame_auton(Game_slot):
 
     distance_to_go = 0
 
-    drivetrain.drive_for(FORWARD,10,INCHES,40,PERCENT)
+    drivetrain.drive_for(FORWARD,10,INCHES,50,PERCENT)
     #turn to balls - caleb
     if Game_slot == 1: #Right
         print("")
         turn_until_distance(300, "right", 10, "FRONT")
-        drivetrain.turn_to_heading(convert_relative_to_absolute(10),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-5),DEGREES,10,PERCENT)
         #NONE
         #one_wheel_turn_to_heading(17,'left',FORWARD,50)
     else: # hey this is the Left auto (new version)
@@ -1692,58 +1694,71 @@ def newgame_auton(Game_slot):
     first_intake.spin(FORWARD,100,PERCENT)
     basket_intake_motor.spin(REVERSE,100,PERCENT)
     Thread(no_jam_arm)
-    drivetrain.drive_for(FORWARD,17.8,INCHES,7.5,PERCENT)
+    drivetrain.drive_for(FORWARD,19,INCHES,7.5,PERCENT)
     wait(300)
     #drivetrain.drive_for(FORWARD,9,INCHES,5,PERCENT)
     #wait(2,SECONDS)
-    basket_intake_motor.stop()
-    first_intake.stop()
+    
     tube_intake_motor.stop()
     keeprunning = False
     # tube_intake_motor.spin_to_position(tube_intake_motor.position(DEGREES) - (tube_intake_motor.position(DEGREES) % 360),DEGREES)
     #drivetrain.drive_for(REVERSE,8,INCHES,15,PERCENT)
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
-
-    if Game_slot == 1:
+    drivetrain.drive_for(REVERSE,4,INCHES,10,PERCENT)
+    if Game_slot == EXTREME_RIGHT:
         drivetrain.turn_to_heading(convert_relative_to_absolute(-45),DEGREES,10,PERCENT)
     else:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(46),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(55),DEGREES,10,PERCENT)
 
     if distance_sensor.object_distance(MM) < 125:
         tube_intake_motor.spin(FORWARD,100,PERCENT)
         wait (1,SECONDS)
         tube_intake_motor.stop()
+    basket_intake_motor.stop()
+    first_intake.stop()
 
 
     if Game_slot ==1:    
-        turn_until_distance(800, "left", 10, "FRONT")
+        #turn_until_distance(1000, "left", 10, "FRONT")
+        P_turn(310,45)
     else:
         turn_until_distance(700, "right", 10, "FRONT")
     
     distance_to_go = distance_sensor.object_distance(MM)
     
     if Game_slot == 1:
-        turn_back_degrees = -10
+        turn_back_degrees = 0
     else:
-        turn_back_degrees = 22
+        turn_back_degrees = 15
+        P_turn(inertial_sensor.heading() + turn_back_degrees, 45)
     
 
 
-    P_turn(inertial_sensor.heading() + turn_back_degrees, 45)
+
+
+
+   
+    basket_intake_motor.spin(FORWARD,50,PERCENT)
     if Game_slot == 1:
-        drivetrain.drive_for(FORWARD,distance_to_go - 290,MM,20,PERCENT)        
+        drivetrain.drive_for(FORWARD,16,INCHES,50,PERCENT)        
     else:
-        drivetrain.drive_for(FORWARD,distance_to_go - 330,MM,20,PERCENT)
+        drivetrain.drive_for(FORWARD,distance_to_go - 330,MM,50,PERCENT)
+    if Game_slot == EXTREME_RIGHT:   
+        first_intake.spin(REVERSE,30,PERCENT) 
+        
+    else:
+        first_intake.spin(FORWARD,70,PERCENT) 
+
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
-        first_intake.spin(REVERSE,60,PERCENT)
+        first_intake.spin(REVERSE,70,PERCENT)
     else:
-        first_intake.spin(FORWARD,60,PERCENT)
+        first_intake.spin(FORWARD,70,PERCENT)
 
 
 
-    basket_intake_motor.spin(FORWARD,70,PERCENT)
-    wait(4,SECONDS)
+    basket_intake_motor.spin(FORWARD,80,PERCENT)
+    wait(3,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
     toprack.stop()
@@ -1766,132 +1781,6 @@ def newgame_auton(Game_slot):
 
 
 
-    return  
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    # tube_intake_motor.spin(REVERSE, 100, PERCENT)
-    wait(0.11, SECONDS)
-    tube_intake_motor.stop()
-    one_wheel_turn_to_heading(15,'right',REVERSE,50)
-    drivetrain.drive_for(FORWARD,11, INCHES, 75, PERCENT )
-    drivetrain.drive_for(FORWARD,14.5,INCHES,10,PERCENT)
-    #drivetrain.drive_for(FORWARD,5, INCHES, 25, PERCENT )
-    #move_until_distance(25, "forward",20,"FRONT")
-    #matchloader_up()
-    #drivetrain.drive_for(FORWARD,5, INCHES, 20, PERCENT )
-
-    wait(1.5,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    
-    drivetrain.drive_for(REVERSE,5.5,INCHES,50,PERCENT)
-
-    one_wheel_turn_to_heading(315,'right',FORWARD,50)
-    drivetrain.drive_for(FORWARD,13,INCHES,50,PERCENT)
-    first_intake.spin(REVERSE, 75, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    wait(1.9, SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    first_intake.spin(FORWARD, 100,PERCENT)
-    basket_intake_motor.spin(REVERSE,100,PERCENT)
-    wait(0.7,SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    drivetrain.drive_for(REVERSE,9,INCHES,50,PERCENT)
-    one_wheel_turn_to_heading(270,'left',REVERSE,50)
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(REVERSE, 100, PERCENT)
-    # if distance_sensor.object_distance() < 1000:
-    #     move_until_distance(50,'forward',50,"FRONT")
-    #     drivetrain.drive_for(FORWARD,8,INCHES,50,PERCENT)
-    # else:
-    drivetrain.drive_for(FORWARD,46,INCHES,50,PERCENT)
-
-    
-    P_turn(50, 50)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    drivetrain.drive_for(FORWARD,9.5,INCHES,50,PERCENT)
-
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD, 100, PERCENT)
-    toprack.spin(FORWARD, 50, PERCENT)
-    wait(2, SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-
-
-    drivetrain.drive_for(REVERSE,22,INCHES,40,PERCENT)
-    # drivetrain.turn_to_heading(180, DEGREES, 100, wait=True)
-    move_until_distance(500, 'reverse', 50, "BACK")
-    #drivetrain.turn_to_heading(calibratedAngle(270),DEGREES, wait=True)
-    P_turn(calibratedAngle(280),35)
-    matchloader_down()
-    wait(400)
-    move_until_distance(360,"forward",70,"FRONT")
-
-    left_motors.spin(FORWARD,55,PERCENT)
-    right_motors.spin(FORWARD,55,PERCENT)
-    #inertial_sensor.collision(stop_all_motors)
-    wait(0.5,SECONDS)
-    left_motors.stop()
-    right_motors.stop()
-    left_motors.spin(FORWARD, 40, PERCENT)
-    right_motors.spin(FORWARD, 40, PERCENT)
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD,100,PERCENT)
-    toprack.spin(REVERSE, 100, PERCENT)
-
-    
-    wait (1.5,SECONDS)
-    left_motors.stop()
-    right_motors.stop()
-    oangle = inertial_sensor.he
-    for i in range(1, 2):
-        left_motors.spin(REVERSE, 40, PERCENT)
-        right_motors.spin(REVERSE, 40, PERCENT)
-        wait(0.2, SECONDS)
-        left_motors.spin(FORWARD, 40, PERCENT)
-        right_motors.spin(FORWARD, 40, PERCENT)
-
-        wait(0.4, SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-    left_motors.stop()
-    right_motors.stop()
-    drivetrain.drive_for(REVERSE, 8, INCHES)
-    matchloader_up()
-
-    #drivetrain.turn_to_heading(275,DEGREES)
-    left_motors.spin(REVERSE,20,PERCENT)
-    #right_motors.spin(REVERSE,20,PERCENading()
-    drivetrain.turn_to_heading(300,DEGREES)
-    
-    #(a,b)=search_for_objects(-45)
-    #drivetrain.turn_to_heading(a-4,DEGREES)
-    # if a > -3 and a < 3:
-    #     a = oangle
-    #     print ("doing the kuba")
-
-    first_intake.spin(FORWARD, 100, PERCENT)
-    basket_intake_motor.spin(FORWARD,100,PERCENT)
-    turn_until_distance(400, "right", 10, "BACK")
-    P_turn(convert_relative_to_absolute(1), 10)
-
-    # P_turn(a, 40)
-    
-    toprack.spin(REVERSE, 20, PERCENT)
-    move_until_distance(120,"reverse",50,"BACK")
-    toprack.spin(REVERSE, 100, PERCENT)
-    wait(1, SECONDS)
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-    drivetrain.drive_for(FORWARD, 6, INCHES)
-    one_wheel_turn_to_heading(42, "left", FORWARD, 60)
 
 
 
@@ -1906,21 +1795,26 @@ def newgame_auton(Game_slot):
 
 
 def auton_funct():
+      
 
       while inertial_sensor.is_calibrating():
          controller_1.screen.set_cursor(2,1)
          controller_1.screen.print("Calibrating Gyro")
          wait(100, MSEC)
+      if potentiometer.value() < 1250:
+        #left
+        vex_brain_slot = 2
+      else:
+        #right
+        vex_brain_slot = 1
       inertial_sensor.reset_rotation()
       inertial_sensor.set_heading(0, DEGREES)
       global MAX_SPEED
       if potentiometer.value() < 50:
-        first_intake.spin(FORWARD,100,PERCENT) 
-        basket_intake_motor.spin(REVERSE,100,PERCENT)
-        wait(2,SECONDS)
-        first_intake.stop()
-        basket_intake_motor.stop()
-        return
+            newgame_auton(vex_brain_slot)
+
+
+        
 
       
 
@@ -1943,12 +1837,7 @@ def auton_funct():
         
 
 
-      if potentiometer.value() < 1250:
-        #left
-        vex_brain_slot = 2
-      else:
-        #right
-        vex_brain_slot = 1
+      
             
       
 
@@ -1956,8 +1845,9 @@ def auton_funct():
       if potentiometer.value() < 4100 and potentiometer.value() > 3800:
             newgame_auton(vex_brain_slot)
             return
-      if potentiometer.value() < 1250:
-            newgame_auton(vex_brain_slot)
+      if potentiometer.value() < 1250 and potentiometer.value() > 100:
+            drivetrain.drive_for(FORWARD,1, INCHES, 100, PERCENT )
+
             return
 
 
