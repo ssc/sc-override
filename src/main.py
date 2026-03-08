@@ -1679,7 +1679,7 @@ def newgame_auton(Game_slot):
     if Game_slot == 1: #Right
         print("")
         turn_until_distance(300, "right", 10, "FRONT")
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-5),DEGREES,10,PERCENT)
+        # drivetrain.turn_to_heading(convert_relative_to_absolute(-5),DEGREES,10,PERCENT)
         #NONE
         #one_wheel_turn_to_heading(17,'left',FORWARD,50)
     else: # hey this is the Left auto (new version)
@@ -1706,9 +1706,9 @@ def newgame_auton(Game_slot):
     #one_wheel_turn_to_heading(322,'left',REVERSE,30)
     drivetrain.drive_for(REVERSE,4,INCHES,10,PERCENT)
     if Game_slot == EXTREME_RIGHT:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(-45),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(-42),DEGREES,10,PERCENT)
     else:
-        drivetrain.turn_to_heading(convert_relative_to_absolute(55),DEGREES,10,PERCENT)
+        drivetrain.turn_to_heading(convert_relative_to_absolute(47),DEGREES,10,PERCENT)
 
     if distance_sensor.object_distance(MM) < 125:
         tube_intake_motor.spin(FORWARD,100,PERCENT)
@@ -1724,7 +1724,10 @@ def newgame_auton(Game_slot):
     else:
         turn_until_distance(700, "right", 10, "FRONT")
     
+    
     distance_to_go = distance_sensor.object_distance(MM)
+    if distance_to_go < 400:
+        return
     
     if Game_slot == 1:
         turn_back_degrees = 0
@@ -1739,25 +1742,26 @@ def newgame_auton(Game_slot):
 
    
     basket_intake_motor.spin(FORWARD,50,PERCENT)
-    if Game_slot == 1:
-        drivetrain.drive_for(FORWARD,16,INCHES,50,PERCENT)        
-    else:
-        drivetrain.drive_for(FORWARD,distance_to_go - 330,MM,50,PERCENT)
     if Game_slot == EXTREME_RIGHT:   
         first_intake.spin(REVERSE,30,PERCENT) 
         
     else:
         first_intake.spin(FORWARD,70,PERCENT) 
 
+    if Game_slot == 1:
+        drivetrain.drive_for(FORWARD,16,INCHES,50,PERCENT)        
+    else:
+        drivetrain.drive_for(FORWARD,distance_to_go - 330,MM,50,PERCENT)
+    
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
-        first_intake.spin(REVERSE,70,PERCENT)
+        first_intake.spin(REVERSE,90,PERCENT)
     else:
         first_intake.spin(FORWARD,70,PERCENT)
 
 
 
-    basket_intake_motor.spin(FORWARD,80,PERCENT)
+    basket_intake_motor.spin(FORWARD,70,PERCENT)
     wait(3,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
