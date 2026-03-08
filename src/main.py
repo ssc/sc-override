@@ -1675,10 +1675,13 @@ def newgame_auton(Game_slot):
     distance_to_go = 0
 
     drivetrain.drive_for(FORWARD,10,INCHES,50,PERCENT)
+    wait(0.2, SECONDS)
     #turn to balls - caleb
     if Game_slot == 1: #Right
         print("")
         turn_until_distance(300, "right", 10, "FRONT")
+        drivetrain.turn_to_heading(convert_relative_to_absolute(3),DEGREES,10,PERCENT)
+
         # drivetrain.turn_to_heading(convert_relative_to_absolute(-5),DEGREES,10,PERCENT)
         #NONE
         #one_wheel_turn_to_heading(17,'left',FORWARD,50)
@@ -1720,7 +1723,7 @@ def newgame_auton(Game_slot):
 
     if Game_slot ==1:    
         #turn_until_distance(1000, "left", 10, "FRONT")
-        P_turn(310,45)
+        P_turn(320,45)
     else:
         turn_until_distance(700, "right", 10, "FRONT")
     
@@ -1742,10 +1745,9 @@ def newgame_auton(Game_slot):
 
    
     basket_intake_motor.spin(FORWARD,50,PERCENT)
-    if Game_slot == EXTREME_RIGHT:   
-        first_intake.spin(REVERSE,30,PERCENT) 
+    if Game_slot == 2:   
         
-    else:
+    
         first_intake.spin(FORWARD,70,PERCENT) 
 
     if Game_slot == 1:
@@ -1755,13 +1757,13 @@ def newgame_auton(Game_slot):
     
     toprack.spin(FORWARD,100,PERCENT)
     if Game_slot == 1:
-        first_intake.spin(REVERSE,90,PERCENT)
+        first_intake.spin(REVERSE,100,PERCENT)
     else:
         first_intake.spin(FORWARD,70,PERCENT)
 
 
 
-    basket_intake_motor.spin(FORWARD,70,PERCENT)
+    basket_intake_motor.spin(FORWARD,60,PERCENT)
     wait(3,SECONDS)
     first_intake.stop()
     basket_intake_motor.stop()
