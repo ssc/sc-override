@@ -42,12 +42,15 @@ right_tube_spin = 0
 # Configure the optical sensor on a specific port (change port number as needed)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
-distance_sensor = Distance(Ports.PORT9)
+distance_sensor = Distance(Ports.PORT19)
 distance_sensor_back = Distance(Ports.PORT2)
-inertial_sensor = Inertial(Ports.PORT1)
+inertial_sensor = Inertial(Ports.PORT13)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
 bumper_was_pressing = 0
+
+grabber_pneumatic = DigitalOut(brain.three_wire_port.c)
+flipper_pneumatic = DigitalOut(brain.three_wire_port.d)
 
 # Global variables
 MAX_SPEED = 40
@@ -60,17 +63,20 @@ vex_brain_slot = 2 # 1 = left, 2 = right Auton
 
 brain.screen.print("Hello V5 - Movement/Intake Split Lucas here")
 
+grabber_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
+grabber_motor.set_stopping(BrakeType.HOLD)
+
 # Create the left Motors and group them under the MotorGroup "left_motors"
-left_motor_a = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False)
+left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
 
 #lift motors
-lift_motor_left = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
-lift_motor_right = Motor(Ports.PORT5, GearSetting.RATIO_18_1, True) 
+lift_motor_left = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False)
+lift_motor_right = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True) 
 
 # Create the right Motors and group them under the MotorGroup "right_motors"
-right_motor_a = Motor(Ports.PORT3, GearSetting.RATIO_18_1, True)
-right_motor_b = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True)
+right_motor_a = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
+right_motor_b = Motor(Ports.PORT20, GearSetting.RATIO_18_1, True)
 
 left_motor_b.set_reversed(False)
 left_motor_a.set_reversed(False)
@@ -96,6 +102,7 @@ basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
 drivetrain.set_stopping(BrakeType.BRAKE)
+lift_motors.set_stopping(BrakeType.HOLD)
 
 LEFT = 1
 RIGHT = 0
@@ -159,7 +166,7 @@ def P_turn(target_heading, max_speed):
 
         rel_current_heading = convert_absolute_to_relative(inertial_sensor.heading())
         #wait(10)
-    drivetrain.stop_motors()
+    drivetrain.stop()
     return
 
 
@@ -176,24 +183,6 @@ def ramp_up(input_percent):
     else:
         return input_percent
     
-
-
-
-
-def jiggle_angle(goal_angle, jspeed):
-    drivetrain.drive_for(FORWARD,1.5,INCHES, jspeed, PERCENT)
-    drivetrain.drive_for(REVERSE,1.8,INCHES, jspeed, PERCENT)
-    # P_turn(goal_angle, 40)
-
-    
-    
-
-
-        
-
-
-    
-
 
 
 
@@ -816,10 +805,29 @@ def potentiometer_test():
 
 
 def auton_funct():
-    drivetrain.drive_for(FORWARD,10,INCHES,50,PERCENT)
+    inertial_sensor.reset_rotation()
+    inertial_sensor.set_heading(0, DEGREES)
+    print("in aouton funct") 
+    lift_motors.reset_position()
+    lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+
+
+    turn_until_distance(500,"right",10,"FRONT")
+
+    move_until_distance(150,"forward",10,"FRONT")
+    lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
+    P_turn(calibratedAngle(-1), 50)
+    drivetrain.drive_for(FORWARD,6,INCHES,20,PERCENT)
+    P_turn(calibratedAngle(3), 50)
+    drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
+    lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+
+
+
 
 
 def drive_task():
+    grabber_closed = False
     controller_1.rumble('.')
     global test_function
     drive_left = 0
@@ -921,35 +929,37 @@ def drive_task():
             right_motor_b.spin(FORWARD)
 
      
+        grabber_motor_control = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * 50
+        lift_motor_control = (controller_1.buttonL1.pressing()- controller_1.buttonL2.pressing()) * -25
+        
+        if lift_motors.position() > -25 and lift_motor_control > 0:
+            lift_motor_control = 0
+        if lift_motors.position() < -435 and lift_motor_control < 0:
+            lift_motor_control = 0
 
-        first_intake_control = (controller_1.buttonL1.pressing()) * 100
+        lift_motors.spin(FORWARD, lift_motor_control, PERCENT)
+    
+        grabber_motor.spin(FORWARD, grabber_motor_control, PERCENT)
 
-        lift_motors.spin(FORWARD,first_intake_control,PERCENT)
-
-        if controller_2.buttonUp.pressing():
-            first_intake.spin(FORWARD,80,PERCENT)
-            basket_intake_motor.spin(FORWARD,80,PERCENT)
-            toprack.spin(FORWARD,40,PERCENT)
-
+        if controller_1.buttonR1.pressing():
+            if grabber_closed == False:
+                grabber_closed = True
+                grabber_pneumatic.set(True)
+            else:
+                grabber_closed = False
+                grabber_pneumatic.set(False)
 
         if bumper.pressing():
             global bumper_was_pressing
             if bumper_was_pressing == 0:
                 bumper_was_pressing = 1
                 print('Caleb2')
-                #auton_funct()
+   
 
      
         sleep(10)
 
-
- 
-
-
-def autonomous():
-    brain.screen.clear_screen()
-    brain.screen.print("autonomous code")
-    # place automonous code here
+        print (lift_motors.position())
 
 def user_control():
     brain.screen.clear_screen()
@@ -998,5 +1008,9 @@ def temp_detect():
 
 Thread(temp_detect)
 #comp = Competition(drive_task())
+#(a,b) =search_for_objects(90,"FRONT")
+#P_turn(calibratedAngle(a), 50)
+#auton_funct()
+lift_motors.set_position(0, DEGREES)
 auton_funct()
 drive_task()
