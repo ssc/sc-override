@@ -840,11 +840,11 @@ def drive_task():
             else:
                 # Joystick tank control (Controller 1)
                 drive_left = controller_1.axis3.position()
-                drive_left = (drive_left/100)**3 * 100   # Left stick Y
+
     
 
                 drive_right = controller_1.axis2.position()            
-                drive_right = (drive_right/100)**3 * 100     # Right stick Y
+
 
 
 
