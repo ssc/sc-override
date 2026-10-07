@@ -785,13 +785,24 @@ def auton_funct():
     move_until_distance(400,"reverse",20,"BACK")
 
     #turn to align
-    P_turn(275,20)
+    P_turn(278,20)
 
     #drive into goal
-    drivetrain.drive_for(FORWARD, 5, INCHES, 20, PERCENT)
+    drivetrain.drive_for(FORWARD, 6, INCHES, 20, PERCENT)
+
+    #lower tower arm
+    lift_motors.spin_to_position(-80,DEGREES,50,PERCENT)
 
     #drop pin
     grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
+
+    #back up and turn to face the wall
+    drivetrain.drive_for(REVERSE,12,INCHES,20,PERCENT)
+    P_turn(0,20)
+
+    #turn the roller
+    move_until_distance(100,"forward",20,"FRONT")
+
 
     # #align with the goal
     # turn_until_distance(500,"right",10,"FRONT")
