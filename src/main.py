@@ -65,7 +65,7 @@ brain.screen.print("Hello V5 - Movement/Intake Split Lucas here")
 
 grabber_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
 grabber_motor.set_stopping(BrakeType.HOLD)
-
+   
 # Create the left Motors and group them under the MotorGroup "left_motors"
 left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
@@ -95,13 +95,13 @@ left_motors = MotorGroup(left_motor_a, left_motor_b)
 #set_position Sets the starting position of the tube intake motor to 0 degrees so that it will not block distance sensor
 drivetrain = SmartDrive(left_motors, right_motors, inertial_sensor,330, 335, 231, MM, 1)
 
-
+drivetrain.set_stopping(BrakeType.COAST)
 # Intake/Mechanism motors
 first_intake = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 basket_intake_motor = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 toprack = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 
-drivetrain.set_stopping(BrakeType.BRAKE)
+#drivetrain.set_stopping(BrakeType.BRAKE)
 lift_motors.set_stopping(BrakeType.HOLD)
 
 LEFT = 1
@@ -698,8 +698,6 @@ class PIDController:
         return output
     
 
-def PID():
-    return
 def stop_motors_on_collision():
     controller_1.screen.clear_screen
     controller_1.screen.set_cursor(2,1)
@@ -740,16 +738,6 @@ def stop_motors_on_collision():
         
 
 
-
-def stop_all_motors():
-    drivetrain.stop()
-    first_intake.stop()
-    basket_intake_motor.stop()
-    toprack.stop()
-
-
-
-
 """
 example usage of P_turn (cut and paste into your code)
 
@@ -769,59 +757,38 @@ P_turn(calibratedAngle(0),90)
 
 
 
-
-def isZero(heading):
-    if (heading < 0.2 and heading > -0.2):
-        return True
-    else:
-        return False
-
-def getPatchedHeading(target_heading):
-    current_heading = inertial_sensor.heading()
-    
-    if isZero(current_heading):
-
-        # if we are turning to the left we want to make sure our heading is 360 not 0
-        if (target_heading>180 and target_heading < 360):
-            current_heading +=360
-            print("in patched heading")
-        else:
-            # this handles situations where it is reading 359.9 we want have the heading be 0
-            current_heading = 0.0
-    return current_heading
-      
-
-
-
-
-def potentiometer_test():
-    brain.screen.clear_screen()
-    brain.screen.print("Potentiometer Test")
-    while True:
-        brain.screen.new_line()
-        brain.screen.print("Value: " + str(potentiometer.value()))
-        wait(100, MSEC)
-
-
-
 def auton_funct():
+
+    #reseting the inertial sensor and lift motors to make sure they are at 0 degrees
     inertial_sensor.reset_rotation()
     inertial_sensor.set_heading(0, DEGREES)
     print("in aouton funct") 
     lift_motors.reset_position()
     lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+    grabber_motor.reset_position()
+    grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
 
+    
+    #grab the pin
+    grabber_motor.spin_to_position(-100,DEGREES,50,PERCENT)
 
+    #align with the goal
     turn_until_distance(500,"right",10,"FRONT")
 
+    #move to goal and raise lift
     move_until_distance(150,"forward",10,"FRONT")
     lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
+
+    #center on goal and move forward to score
     P_turn(calibratedAngle(-1), 50)
     drivetrain.drive_for(FORWARD,6,INCHES,20,PERCENT)
     P_turn(calibratedAngle(3), 50)
+
+    #score on goal
     drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
     lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
-
+    grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
+    
 
 
 
@@ -872,12 +839,15 @@ def drive_task():
                 right_motor_b.spin(REVERSE)
             else:
                 # Joystick tank control (Controller 1)
-                drive_left = controller_1.axis3.position()    # Left stick Y
-                drive_right = controller_1.axis2.position()  # Right stick Y
-                if drive_left == 0:
-                    drive_left = controller_2.axis3.position()  # Left stick Y
-                if drive_right == 0:
-                    drive_right = controller_2.axis2.position()  # Right stick Y
+                drive_left = controller_1.axis3.position()
+                drive_left = (drive_left/100)**3 * 100   # Left stick Y
+    
+
+                drive_right = controller_1.axis2.position()            
+                drive_right = (drive_right/100)**3 * 100     # Right stick Y
+
+
+
 
                 # Deadband threshold
                 deadband = 15
@@ -929,12 +899,12 @@ def drive_task():
             right_motor_b.spin(FORWARD)
 
      
-        grabber_motor_control = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * 50
-        lift_motor_control = (controller_1.buttonL1.pressing()- controller_1.buttonL2.pressing()) * -25
+        grabber_motor_control = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * -90
+        lift_motor_control = (controller_1.buttonL1.pressing()- controller_1.buttonL2.pressing()) * -50
         
         if lift_motors.position() > -25 and lift_motor_control > 0:
             lift_motor_control = 0
-        if lift_motors.position() < -435 and lift_motor_control < 0:
+        if lift_motors.position() < -620 and lift_motor_control < 0:
             lift_motor_control = 0
 
         lift_motors.spin(FORWARD, lift_motor_control, PERCENT)
@@ -954,12 +924,18 @@ def drive_task():
             if bumper_was_pressing == 0:
                 bumper_was_pressing = 1
                 print('Caleb2')
+
+        if controller_1.buttonUp.pressing() and controller_1.buttonDown.pressing():
+            auton_funct()
+
+        if controller_1.buttonA.pressing():
+            lift_motors.spin_to_position(-185,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
    
 
      
         sleep(10)
 
-        print (lift_motors.position())
+        print (controller_1.axis3.position(),controller_1.axis2.position())
 
 def user_control():
     brain.screen.clear_screen()
@@ -1011,6 +987,6 @@ Thread(temp_detect)
 #(a,b) =search_for_objects(90,"FRONT")
 #P_turn(calibratedAngle(a), 50)
 #auton_funct()
-lift_motors.set_position(0, DEGREES)
-auton_funct()
+#lift_motors.set_position(0, DEGREES)
+#auton_funct()
 drive_task()
