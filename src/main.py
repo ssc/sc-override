@@ -43,7 +43,7 @@ right_tube_spin = 0
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT19)
-distance_sensor_back = Distance(Ports.PORT2)
+distance_sensor_back = Distance(Ports.PORT5)
 inertial_sensor = Inertial(Ports.PORT13)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
@@ -764,30 +764,51 @@ def auton_funct():
     inertial_sensor.set_heading(0, DEGREES)
     print("in aouton funct") 
     lift_motors.reset_position()
-    lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+    #lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
     grabber_motor.reset_position()
-    grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
+    #grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
 
     
-    #grab the pin
-    grabber_motor.spin_to_position(-100,DEGREES,50,PERCENT)
+    # #grab the pin
+    grabber_motor.spin_for(FORWARD, 1,SECONDS,-50,PERCENT)
 
-    #align with the goal
-    turn_until_distance(500,"right",10,"FRONT")
 
-    #move to goal and raise lift
-    move_until_distance(150,"forward",10,"FRONT")
+    #drive away from wall
+    move_until_distance(300,"reverse",40,"FRONT")
+
+    #lift mech
     lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
 
-    #center on goal and move forward to score
-    P_turn(calibratedAngle(-1), 50)
-    drivetrain.drive_for(FORWARD,6,INCHES,20,PERCENT)
-    P_turn(calibratedAngle(3), 50)
 
-    #score on goal
-    drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
-    lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+    #align with goal and drive closer to it
+    turn_until_distance(600,"left",10,"BACK")
+    move_until_distance(400,"reverse",20,"BACK")
+
+    #turn to align
+    P_turn(275,20)
+
+    #drive into goal
+    drivetrain.drive_for(FORWARD, 5, INCHES, 20, PERCENT)
+
+    #drop pin
     grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
+
+    # #align with the goal
+    # turn_until_distance(500,"right",10,"FRONT")
+
+    # #move to goal and raise lift
+    # move_until_distance(150,"forward",10,"FRONT")
+    # lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
+
+    # #center on goal and move forward to score
+    # P_turn(calibratedAngle(-1), 50)
+    # drivetrain.drive_for(FORWARD,6,INCHES,20,PERCENT)
+    # P_turn(calibratedAngle(3), 50)
+
+    # #score on goal
+    # drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
+    # lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
+    # grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
     
 
 
@@ -925,7 +946,7 @@ def drive_task():
                 bumper_was_pressing = 1
                 print('Caleb2')
 
-        if controller_1.buttonUp.pressing() and controller_1.buttonDown.pressing():
+        if controller_1.buttonLeft.pressing() and controller_1.buttonRight.pressing():
             auton_funct()
 
         if controller_1.buttonA.pressing():
