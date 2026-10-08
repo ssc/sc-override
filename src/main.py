@@ -801,7 +801,12 @@ def auton_funct():
     P_turn(0,20)
 
     #turn the roller
-    move_until_distance(100,"forward",20,"FRONT")
+    move_until_distance(120,"forward",20,"FRONT")
+
+    # move into center
+    move_until_distance(800,"reverse",30,"BACK")
+    drivetrain.drive_for(REVERSE,3,INCHES,20,PERCENT)
+
 
 
     # #align with the goal
@@ -838,6 +843,7 @@ def drive_task():
     brain.screen.print(potentiometer.value())
     global left_tube_spin
     global right_tube_spin
+    modslow = 1
     print("very unique")
     while True:
 
@@ -871,11 +877,11 @@ def drive_task():
                 right_motor_b.spin(REVERSE)
             else:
                 # Joystick tank control (Controller 1)
-                drive_left = controller_1.axis3.position()
+                drive_left = controller_1.axis3.position() * modslow
 
     
 
-                drive_right = controller_1.axis2.position()            
+                drive_right = controller_1.axis2.position() * modslow           
 
 
 
@@ -957,11 +963,17 @@ def drive_task():
                 bumper_was_pressing = 1
                 print('Caleb2')
 
+
+        if controller_2.buttonA.pressing():
+            modslow = 0.5
+        if controller_2.buttonY.pressing():
+            modslow = 1
+
         if controller_1.buttonLeft.pressing() and controller_1.buttonRight.pressing():
             auton_funct()
 
         if controller_1.buttonA.pressing():
-            lift_motors.spin_to_position(-185,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
+            lift_motors.spin_to_position(-162,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
    
 
      
