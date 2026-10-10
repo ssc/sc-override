@@ -765,7 +765,7 @@ def pickupsecondpin():
     lift_motors.spin_to_position(-350,DEGREES,50,PERCENT)
     turn_until_distance(300,"right",10,"FRONT")
     move_until_distance(120,"forward",10,"FRONT")
-    P_turn(322,20)
+    P_turn(326,20)
     drivetrain.drive_for(FORWARD, 7, INCHES, 20, PERCENT)
     lift_motors.spin_to_position(-100,DEGREES,50,PERCENT)
     grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
@@ -791,19 +791,19 @@ def auton_funct():
     
     # #grab the pin
     grabber_motor.spin_for(FORWARD, 1,SECONDS,-50,PERCENT)
-
+    lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
 
     #drive away from wall
     move_until_distance(200,"reverse",40,"FRONT")
 
     #lift mech
-    lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
+
     move_until_distance(100,"forward",20,"FRONT")
     move_until_distance(300,"reverse",40,"FRONT")
 
 
     #align with goal and drive closer to it
-    P_turn(290,20)
+    P_turn(286,20)
 
     turn_until_distance(500,"left",10,"FRONT")
 
