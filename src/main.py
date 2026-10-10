@@ -43,7 +43,7 @@ right_tube_spin = 0
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
 distance_sensor = Distance(Ports.PORT19)
-distance_sensor_back = Distance(Ports.PORT5)
+distance_sensor_back = Distance(Ports.PORT4)
 inertial_sensor = Inertial(Ports.PORT13)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
@@ -608,6 +608,7 @@ def P_drive_max_done(maxs, targ_dist):
 
     
 def turn_until_distance(distance,direction,speed, sensor_location):
+    print ("in turn until distance")
     if sensor_location == "FRONT":
         while distance_sensor.object_distance(MM) > distance:
             if direction == 'left':
@@ -774,21 +775,26 @@ def auton_funct():
 
 
     #drive away from wall
-    move_until_distance(300,"reverse",40,"FRONT")
+    move_until_distance(200,"reverse",40,"FRONT")
 
     #lift mech
     lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
+    move_until_distance(120,"forward",20,"FRONT")
+    move_until_distance(300,"reverse",40,"FRONT")
 
 
     #align with goal and drive closer to it
-    turn_until_distance(600,"left",10,"BACK")
-    move_until_distance(400,"reverse",20,"BACK")
+    P_turn(290,20)
+
+    turn_until_distance(500,"left",10,"FRONT")
+
+    move_until_distance(120,"forward",20,"FRONT")
 
     #turn to align
-    P_turn(278,20)
+    P_turn(283,20)
 
     #drive into goal
-    drivetrain.drive_for(FORWARD, 6, INCHES, 20, PERCENT)
+    drivetrain.drive_for(FORWARD, 7, INCHES, 20, PERCENT)
 
     #lower tower arm
     lift_motors.spin_to_position(-80,DEGREES,50,PERCENT)
@@ -797,15 +803,16 @@ def auton_funct():
     grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
 
     #back up and turn to face the wall
-    drivetrain.drive_for(REVERSE,12,INCHES,20,PERCENT)
+    drivetrain.drive_for(REVERSE,9,INCHES,20,PERCENT)
     P_turn(0,20)
 
+    wait(6000,MSEC)
     #turn the roller
-    move_until_distance(120,"forward",20,"FRONT")
+    #move_until_distance(120,"forward",20,"FRONT")
 
     # move into center
-    move_until_distance(800,"reverse",30,"BACK")
-    drivetrain.drive_for(REVERSE,3,INCHES,20,PERCENT)
+    #move_until_distance(800,"reverse",30,"BACK")
+    drivetrain.drive_for(REVERSE,49,INCHES,60,PERCENT)
 
 
 
@@ -1027,10 +1034,10 @@ def temp_detect():
             brain.screen.draw_rectangle(0, 0, 480, 240)
 
 Thread(temp_detect)
-#comp = Competition(drive_task())
+comp = Competition(drive_task,auton_funct)
 #(a,b) =search_for_objects(90,"FRONT")
 #P_turn(calibratedAngle(a), 50)
 #auton_funct()
 #lift_motors.set_position(0, DEGREES)
 #auton_funct()
-drive_task()
+#drive_task()
