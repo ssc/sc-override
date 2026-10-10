@@ -752,6 +752,25 @@ P_turn(calibratedAngle(355),90)
 P_turn(calibratedAngle(0),90)
 """
 
+def pickupsecondpin():
+    P_turn(230,20)
+    turn_until_distance(600,"left",5,"FRONT")
+    a = distance_sensor.object_distance(MM)
+    drivetrain.drive_for(FORWARD,a-70,MM,20,PERCENT)
+    turn_until_distance(150,"right",10,"FRONT")
+    a = distance_sensor.object_distance(MM)
+    P_turn(inertial_sensor.heading() + 16,20)
+    drivetrain.drive_for(FORWARD,180,MM,20,PERCENT)
+    grabber_motor.spin_for(FORWARD, 1,SECONDS,-50,PERCENT)
+    lift_motors.spin_to_position(-350,DEGREES,50,PERCENT)
+    turn_until_distance(300,"right",10,"FRONT")
+    move_until_distance(120,"forward",10,"FRONT")
+    P_turn(322,20)
+    drivetrain.drive_for(FORWARD, 7, INCHES, 20, PERCENT)
+    lift_motors.spin_to_position(-100,DEGREES,50,PERCENT)
+    grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
+    drivetrain.drive_for(REVERSE,48,INCHES,60,PERCENT)
+
 
 
 
@@ -779,7 +798,7 @@ def auton_funct():
 
     #lift mech
     lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
-    move_until_distance(120,"forward",20,"FRONT")
+    move_until_distance(100,"forward",20,"FRONT")
     move_until_distance(300,"reverse",40,"FRONT")
 
 
@@ -804,15 +823,16 @@ def auton_funct():
 
     #back up and turn to face the wall
     drivetrain.drive_for(REVERSE,9,INCHES,20,PERCENT)
-    P_turn(0,20)
+    pickupsecondpin()
+    #P_turn(0,20)
 
-    wait(6000,MSEC)
+   # wait(6000,MSEC)
     #turn the roller
     #move_until_distance(120,"forward",20,"FRONT")
 
     # move into center
     #move_until_distance(800,"reverse",30,"BACK")
-    drivetrain.drive_for(REVERSE,49,INCHES,60,PERCENT)
+    #drivetrain.drive_for(REVERSE,49,INCHES,60,PERCENT)
 
 
 
