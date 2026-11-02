@@ -12,7 +12,6 @@
 # Library imports
 from vex import *
 
-
 #DO NOT ADD PI KUBA!!!!!!
 
 dont_stop_twice = 0
@@ -39,6 +38,11 @@ right_tube_spin = 0
 #smallest_distance_value = 100000
 #smallest_distance_angle = 0
 
+
+grabber_distance_sensor = Distance(Ports.PORT14)
+
+
+
 # Configure the optical sensor on a specific port (change port number as needed)
 bumper = Bumper(brain.three_wire_port.a)
 potentiometer = Potentiometer(brain.three_wire_port.b) 
@@ -63,7 +67,9 @@ vex_brain_slot = 2 # 1 = left, 2 = right Auton
 
 brain.screen.print("Hello V5 - Movement/Intake Split Lucas here")
 
+twiddler_mech = Motor(Ports.PORT15, GearSetting.RATIO_18_1, True)
 grabber_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
+grabber_motor.set_stopping(BrakeType.BRAKE)
 grabber_motor.set_stopping(BrakeType.HOLD)
    
 # Create the left Motors and group them under the MotorGroup "left_motors"
@@ -78,10 +84,10 @@ lift_motor_right = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True)
 right_motor_a = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
 right_motor_b = Motor(Ports.PORT20, GearSetting.RATIO_18_1, True)
 
-left_motor_b.set_reversed(False)
-left_motor_a.set_reversed(False)
+left_motor_b.set_reversed(True)
+left_motor_a.set_reversed(True)
 
-right_motor_a.set_reversed(True)
+right_motor_a.set_reversed(False)
 right_motor_b.set_reversed(True)
 
 lift_motor_left.set_reversed(False)
@@ -486,126 +492,6 @@ def one_wheel_turn_to_heading(target_heading, side, direction,speed):
     return()
 
 
-def P_drive_dist(maxs, targ_dist, directionA):
-    thespeed = 0
-    
-
-  
-
-    if directionA == "forward":
-
-        curdistance = distance_sensor.object_distance(MM)
-        travel_dist = curdistance - targ_dist
-        travel_steps = travel_dist / 2
-        cons_acc = 0.5
-      
-
-        while (distance_sensor.object_distance(MM) > travel_steps):
-            if thespeed == maxs:
-                thespeed = maxs - 1
-            else:
-                thespeed += cons_acc
-            left_motors.set_velocity(thespeed, PERCENT)
-            right_motors.set_velocity(thespeed, PERCENT)
-        print("1st done")
-
-
-        while (distance_sensor.object_distance(MM) > 0):
-            if thespeed == maxs:
-                thespeed = maxs - 1
-            else:
-                thespeed -= cons_acc
-            left_motors.set_velocity(thespeed, PERCENT)
-            right_motors.set_velocity(thespeed, PERCENT)
-        print("3rd done")
-
-    if directionA == "back":
-        curdistance = distance_sensor_back.object_distance(MM)
-        travel_dist = curdistance - targ_dist
-        travel_steps = travel_dist / 3
-
-        # increase the speed to max
-        while (distance_sensor_back.object_distance(MM) > travel_steps * 2):
-            if thespeed == maxs:
-                thespeed = maxs - 1
-            else:
-                thespeed += 1
-            left_motors.set_velocity(-thespeed, PERCENT)
-            right_motors.set_velocity(-thespeed, PERCENT)
-        print("1st done")
-
-        while (distance_sensor_back.object_distance(MM) > travel_steps):
-            left_motors.set_velocity(-maxs, PERCENT)
-            right_motors.set_velocity(-maxs, PERCENT)
-        print("2nd done")
-
-        while (distance_sensor_back.object_distance(MM) > travel_steps * 0):
-            if thespeed == maxs:
-                thespeed = maxs - 1
-            else:
-                thespeed -= 1
-            left_motors.set_velocity(-thespeed, PERCENT)
-            right_motors.set_velocity(-thespeed, PERCENT)
-        print("3rd done")
-        
-
-    # drive some time
-   
-    
-    left_motors.stop()
-    right_motors.stop()
-
-
-
-
-
-def P_drive_max_done(maxs, targ_dist):
-    thespeed = 5
-    curdistance = distance_sensor.object_distance(MM)
-    myerror = curdistance - targ_dist
-
-    
-
-    # start motors
-
-    left_motors.spin(FORWARD,thespeed, PERCENT)    
-    right_motors.spin(FORWARD, thespeed, PERCENT)    
-    # increase the speed to max
-    while (thespeed < maxs):
-        thespeed += 1
-        left_motors.set_velocity(thespeed, PERCENT)
-        right_motors.set_velocity(thespeed, PERCENT)
-        wait(10)
-
-    # drive some time
-   
-    curdistance = distance_sensor.object_distance(MM)
-    while (thespeed > 5):
-        
-        myerror = curdistance - targ_dist
-        if (myerror > maxs):
-            myerror = maxs
-        thespeed = myerror / 1.2
-        left_motors.set_velocity(thespeed, PERCENT)
-        right_motors.set_velocity(thespeed, PERCENT)
-        wait(0.01, SECONDS)
-        curdistance = distance_sensor.object_distance(MM)
-
-    # stop motors
-    left_motors.stop()
-    right_motors.stop()
-
-
-
-
-
-
-            
-        
-        
-            
-        
-
     
 def turn_until_distance(distance,direction,speed, sensor_location):
     print ("in turn until distance")
@@ -782,8 +668,9 @@ def auton_funct():
     #reseting the inertial sensor and lift motors to make sure they are at 0 degrees
     inertial_sensor.reset_rotation()
     inertial_sensor.set_heading(0, DEGREES)
-    print("in aouton funct") 
+    print("in aouton funct")
     lift_motors.reset_position()
+
     #lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
     grabber_motor.reset_position()
     #grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
@@ -794,6 +681,11 @@ def auton_funct():
     lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
 
     #drive away from wall
+    move_until_distance(200,"reverse",40,"FRONT")
+
+    #lift mech
+
+    move_until_distance(100,"forward",20,"FRONT")
     move_until_distance(200,"reverse",40,"FRONT")
 
     #lift mech
@@ -824,40 +716,10 @@ def auton_funct():
     #back up and turn to face the wall
     drivetrain.drive_for(REVERSE,9,INCHES,20,PERCENT)
     pickupsecondpin()
-    #P_turn(0,20)
-
-   # wait(6000,MSEC)
-    #turn the roller
-    #move_until_distance(120,"forward",20,"FRONT")
-
-    # move into center
-    #move_until_distance(800,"reverse",30,"BACK")
-    #drivetrain.drive_for(REVERSE,49,INCHES,60,PERCENT)
-
-
-
-    # #align with the goal
-    # turn_until_distance(500,"right",10,"FRONT")
-
-    # #move to goal and raise lift
-    # move_until_distance(150,"forward",10,"FRONT")
-    # lift_motors.spin_to_position(-200,DEGREES,50,PERCENT)
-
-    # #center on goal and move forward to score
-    # P_turn(calibratedAngle(-1), 50)
-    # drivetrain.drive_for(FORWARD,6,INCHES,20,PERCENT)
-    # P_turn(calibratedAngle(3), 50)
-
-    # #score on goal
-    # drivetrain.drive_for(FORWARD,1,INCHES,20,PERCENT)
-    # lift_motors.spin_to_position(0,DEGREES,50,PERCENT)
-    # grabber_motor.spin_to_position(0,DEGREES,50,PERCENT)
-    
-
-
 
 
 def drive_task():
+    grabber_dont_spin = False
     grabber_closed = False
     controller_1.rumble('.')
     global test_function
@@ -893,28 +755,11 @@ def drive_task():
                 right_motor_b.spin(FORWARD)
 
                 brain.screen.print("Button Up Pressed")
-            elif controller_1.buttonDown.pressing(): #or controller_2.buttonDown.pressing():
-                left_motor_a.set_velocity(60, PERCENT)
-                left_motor_b.set_velocity(60, PERCENT)
-                right_motor_a.set_velocity(60, PERCENT)
-                right_motor_b.set_velocity(60, PERCENT)
-                left_motor_a.spin(REVERSE)
-                right_motor_a.spin(REVERSE)
-                left_motor_b.spin(REVERSE)
-                right_motor_b.spin(REVERSE)
             else:
                 # Joystick tank control (Controller 1)
                 drive_left = controller_1.axis3.position() * modslow
-
-    
-
-                drive_right = controller_1.axis2.position() * modslow           
-
-
-
-
-
-                # Deadband threshold
+                drive_right = controller_1.axis2.position() * modslow * -1           
+                # Deadband threshold ccc
                 deadband = 15
                 if abs(drive_left) < deadband:
                     drive_left = 0
@@ -941,48 +786,27 @@ def drive_task():
                     right_motors.spin(REVERSE, ramp_up(0 - drive_right), PERCENT)
 
 
-        else:
-            # Arcade control mode (Controller 1)
-            forward_power = controller_1.axis3.position()  # Left stick Y
-            turn_power = controller_1.axis1.position()     # Left stick X
-            if forward_power == 0:
-                forward_power = controller_2.axis3.position()  # Left stick Y
-            if turn_power == 0:
-                turn_power = controller_2.axis1.position()     # Left stick X
+        
 
-            left_power = forward_power + turn_power
-            right_power = forward_power - turn_power
-
-            left_motor_a.set_velocity(left_power * 2, PERCENT)
-            left_motor_b.set_velocity(left_power * 2, PERCENT)
-            right_motor_a.set_velocity(right_power * 2, PERCENT)
-            right_motor_b.set_velocity(right_power * 2, PERCENT)
-
-            left_motor_a.spin(FORWARD)
-            left_motor_b.spin(FORWARD)
-            right_motor_a.spin(FORWARD)
-            right_motor_b.spin(FORWARD)
-
-     
+        twiddler_mech_control = (controller_1.buttonX.pressing()- controller_1.buttonB.pressing())*90
         grabber_motor_control = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * -90
         lift_motor_control = (controller_1.buttonL1.pressing()- controller_1.buttonL2.pressing()) * -50
         
+        if grabber_motor.position() > 0 and grabber_motor_control > 0:
+            grabber_motor_control = 0
+            #grabber_motor.set_position(0,DEGREES)
+
         if lift_motors.position() > -25 and lift_motor_control > 0:
             lift_motor_control = 0
-        if lift_motors.position() < -620 and lift_motor_control < 0:
+        if lift_motors.position() < -1400 and lift_motor_control < 0:
             lift_motor_control = 0
 
         lift_motors.spin(FORWARD, lift_motor_control, PERCENT)
-    
+        twiddler_mech.spin(FORWARD, twiddler_mech_control, PERCENT)
         grabber_motor.spin(FORWARD, grabber_motor_control, PERCENT)
 
-        if controller_1.buttonR1.pressing():
-            if grabber_closed == False:
-                grabber_closed = True
-                grabber_pneumatic.set(True)
-            else:
-                grabber_closed = False
-                grabber_pneumatic.set(False)
+        if controller_1.buttonDown.pressing():
+            lift_motors.spin_to_position(5,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
 
         if bumper.pressing():
             global bumper_was_pressing
@@ -990,23 +814,36 @@ def drive_task():
                 bumper_was_pressing = 1
                 print('Caleb2')
 
-
-        if controller_2.buttonA.pressing():
-            modslow = 0.5
-        if controller_2.buttonY.pressing():
-            modslow = 1
+        #if controller_1.buttonX.pressing():
+        #    modslow = 0.5
+        #if controller_1.buttonB.pressing():
+        #    modslow = 1
 
         if controller_1.buttonLeft.pressing() and controller_1.buttonRight.pressing():
             auton_funct()
 
         if controller_1.buttonA.pressing():
             lift_motors.spin_to_position(-162,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
-   
+        if grabber_distance_sensor.object_distance(MM) < 75 and grabber_dont_spin == False:
+            if grabber_closed == False:
+                grabber_motor.spin(FORWARD, -100,PERCENT)
+                sleep (10,MSEC)
+                if grabber_motor.torque() > 0.5:
+                    grabber_closed = True
+            else:
+                    grabber_motor.stop()
+                    grabber_closed = False
+                    grabber_dont_spin = True
 
-     
-        sleep(10)
+            
+        if grabber_dont_spin == True:
+            if grabber_distance_sensor.object_distance(MM) > 75:
+                grabber_dont_spin = False
 
-        print (controller_1.axis3.position(),controller_1.axis2.position())
+
+        sleep(10,MSEC)
+
+        print (grabber_closed)
 
 def user_control():
     brain.screen.clear_screen()
@@ -1055,9 +892,3 @@ def temp_detect():
 
 Thread(temp_detect)
 comp = Competition(drive_task,auton_funct)
-#(a,b) =search_for_objects(90,"FRONT")
-#P_turn(calibratedAngle(a), 50)
-#auton_funct()
-#lift_motors.set_position(0, DEGREES)
-#auton_funct()
-#drive_task()
