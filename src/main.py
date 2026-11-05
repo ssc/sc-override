@@ -16,7 +16,7 @@ from vex import *
 
 dont_stop_twice = 0
 test_function = 0
-
+reverse = 1
 EXTREME_RIGHT = 1
 
 brain = Brain()
@@ -719,6 +719,7 @@ def auton_funct():
 
 
 def drive_task():
+    global reverse
     grabber_dont_spin = False
     grabber_closed = False
     controller_1.rumble('.')
@@ -755,10 +756,10 @@ def drive_task():
                 right_motor_b.spin(FORWARD)
 
                 brain.screen.print("Button Up Pressed")
-            else:
+            else:   
                 # Joystick tank control (Controller 1)
-                drive_left = controller_1.axis3.position() * modslow
-                drive_right = controller_1.axis2.position() * modslow * -1           
+                drive_left = controller_1.axis3.position() * modslow * reverse
+                drive_right = controller_1.axis2.position() * modslow * -1 * reverse      
                 # Deadband threshold ccc
                 deadband = 15
                 if abs(drive_left) < deadband:
@@ -814,6 +815,11 @@ def drive_task():
                 bumper_was_pressing = 1
                 print('Caleb2')
 
+        if controller_1.buttonDown.pressing() and controller_1.buttonUp.pressing() and controller_1.buttonA.pressing():
+            if reverse == 1:
+                reverse = -1
+            else:
+                reverse = 1
         #if controller_1.buttonX.pressing():
         #    modslow = 0.5
         #if controller_1.buttonB.pressing():
@@ -823,7 +829,12 @@ def drive_task():
             auton_funct()
 
         if controller_1.buttonA.pressing():
-            lift_motors.spin_to_position(-162,DEGREES,50,PERCENT) # going to 190 makes top pin seperate from the casing
+            lift_motors.spin_to_position(-162,DEGREES,50,PERCENT)
+             # going to 190 makes top pin seperate from the casing
+        if drive_left > drive_right:
+            fastest = drive_left
+        else:
+            fastest = drive_right
         if grabber_distance_sensor.object_distance(MM) < 75 and grabber_dont_spin == False:
             if grabber_closed == False:
                 grabber_motor.spin(FORWARD, -100,PERCENT)
