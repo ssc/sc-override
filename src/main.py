@@ -14,6 +14,8 @@ from vex import *
 
 #DO NOT ADD PI KUBA!!!!!!
 
+
+color_value = 0
 dont_stop_twice = 0
 test_function = 0
 reverse = 1
@@ -52,6 +54,7 @@ inertial_sensor = Inertial(Ports.PORT13)
 controller_1 = Controller(ControllerType.PRIMARY)    # MOVEMENT CONTROLLER
 controller_2 = Controller(ControllerType.PARTNER)    # INTAKE CONTROLLER
 bumper_was_pressing = 0
+twiddler_color_sensor = Optical(Ports.PORT16)
 
 grabber_pneumatic = DigitalOut(brain.three_wire_port.c)
 flipper_pneumatic = DigitalOut(brain.three_wire_port.d)
@@ -68,7 +71,7 @@ vex_brain_slot = 2 # 1 = left, 2 = right Auton
 brain.screen.print("Hello V5 - Movement/Intake Split Lucas here")
 
 twiddler_mech = Motor(Ports.PORT15, GearSetting.RATIO_18_1, True)
-grabber_motor = Motor(Ports.PORT18, GearSetting.RATIO_18_1, True)
+grabber_motor = Motor(Ports.PORT17, GearSetting.RATIO_18_1, True)
 grabber_motor.set_stopping(BrakeType.BRAKE)
 grabber_motor.set_stopping(BrakeType.HOLD)
    
@@ -77,8 +80,8 @@ left_motor_a = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
 left_motor_b = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)
 
 #lift motors
-lift_motor_left = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False)
-lift_motor_right = Motor(Ports.PORT12, GearSetting.RATIO_18_1, True) 
+lift_motor_left = Motor(Ports.PORT9, GearSetting.RATIO_18_1, False)
+lift_motor_right = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True) 
 
 # Create the right Motors and group them under the MotorGroup "right_motors"
 right_motor_a = Motor(Ports.PORT11, GearSetting.RATIO_18_1, True)
@@ -719,6 +722,7 @@ def auton_funct():
 
 
 def drive_task():
+    global color_value
     global reverse
     grabber_dont_spin = False
     grabber_closed = False
@@ -851,10 +855,22 @@ def drive_task():
             if grabber_distance_sensor.object_distance(MM) > 75:
                 grabber_dont_spin = False
 
+        if controller_1.buttonA.pressing():
+            color_value = twiddler_color_sensor.hue()
+
+        if controller_1.buttonB.pressing():
+            while not twiddler_color_sensor.hue() > color_value + 1 or twiddler_color_sensor.hue() < color_value - 1:
+                twiddler_mech.spin(FORWARD, -100, PERCENT)
+                wait (168,MSEC)
+                twiddler_mech.stop()
+                wait(500,MSEC)
+                twiddler_mech.stop()
+                #wait (1000,MSEC)
+
 
         sleep(10,MSEC)
 
-        print (grabber_closed)
+        print (twiddler_color_sensor.hue())
 
 def user_control():
     brain.screen.clear_screen()
